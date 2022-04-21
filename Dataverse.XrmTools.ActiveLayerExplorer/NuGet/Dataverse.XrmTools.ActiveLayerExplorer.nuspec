@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Dataverse.XrmTools.ActiveLayerExplorer</id>
+    <version>2022.4.19.1</version>
+    <title>Active Layer Explorer</title>
+    <authors>Rui Sousa</authors>
+    <owners>Rui Sousa</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/rsousa88/ActiveLayerExplorer</projectUrl>
+    <icon>images\icon.png</icon>
+    <description>
+		Tool used to explore and delete managed solution active layers.
+	</description>
+    <summary>Explore and delete managed solution active layers</summary>
+    <releaseNotes>
+		2022.4.19.x
+		- First commit
+	</releaseNotes>
+    <copyright>Copyright 2021</copyright>
+    <tags>XrmToolBox dataverse managed active layer layers explorer tool dynamics 365 crm xrm</tags>
+    <dependencies>
+      <dependency id="XrmToolBox" version="1.2021.6.51" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\Resources\icon.png" target="images\" />
+	<file src="..\bin\Release\Dataverse.XrmTools.ActiveLayerExplorer.dll" target="lib\net462\Plugins\Dataverse.XrmTools.ActiveLayerExplorer.dll" />
+  </files>
+</package>

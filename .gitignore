@@ -1,0 +1,20 @@
+## GIT IGNORE FILE
+.vs
+
+#[Bb]in
+**/[Bb]in/**/Logs
+**/[Bb]in/**/NugetPlugins
+**/[Bb]in/**/Connections
+**/[Bb]in/**/Metadata
+**/[Bb]in/**/Plugins
+**/[Bb]in/**/Settings
+**/[Bb]in/**/Dataverse.XrmTools.ActiveLayerExplorer*
+**/[Bb]in/Release
+
+[Oo]bj
+[Pp]ackages
+/TODO.md
+/DEV-NOTES.md
+
+**/Dataverse.XrmTools.ActiveLayerExplorer.Tests/[Bb]in/*
+**/Dataverse.XrmTools.ActiveLayerExplorer/[Bb]in/*
