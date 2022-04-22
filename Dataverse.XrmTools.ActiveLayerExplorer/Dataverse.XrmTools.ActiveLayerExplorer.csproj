@@ -208,6 +208,8 @@
     <Compile Include="ActiveLayerExplorerControl.designer.cs">
       <DependentUpon>ActiveLayerExplorerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\SolutionComponent.cs" />
+    <Compile Include="Models\ComponentType.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />

@@ -64,6 +64,68 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
             }
         }
 
+        public IEnumerable<Entity> GetSolutionComponents(string[] columns, Guid solutionId)
+        {
+            try
+            {
+                var filter = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("solutionid", ConditionOperator.Equal, solutionId)
+                    }
+                };
+
+                var query = new QueryExpression("solutioncomponent")
+                {
+                    ColumnSet = new ColumnSet((from c in columns select c.ToLower()).ToArray()),
+                    Criteria = filter,
+                    PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
+                };
+
+                return GetRecords(query);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        //public void GetActiveLayers(List<LayerItem> items)
+        //{
+        //    _bulk.Requests = new OrganizationRequestCollection();
+
+        //    foreach (var item in items)
+        //    {
+        //        _bulk.Requests.Add(new RetrieveMultipleRequest
+        //        {
+        //            Query = new QueryExpression("msdyn_componentlayer")
+        //            {
+        //                NoLock = true,
+        //                ColumnSet = new ColumnSet(true),
+        //                Criteria = new FilterExpression
+        //                {
+        //                    Conditions =
+        //                    {
+        //                        new ConditionExpression("msdyn_solutionname",ConditionOperator.Equal, "Active"),
+        //                        new ConditionExpression("msdyn_solutioncomponentname",ConditionOperator.Equal, ((ComponentType)item.Record.GetAttributeValue<OptionSetValue>("componenttype").Value).ToString()),
+        //                        new ConditionExpression("msdyn_componentid",ConditionOperator.Equal, item.Record.GetAttributeValue<Guid>("objectid")),
+        //                    }
+        //                }
+        //            }
+        //        });
+        //    }
+
+        //    var bulkResp = (ExecuteMultipleResponse)_service.Execute(_bulk);
+        //    foreach (var response in bulkResp.Responses)
+        //    {
+        //        var request = (RetrieveMultipleRequest)_bulk.Requests[response.RequestIndex];
+        //        var objectId = (Guid)((QueryExpression)request.Query).Criteria.Conditions.Last().Values.First();
+
+        //        items.First(i => i.Record.GetAttributeValue<Guid>("objectid") == objectId).ActiveLayer = ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.FirstOrDefault();
+        //    }
+        //}
+
         public IEnumerable<EntityMetadata> GetOrgTables()
         {
             try
@@ -95,6 +157,27 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
 
                 var response = _service.Execute(request) as RetrieveEntityResponse;
                 return response.EntityMetadata;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public EnumAttributeMetadata GetOptionSetMetadata(string tableName, string columnName)
+        {
+            try
+            {
+                var request = new RetrieveAttributeRequest
+                {
+                    EntityLogicalName = tableName,
+                    LogicalName = columnName,
+                    RetrieveAsIfPublished = true
+                };
+
+                var response = _service.Execute(request) as RetrieveAttributeResponse;
+
+                return response.AttributeMetadata as EnumAttributeMetadata;
             }
             catch (Exception)
             {

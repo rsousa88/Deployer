@@ -27,22 +27,24 @@
             this.tsMain = new System.Windows.Forms.ToolStrip();
             this.tsbRefreshSolutions = new System.Windows.Forms.ToolStripButton();
             this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbAbort = new System.Windows.Forms.ToolStripButton();
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbEnvironments = new System.Windows.Forms.GroupBox();
             this.lblSource = new System.Windows.Forms.Label();
-            this.lblSourceValue = new System.Windows.Forms.Label();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbSolutions = new System.Windows.Forms.GroupBox();
             this.lblSolutionFilter = new System.Windows.Forms.Label();
             this.txtSolutionFilter = new System.Windows.Forms.TextBox();
             this.lvSolutions = new System.Windows.Forms.ListView();
+            this.chSolId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chSolLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            //this.chSolLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.gbComponentTypes = new System.Windows.Forms.GroupBox();
             this.cbCmpTypSelectAll = new System.Windows.Forms.CheckBox();
             this.lvComponentTypes = new System.Windows.Forms.ListView();
             this.chCmpTypComponentName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chCmpTypComponentCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chCmpTypActiveLayerCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.gbComponents = new System.Windows.Forms.GroupBox();
             this.cbCmpSelectAll = new System.Windows.Forms.CheckBox();
@@ -57,7 +59,7 @@
             this.chChangesId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chChangesAttributeName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chChangesAttributeValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tsbAbort = new System.Windows.Forms.ToolStripButton();
+            this.lblSourceValue = new System.Windows.Forms.Label();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -98,11 +100,21 @@
             this.tsSeparator1.Name = "tsSeparator1";
             this.tsSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
+            // tsbAbort
+            // 
+            this.tsbAbort.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbAbort.Image = ((System.Drawing.Image)(resources.GetObject("tsbAbort.Image")));
+            this.tsbAbort.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbAbort.Name = "tsbAbort";
+            this.tsbAbort.Size = new System.Drawing.Size(45, 22);
+            this.tsbAbort.Text = "Abort";
+            this.tsbAbort.Visible = false;
+            // 
             // pnlMain
             // 
             this.pnlMain.ColumnCount = 2;
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 90F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
             this.pnlMain.Controls.Add(this.pnlSettings, 0, 0);
             this.pnlMain.Controls.Add(this.pnlBody, 1, 0);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -126,7 +138,7 @@
             this.pnlSettings.RowCount = 2;
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.5F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 92.5F));
-            this.pnlSettings.Size = new System.Drawing.Size(157, 759);
+            this.pnlSettings.Size = new System.Drawing.Size(318, 759);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbEnvironments
@@ -138,7 +150,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(2);
-            this.gbEnvironments.Size = new System.Drawing.Size(153, 52);
+            this.gbEnvironments.Size = new System.Drawing.Size(314, 52);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -152,18 +164,6 @@
             this.lblSource.Size = new System.Drawing.Size(41, 13);
             this.lblSource.TabIndex = 0;
             this.lblSource.Text = "Source";
-            // 
-            // lblSourceValue
-            // 
-            this.lblSourceValue.AutoSize = true;
-            this.lblSourceValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.lblSourceValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblSourceValue.Location = new System.Drawing.Point(61, 22);
-            this.lblSourceValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblSourceValue.Name = "lblSourceValue";
-            this.lblSourceValue.Size = new System.Drawing.Size(77, 13);
-            this.lblSourceValue.TabIndex = 1;
-            this.lblSourceValue.Text = "Disconnected";
             // 
             // pnlBody
             // 
@@ -179,16 +179,17 @@
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
             this.pnlBody.Controls.Add(this.gbSolutions, 0, 0);
             this.pnlBody.Controls.Add(this.gbComponentTypes, 2, 0);
-            this.pnlBody.Controls.Add(this.gbComponents, 4, 0);
+            this.pnlBody.Controls.Add(this.gbComponents, 5, 0);
             this.pnlBody.Controls.Add(this.gbChanges, 0, 1);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlBody.Location = new System.Drawing.Point(163, 2);
+            this.pnlBody.Location = new System.Drawing.Point(324, 2);
             this.pnlBody.Margin = new System.Windows.Forms.Padding(2);
             this.pnlBody.Name = "pnlBody";
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlBody.Size = new System.Drawing.Size(1445, 759);
+            this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.pnlBody.Size = new System.Drawing.Size(1284, 759);
             this.pnlBody.TabIndex = 1;
             // 
             // gbSolutions
@@ -203,7 +204,7 @@
             this.gbSolutions.Margin = new System.Windows.Forms.Padding(2);
             this.gbSolutions.Name = "gbSolutions";
             this.gbSolutions.Padding = new System.Windows.Forms.Padding(2);
-            this.gbSolutions.Size = new System.Drawing.Size(316, 375);
+            this.gbSolutions.Size = new System.Drawing.Size(280, 375);
             this.gbSolutions.TabIndex = 0;
             this.gbSolutions.TabStop = false;
             this.gbSolutions.Text = "Managed Solutions";
@@ -223,7 +224,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSolutionFilter.Location = new System.Drawing.Point(48, 17);
             this.txtSolutionFilter.Name = "txtSolutionFilter";
-            this.txtSolutionFilter.Size = new System.Drawing.Size(264, 20);
+            this.txtSolutionFilter.Size = new System.Drawing.Size(228, 20);
             this.txtSolutionFilter.TabIndex = 1;
             this.txtSolutionFilter.TextChanged += new System.EventHandler(this.txtSolutionFilter_TextChanged);
             // 
@@ -233,15 +234,15 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvSolutions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chSolDisplayName/*,
-            this.chSolLogicalName*/});
+            this.chSolId,
+            this.chSolLogicalName,
+            this.chSolDisplayName});
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
             this.lvSolutions.Location = new System.Drawing.Point(7, 44);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(305, 326);
-            this.lvSolutions.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvSolutions.Size = new System.Drawing.Size(269, 326);
             this.lvSolutions.TabIndex = 2;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -249,27 +250,32 @@
             this.lvSolutions.SelectedIndexChanged += new System.EventHandler(this.lvSolutions_SelectedIndexChanged);
             this.lvSolutions.Resize += new System.EventHandler(this.lvSolutions_Resize);
             // 
+            // chSolId
+            // 
+            this.chSolId.Text = "Solution Id";
+            this.chSolId.Width = 0;
+            // 
+            // chSolLogicalName
+            // 
+            this.chSolLogicalName.Text = "Logical Name";
+            this.chSolLogicalName.Width = 0;
+            // 
             // chSolDisplayName
             // 
             this.chSolDisplayName.Text = "Display Name";
-            this.chSolDisplayName.Width = 300;
-            //// 
-            //// chSolLogicalName
-            //// 
-            //this.chSolLogicalName.Text = "Logical Name";
-            //this.chSolLogicalName.Width = 0;
+            this.chSolDisplayName.Width = 250;
             // 
             // gbComponentTypes
             // 
-            this.pnlBody.SetColumnSpan(this.gbComponentTypes, 2);
+            this.pnlBody.SetColumnSpan(this.gbComponentTypes, 3);
             this.gbComponentTypes.Controls.Add(this.cbCmpTypSelectAll);
             this.gbComponentTypes.Controls.Add(this.lvComponentTypes);
             this.gbComponentTypes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbComponentTypes.Location = new System.Drawing.Point(322, 2);
+            this.gbComponentTypes.Location = new System.Drawing.Point(286, 2);
             this.gbComponentTypes.Margin = new System.Windows.Forms.Padding(2);
             this.gbComponentTypes.Name = "gbComponentTypes";
             this.gbComponentTypes.Padding = new System.Windows.Forms.Padding(2);
-            this.gbComponentTypes.Size = new System.Drawing.Size(316, 375);
+            this.gbComponentTypes.Size = new System.Drawing.Size(422, 375);
             this.gbComponentTypes.TabIndex = 1;
             this.gbComponentTypes.TabStop = false;
             this.gbComponentTypes.Text = "Component Types";
@@ -295,13 +301,13 @@
             this.lvComponentTypes.CheckBoxes = true;
             this.lvComponentTypes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chCmpTypComponentName,
+            this.chCmpTypComponentCount,
             this.chCmpTypActiveLayerCount});
             this.lvComponentTypes.FullRowSelect = true;
             this.lvComponentTypes.HideSelection = false;
             this.lvComponentTypes.Location = new System.Drawing.Point(6, 44);
             this.lvComponentTypes.Name = "lvComponentTypes";
-            this.lvComponentTypes.Size = new System.Drawing.Size(306, 326);
-            this.lvComponentTypes.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvComponentTypes.Size = new System.Drawing.Size(412, 326);
             this.lvComponentTypes.TabIndex = 3;
             this.lvComponentTypes.UseCompatibleStateImageBehavior = false;
             this.lvComponentTypes.View = System.Windows.Forms.View.Details;
@@ -314,6 +320,11 @@
             this.chCmpTypComponentName.Text = "Component";
             this.chCmpTypComponentName.Width = 200;
             // 
+            // chCmpTypComponentCount
+            // 
+            this.chCmpTypComponentCount.Text = "Count";
+            this.chCmpTypComponentCount.Width = 75;
+            // 
             // chCmpTypActiveLayerCount
             // 
             this.chCmpTypActiveLayerCount.Text = "Active Layers";
@@ -321,15 +332,15 @@
             // 
             // gbComponents
             // 
-            this.pnlBody.SetColumnSpan(this.gbComponents, 5);
+            this.pnlBody.SetColumnSpan(this.gbComponents, 4);
             this.gbComponents.Controls.Add(this.cbCmpSelectAll);
             this.gbComponents.Controls.Add(this.lvComponents);
             this.gbComponents.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbComponents.Location = new System.Drawing.Point(642, 2);
+            this.gbComponents.Location = new System.Drawing.Point(712, 2);
             this.gbComponents.Margin = new System.Windows.Forms.Padding(2);
             this.gbComponents.Name = "gbComponents";
             this.gbComponents.Padding = new System.Windows.Forms.Padding(2);
-            this.gbComponents.Size = new System.Drawing.Size(801, 375);
+            this.gbComponents.Size = new System.Drawing.Size(570, 375);
             this.gbComponents.TabIndex = 2;
             this.gbComponents.TabStop = false;
             this.gbComponents.Text = "Components with Active Layer";
@@ -361,8 +372,7 @@
             this.lvComponents.HideSelection = false;
             this.lvComponents.Location = new System.Drawing.Point(6, 44);
             this.lvComponents.Name = "lvComponents";
-            this.lvComponents.Size = new System.Drawing.Size(791, 326);
-            this.lvComponents.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvComponents.Size = new System.Drawing.Size(560, 326);
             this.lvComponents.TabIndex = 3;
             this.lvComponents.UseCompatibleStateImageBehavior = false;
             this.lvComponents.View = System.Windows.Forms.View.Details;
@@ -397,7 +407,7 @@
             this.gbChanges.Margin = new System.Windows.Forms.Padding(2);
             this.gbChanges.Name = "gbChanges";
             this.gbChanges.Padding = new System.Windows.Forms.Padding(2);
-            this.gbChanges.Size = new System.Drawing.Size(1441, 376);
+            this.gbChanges.Size = new System.Drawing.Size(1280, 376);
             this.gbChanges.TabIndex = 3;
             this.gbChanges.TabStop = false;
             this.gbChanges.Text = "Changes";
@@ -428,8 +438,7 @@
             this.lvChanges.HideSelection = false;
             this.lvChanges.Location = new System.Drawing.Point(6, 44);
             this.lvChanges.Name = "lvChanges";
-            this.lvChanges.Size = new System.Drawing.Size(1431, 327);
-            this.lvChanges.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvChanges.Size = new System.Drawing.Size(1270, 359);
             this.lvChanges.TabIndex = 3;
             this.lvChanges.UseCompatibleStateImageBehavior = false;
             this.lvChanges.View = System.Windows.Forms.View.Details;
@@ -449,15 +458,17 @@
             this.chChangesAttributeValue.Text = "Attribute Value";
             this.chChangesAttributeValue.Width = 900;
             // 
-            // tsbAbort
+            // lblSourceValue
             // 
-            this.tsbAbort.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbAbort.Image = ((System.Drawing.Image)(resources.GetObject("tsbAbort.Image")));
-            this.tsbAbort.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbAbort.Name = "tsbAbort";
-            this.tsbAbort.Size = new System.Drawing.Size(45, 22);
-            this.tsbAbort.Text = "Abort";
-            this.tsbAbort.Visible = false;
+            this.lblSourceValue.AutoSize = true;
+            this.lblSourceValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.lblSourceValue.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblSourceValue.Location = new System.Drawing.Point(49, 25);
+            this.lblSourceValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblSourceValue.Name = "lblSourceValue";
+            this.lblSourceValue.Size = new System.Drawing.Size(77, 13);
+            this.lblSourceValue.TabIndex = 1;
+            this.lblSourceValue.Text = "Disconnected";
             // 
             // ActiveLayerExplorerControl
             // 
@@ -515,13 +526,15 @@
         private System.Windows.Forms.Label lblSolutionFilter;
         private System.Windows.Forms.TextBox txtSolutionFilter;
         private System.Windows.Forms.ListView lvSolutions;
+        private System.Windows.Forms.ColumnHeader chSolId;
+        private System.Windows.Forms.ColumnHeader chSolLogicalName;
         private System.Windows.Forms.ColumnHeader chSolDisplayName;
-        //private System.Windows.Forms.ColumnHeader chSolLogicalName;
 
         // Component Types Group
         private System.Windows.Forms.GroupBox gbComponentTypes;
         private System.Windows.Forms.CheckBox cbCmpTypSelectAll;
         private System.Windows.Forms.ListView lvComponentTypes;
+        private System.Windows.Forms.ColumnHeader chCmpTypComponentCount;
         private System.Windows.Forms.ColumnHeader chCmpTypActiveLayerCount;
         private System.Windows.Forms.ColumnHeader chCmpTypComponentName;
         private System.Windows.Forms.GroupBox gbComponents;

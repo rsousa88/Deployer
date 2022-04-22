@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections.Generic;
 
 // Microsoft
@@ -14,6 +15,21 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.RepoInterfaces
     public interface ICrmRepo
     {
         /// <summary>
+        /// Retrieve all managed Solutions
+        /// </summary>
+        /// <param name="columns">Columns to be retrieved</param>
+        /// <returns>A list of Solutions</returns>
+        IEnumerable<Entity> GetManagedSolutions(string[] columns);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columns">Columns to be retrieved</param>
+        /// <param name="solutionId">Solution ID</param>
+        /// <returns>A list of Solution Components</returns>
+        IEnumerable<Entity> GetSolutionComponents(string[] columns, Guid solutionId);
+
+        /// <summary>
         /// Retrieve Metadata from all Tables
         /// </summary>
         /// <returns>A list of EntityMetadata</returns>
@@ -22,8 +38,17 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.RepoInterfaces
         /// <summary>
         /// Retrieve Metadata of a single Table
         /// </summary>
+        /// <param name="logicalName">Logical name of the Table</param>
         /// <returns>EntityMetadata of a Table</returns>
         EntityMetadata GetTableMetadata(string logicalName);
+
+        /// <summary>
+        /// Retrieve Metadata of a single Table Column
+        /// </summary>
+        /// <param name="tableName">Logical name of the Table</param>
+        /// <param name="columnName">Logical name of the Column</param>
+        /// <returns></returns>
+        EnumAttributeMetadata GetOptionSetMetadata(string tableName, string columnName);
 
         /// <summary>
         /// Retrieve an enumerable list of records

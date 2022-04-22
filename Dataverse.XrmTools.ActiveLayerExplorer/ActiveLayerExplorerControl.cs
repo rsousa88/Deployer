@@ -40,7 +40,12 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
         // main objects
         private Instance _sourceInstance;
         private Instance _targetInstance;
+
+        // models
         private IEnumerable<Solution> _solutions;
+        private IEnumerable<ComponentType> _componentTypes;
+        private IEnumerable<ComponentType> _solutionComponentTypes;
+        private IEnumerable<SolutionComponent> _solutionComponents;
 
         // flags
         private bool _ready = false;
@@ -111,10 +116,10 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                     // render UI components
                     LogInfo($"Rendering UI components...");
                     RenderConnectionLabel(instance.FriendlyName);
-                    ReRenderComponents(true);
+                    //ReRenderComponents(true);
 
-                    // load tables when source connection changes
-                    LoadSolutions();
+                    // load component types and solutions when source connection changes
+                    LoadInitialData();
                 }
             }
             catch (Exception ex)
@@ -169,7 +174,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
 
                     SettingsHelper.SetSettings(_settings);
 
-                    ReRenderComponents(true);
+                    //ReRenderComponents(true);
                     RenderConnectionLabel(instance.FriendlyName);
 
                     _ready = true;
@@ -192,18 +197,65 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             Service.Execute(new WhoAmIRequest());
         }
 
-        // OK
-        private void LoadSolutions()
+        private void LoadInitialData()
         {
-            LogInfo($"Loading solutions...");
+            LogInfo($"Loading component types...");
 
+            gbSolutions.Enabled = false;
             gbComponentTypes.Enabled = false;
+            gbComponents.Enabled = false;
+            gbChanges.Enabled = false;
 
             if (Service == null)
             {
                 ExecuteMethod(WhoAmI);
                 return;
             }
+
+            if (_working) { return; }
+
+            ManageWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Loading component types...",
+                Work = (worker, args) =>
+                {
+                    var repo = new CrmRepo(Service, worker);
+                    var metadata = repo.GetOptionSetMetadata("solutioncomponent", "componenttype");
+
+                    args.Result = metadata.OptionSet.Options.Select(ct => new ComponentType
+                    {
+                        Label = ct.Label.UserLocalizedLabel.Label,
+                        Value = ct.Value.Value
+                    });
+                },
+                PostWorkCallBack = args =>
+                {
+                    if (args.Error != null)
+                    {
+                        throw new Exception(args.Error.Message);
+                    }
+                    else
+                    {
+                        _componentTypes = args.Result as IEnumerable<ComponentType>;
+                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Component types load complete"));
+                        ManageWorkingState(false);
+
+                        LoadSolutions();
+                    }
+                }
+            });
+        }
+
+        // OK
+        private void LoadSolutions()
+        {
+            LogInfo($"Loading solutions...");
+
+            gbComponentTypes.Enabled = false;
+            gbComponents.Enabled = false;
+            gbChanges.Enabled = false;
 
             if (_working) { return; }
 
@@ -222,9 +274,10 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
 
                     args.Result = solutions.Select(sol => new Solution
                     {
+                        SolutionId = sol.GetAttributeValue<Guid>("solutionid"),
                         LogicalName = sol.GetAttributeValue<string>("uniquename"),
                         DisplayName = sol.GetAttributeValue<string>("friendlyname")
-                    }).ToList();
+                    }).OrderBy(sol => sol.DisplayName);
                 },
                 PostWorkCallBack = args =>
                 {
@@ -258,6 +311,82 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 lvSolutions.Items.Add(item);
             }
 
+            gbSolutions.Enabled = true;
+            ManageWorkingState(false);
+        }
+
+        private void LoadSolutionComponentTypes(Solution solution)
+        {
+            LogInfo($"Loading solution component types...");
+
+            if (_working) { return; }
+
+            lvComponentTypes.Items.Clear();
+            cbCmpTypSelectAll.Checked = false;
+
+            ManageWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Loading solution component types...",
+                Work = (worker, args) =>
+                {
+                    var repo = new CrmRepo(Service, worker);
+
+                    // get component types present in selected solution
+                    var solutionId = solution.SolutionId;
+                    var components = repo.GetSolutionComponents(new string[] { "solutionid", "objectid", "componenttype" }, solutionId);
+
+                    args.Result = components.Select(sct => new SolutionComponent
+                    {
+                        Id = sct.GetAttributeValue<Guid>("solutioncomponentid"),
+                        SolutionId = sct.GetAttributeValue<EntityReference>("solutionid").Id,
+                        ObjectId = sct.GetAttributeValue<Guid>("objectid"),
+                        Type = sct.GetAttributeValue<OptionSetValue>("componenttype").Value,
+                        TypeName = _componentTypes.FirstOrDefault(ct => ct.Value.Equals(sct.GetAttributeValue<OptionSetValue>("componenttype").Value)).Label,
+                        ActiveLayers = 0
+                    }).OrderBy(sc => sc.TypeName);
+                },
+                PostWorkCallBack = args =>
+                {
+                    if (args.Error != null)
+                    {
+                        throw new Exception(args.Error.Message);
+                    }
+                    else
+                    {
+                        // load component types list (also load solution components for later use)
+                        _solutionComponents = args.Result as IEnumerable<SolutionComponent>;
+
+                        var groupByType = _solutionComponents.GroupBy(sc => sc.Type);
+
+                        _solutionComponentTypes = groupByType.Select(sc => sc.First()).Select(sc => new ComponentType
+                        {
+                            Label = sc.TypeName,
+                            Value = sc.Type,
+                            ComponentCount = groupByType.Where(grp => grp.Key.Equals(sc.Type)).Select(grp => grp.Count()).First()
+                        }).OrderBy(ct => ct.Label);
+
+                        LoadSolutionComponentTypesList();
+
+                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Solution component types load complete"));
+                    }
+                }
+            });
+        }
+
+        // OK
+        private void LoadSolutionComponentTypesList()
+        {
+            LogInfo($"Rendering solution component types list view...");
+
+            foreach (var sct in _solutionComponentTypes)
+            {
+                var item = sct.ToListViewItem();
+                lvComponentTypes.Items.Add(item);
+            }
+
+            gbComponentTypes.Enabled = true;
             ManageWorkingState(false);
         }
         #endregion Private Main Methods
@@ -340,19 +469,19 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
         #region Form events
         private void DataMigrationControl_Resize(object sender, EventArgs e)
         {
-            // re-render main panel
-            var firstColumn = pnlMain.ColumnStyles[0];
-            firstColumn.SizeType = SizeType.Absolute;
-            firstColumn.Width = 200;
+            //// re-render main panel
+            //var firstColumn = pnlMain.ColumnStyles[0];
+            //firstColumn.SizeType = SizeType.Absolute;
+            //firstColumn.Width = 200;
 
-            // re-render settings panel
-            var settingsRows = pnlSettings.RowStyles;
-            settingsRows[0].SizeType = SizeType.Absolute;
-            settingsRows[0].Height = 115;
-            settingsRows[1].SizeType = SizeType.Absolute;
-            settingsRows[1].Height = 185;
-            settingsRows[2].SizeType = SizeType.Absolute;
-            settingsRows[2].Height = 129;
+            //// re-render settings panel
+            //var settingsRows = pnlSettings.RowStyles;
+            //settingsRows[0].SizeType = SizeType.Absolute;
+            //settingsRows[0].Height = 115;
+            //settingsRows[1].SizeType = SizeType.Absolute;
+            //settingsRows[1].Height = 185;
+            //settingsRows[2].SizeType = SizeType.Absolute;
+            //settingsRows[2].Height = 129;
         }
 
         private void lvSolutions_Resize(object sender, EventArgs e)
@@ -409,7 +538,11 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             {
                 if (lvSolutions.SelectedItems.Count > 0)
                 {
-                    //LoadAttributes();
+                    // get selected solution
+                    var solutionItem = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
+
+                    // load component types
+                    LoadSolutionComponentTypes(solutionItem);
                 }
             }
             catch (Exception ex)

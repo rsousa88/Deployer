@@ -45,7 +45,12 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Helpers
         {
             if (value is Solution) {
                 var solution = value as Solution;
-                return new ListViewItem(new string[] { solution.DisplayName/*, solution.LogicalName*/ });
+                return new ListViewItem(new string[] { solution.SolutionId.ToString(), solution.LogicalName, solution.DisplayName });
+            }
+            if (value is ComponentType)
+            {
+                var componentType = value as ComponentType;
+                return new ListViewItem(new string[] { componentType.Label, componentType.ComponentCount.ToString() });
             }
             //if (value is Models.Attribute) {
             //    var attribute = value as Models.Attribute;
@@ -85,27 +90,29 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Helpers
             {
                 return new Solution
                 {
-                    DisplayName = lvItem.SubItems[0].Text,
-                    LogicalName = lvItem.SubItems[1].Text
-                };
-            }
-            if (output is Models.Attribute)
-            {
-                return new Models.Attribute
-                {
-                    DisplayName = lvItem.SubItems[0].Text,
+
+                    SolutionId = Guid.Parse(lvItem.SubItems[0].Text),
                     LogicalName = lvItem.SubItems[1].Text,
-                    Type = lvItem.SubItems[2].Text
+                    DisplayName = lvItem.SubItems[2].Text
                 };
             }
-            if (output is Entity)
-            {
-                if (parameters == null || !parameters.Item1.Equals("table") || !(parameters.Item2 is Dictionary<string, string> dictionary)) { throw new Exception("Invalid parameters for Entity type cast"); }
+            //if (output is Models.Attribute)
+            //{
+            //    return new Models.Attribute
+            //    {
+            //        DisplayName = lvItem.SubItems[0].Text,
+            //        LogicalName = lvItem.SubItems[1].Text,
+            //        Type = lvItem.SubItems[2].Text
+            //    };
+            //}
+            //if (output is Entity)
+            //{
+            //    if (parameters == null || !parameters.Item1.Equals("table") || !(parameters.Item2 is Dictionary<string, string> dictionary)) { throw new Exception("Invalid parameters for Entity type cast"); }
 
-                var logicalName = dictionary.FirstOrDefault(kvp => kvp.Key.Equals("logicalname")).Value;
+            //    var logicalName = dictionary.FirstOrDefault(kvp => kvp.Key.Equals("logicalname")).Value;
 
-                return new Entity(logicalName, Guid.Parse(lvItem.SubItems[1].Text));
-            }
+            //    return new Entity(logicalName, Guid.Parse(lvItem.SubItems[1].Text));
+            //}
 
             return null;
         }
