@@ -15,6 +15,7 @@ using Microsoft.Xrm.Sdk;
 // ActiveLayerExplorer
 using Dataverse.XrmTools.ActiveLayerExplorer.Models;
 using Dataverse.XrmTools.ActiveLayerExplorer.AppSettings;
+using System.Text.RegularExpressions;
 
 namespace Dataverse.XrmTools.ActiveLayerExplorer.Helpers
 {
@@ -45,41 +46,32 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Helpers
         {
             if (value is Solution) {
                 var solution = value as Solution;
-                return new ListViewItem(new string[] { solution.SolutionId.ToString(), solution.LogicalName, solution.DisplayName });
+
+                var item = new ListViewItem(new string[] { solution.DisplayName });
+                item.Tag = solution.SolutionId;
+                return item;
             }
             if (value is ComponentType)
             {
                 var componentType = value as ComponentType;
-                return new ListViewItem(new string[] { componentType.Label, componentType.ComponentCount.ToString() });
+                var item = new ListViewItem(new string[] { componentType.DisplayName, componentType.ComponentCount.ToString(), componentType.LayersCount.ToString()});
+                item.Tag = componentType.Value;
+                return item;
             }
-            //if (value is Models.Attribute) {
-            //    var attribute = value as Models.Attribute;
-            //    return new ListViewItem(new string[] { attribute.DisplayName, attribute.LogicalName, attribute.Type }); ;
-            //}
-            //if (value is Entity)
-            //{
-            //    var entity = value as Entity;
-            //    if (parameters == null || !parameters.Item1.Equals("table") || !(parameters.Item2 is Dictionary<string, string> dictionary)) { throw new Exception("Invalid parameters for Entity type cast"); }
-
-            //    var attrName = dictionary.FirstOrDefault(kvp => kvp.Key.Equals("attributename")).Value;
-            //    var actionName = dictionary.FirstOrDefault(kvp => kvp.Key.Equals("action")).Value;
-            //    var description = dictionary.FirstOrDefault(kvp => kvp.Key.Equals("description")).Value;
-
-            //    return new ListViewItem(new string[]
-            //    {
-            //        actionName,
-            //        entity.Id.ToString(),
-            //        entity.GetAttributeValue<string>(attrName),
-            //        description
-            //    });
-            //}
-            //if (value is ExecuteMultipleResponseItem)
-            //{
-            //    var response = value as ExecuteMultipleResponseItem;
-            //    if (parameters == null || !parameters.Item1.Equals("table") || !(parameters.Item2 is Table table)) { throw new Exception("Invalid parameters for ExecuteMultipleResponseItem type cast"); }
-
-            //    return new ListViewItem(new string[] { table.DisplayName, response.Fault.Message });
-            //}
+            if (value is ActiveLayer)
+            {
+                var layer = value as ActiveLayer;
+                var item = new ListViewItem(new string[] { layer.Name, layer.SolutionComponent.ObjectId.ToString(), layer.SolutionComponent.Type.DisplayName });
+                item.Tag = layer.Id;
+                return item;
+            }
+            if (value is OperationResult)
+            {
+                var result = value as OperationResult;
+                var item = new ListViewItem(new string[] { result.ComponentName, result.Description });
+                item.Tag = result.ComponentId;
+                return item;
+            }
 
             return null;
         }
@@ -90,29 +82,20 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Helpers
             {
                 return new Solution
                 {
-
-                    SolutionId = Guid.Parse(lvItem.SubItems[0].Text),
-                    LogicalName = lvItem.SubItems[1].Text,
-                    DisplayName = lvItem.SubItems[2].Text
+                    SolutionId = (Guid)lvItem.Tag,
+                    DisplayName = lvItem.SubItems[0].Text
                 };
             }
-            //if (output is Models.Attribute)
-            //{
-            //    return new Models.Attribute
-            //    {
-            //        DisplayName = lvItem.SubItems[0].Text,
-            //        LogicalName = lvItem.SubItems[1].Text,
-            //        Type = lvItem.SubItems[2].Text
-            //    };
-            //}
-            //if (output is Entity)
-            //{
-            //    if (parameters == null || !parameters.Item1.Equals("table") || !(parameters.Item2 is Dictionary<string, string> dictionary)) { throw new Exception("Invalid parameters for Entity type cast"); }
-
-            //    var logicalName = dictionary.FirstOrDefault(kvp => kvp.Key.Equals("logicalname")).Value;
-
-            //    return new Entity(logicalName, Guid.Parse(lvItem.SubItems[1].Text));
-            //}
+            if (output is ComponentType)
+            {
+                return new ComponentType
+                {
+                    Value = (int)lvItem.Tag,
+                    DisplayName = lvItem.SubItems[0].Text,
+                    ComponentCount = lvItem.SubItems[1].Text.ToInt().Value,
+                    LayersCount = lvItem.SubItems[2].Text.ToInt().Value
+                };
+            }
 
             return null;
         }
@@ -187,6 +170,11 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Helpers
             }
 
             listview.ListViewItemSorter = new ListViewComparer(column, listview.Sorting);
+        }
+
+        public static string RemoveSpaces(this string plain)
+        {
+            return Regex.Replace(plain, @"\s+", "");
         }
     }
 }

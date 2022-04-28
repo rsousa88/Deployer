@@ -24,6 +24,7 @@ using Dataverse.XrmTools.ActiveLayerExplorer.Models;
 using Dataverse.XrmTools.ActiveLayerExplorer.Helpers;
 using Dataverse.XrmTools.ActiveLayerExplorer.AppSettings;
 using Dataverse.XrmTools.ActiveLayerExplorer.Repositories;
+using Dataverse.XrmTools.ActiveLayerExplorer.Forms;
 
 namespace Dataverse.XrmTools.ActiveLayerExplorer
 {
@@ -34,21 +35,20 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
         private Settings _settings;
 
         // service
-        private CrmServiceClient _sourceClient;
+        private CrmServiceClient _client;
         private CrmServiceClient _targetClient;
 
         // main objects
-        private Instance _sourceInstance;
-        private Instance _targetInstance;
+        private Instance _instance;
 
         // models
         private IEnumerable<Solution> _solutions;
         private IEnumerable<ComponentType> _componentTypes;
         private IEnumerable<ComponentType> _solutionComponentTypes;
         private IEnumerable<SolutionComponent> _solutionComponents;
+        private IEnumerable<ActiveLayer> _activeLayers;
 
         // flags
-        private bool _ready = false;
         private bool _working;
         #endregion Variables
 
@@ -84,39 +84,35 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 base.UpdateConnection(newService, detail, actionName, parameter);
                 LogInfo($"Connection successfully updated...");
 
-                var client = detail.ServiceClient;
+                _client = detail.ServiceClient;
 
                 if (!actionName.Equals("AdditionalOrganization"))
                 {
                     LogInfo($"Checking settings for known instances...");
-                    var instance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(client.ConnectedOrgUniqueName));
-                    if (instance is null)
+                    _instance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_client.ConnectedOrgUniqueName));
+                    if (_instance is null)
                     {
-                        LogInfo($"New instance '{client.ConnectedOrgUniqueName}': Adding to settings...");
-                        instance = new Instance
+                        LogInfo($"New instance '{_client.ConnectedOrgUniqueName}': Adding to settings...");
+                        _instance = new Instance
                         {
-                            Id = client.ConnectedOrgId,
-                            UniqueName = client.ConnectedOrgUniqueName,
-                            FriendlyName = client.ConnectedOrgFriendlyName
+                            Id = _client.ConnectedOrgId,
+                            UniqueName = _client.ConnectedOrgUniqueName,
+                            FriendlyName = _client.ConnectedOrgFriendlyName
                         };
 
-                        _settings.Instances.Add(instance);
+                        _settings.Instances.Add(_instance);
                     }
                     else
                     {
-                        LogInfo($"Found known instance '{instance.UniqueName}'");
+                        LogInfo($"Found known instance '{_instance.UniqueName}'");
                     }
-
-                    _sourceClient = client;
-                    _sourceInstance = instance;
 
                     // save settings file
                     SettingsHelper.SetSettings(_settings);
 
                     // render UI components
                     LogInfo($"Rendering UI components...");
-                    RenderConnectionLabel(instance.FriendlyName);
-                    //ReRenderComponents(true);
+                    RenderInitialComponents(_instance.FriendlyName);
 
                     // load component types and solutions when source connection changes
                     LoadInitialData();
@@ -139,11 +135,11 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                     var detail = (ConnectionDetail)args.NewItems[0];
                     var client = detail.ServiceClient;
 
-                    if (_sourceClient == null) { throw new Exception("Source connection is invalid"); }
-                    LogInfo($"Source OrgId: {_sourceClient.ConnectedOrgId}");
-                    LogInfo($"Source OrgUniqueName: {_sourceClient.ConnectedOrgUniqueName}");
-                    LogInfo($"Source OrgFriendlyName: {_sourceClient.ConnectedOrgFriendlyName}");
-                    LogInfo($"Source EnvId: {_sourceClient.EnvironmentId}");
+                    if (_client == null) { throw new Exception("Source connection is invalid"); }
+                    LogInfo($"Source OrgId: {_client.ConnectedOrgId}");
+                    LogInfo($"Source OrgUniqueName: {_client.ConnectedOrgUniqueName}");
+                    LogInfo($"Source OrgFriendlyName: {_client.ConnectedOrgFriendlyName}");
+                    LogInfo($"Source EnvId: {_client.EnvironmentId}");
 
                     if (client == null) { throw new Exception("Target connection is invalid"); }
                     LogInfo($"Target OrgId: {client.ConnectedOrgId}");
@@ -151,34 +147,28 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                     LogInfo($"Target OrgFriendlyName: {client.ConnectedOrgFriendlyName}");
                     LogInfo($"Target EnvId: {client.EnvironmentId}");
 
-                    if (_sourceClient.ConnectedOrgUniqueName.Equals(client.ConnectedOrgUniqueName))
+                    if (_client.ConnectedOrgUniqueName.Equals(client.ConnectedOrgUniqueName))
                     {
                         throw new Exception("Source and Target connections must refer to different Dataverse instances");
                     }
 
-                    var instance = _settings.Instances.FirstOrDefault(inst => !string.IsNullOrEmpty(inst.UniqueName) && inst.UniqueName.Equals(client.ConnectedOrgUniqueName));
-                    if (instance == null)
+                    _instance = _settings.Instances.FirstOrDefault(inst => !string.IsNullOrEmpty(inst.UniqueName) && inst.UniqueName.Equals(client.ConnectedOrgUniqueName));
+                    if (_instance == null)
                     {
-                        instance = new Instance
+                        _instance = new Instance
                         {
                             Id = client.ConnectedOrgId,
                             UniqueName = client.ConnectedOrgUniqueName,
                             FriendlyName = client.ConnectedOrgFriendlyName
-                    };
+                        };
 
-                        _settings.Instances.Add(instance);
+                        _settings.Instances.Add(_instance);
                     }
-
-                    _targetClient = client;
-                    _targetInstance = instance;
 
                     SettingsHelper.SetSettings(_settings);
 
-                    //ReRenderComponents(true);
-                    RenderConnectionLabel(instance.FriendlyName);
-
-                    _ready = true;
-                    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Target Connection ready"));
+                    RenderInitialComponents(_instance.FriendlyName);
+                    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Connection ready"));
                 }
             }
             catch (Exception ex)
@@ -191,7 +181,6 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
         #endregion Interface Methods
 
         #region Private Main Methods
-        // OK
         private void WhoAmI()
         {
             Service.Execute(new WhoAmIRequest());
@@ -201,11 +190,6 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
         {
             LogInfo($"Loading component types...");
 
-            gbSolutions.Enabled = false;
-            gbComponentTypes.Enabled = false;
-            gbComponents.Enabled = false;
-            gbChanges.Enabled = false;
-
             if (Service == null)
             {
                 ExecuteMethod(WhoAmI);
@@ -213,7 +197,6 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             }
 
             if (_working) { return; }
-
             ManageWorkingState(true);
 
             WorkAsync(new WorkAsyncInfo
@@ -226,12 +209,15 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
 
                     args.Result = metadata.OptionSet.Options.Select(ct => new ComponentType
                     {
-                        Label = ct.Label.UserLocalizedLabel.Label,
-                        Value = ct.Value.Value
+                        Value = ct.Value.Value,
+                        LogicalName = ct.Label.UserLocalizedLabel.Label.RemoveSpaces(),
+                        DisplayName = ct.Label.UserLocalizedLabel.Label
                     });
                 },
                 PostWorkCallBack = args =>
                 {
+                    ManageWorkingState(false);
+
                     if (args.Error != null)
                     {
                         throw new Exception(args.Error.Message);
@@ -240,7 +226,6 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                     {
                         _componentTypes = args.Result as IEnumerable<ComponentType>;
                         SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Component types load complete"));
-                        ManageWorkingState(false);
 
                         LoadSolutions();
                     }
@@ -248,20 +233,14 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             });
         }
 
-        // OK
         private void LoadSolutions()
         {
             LogInfo($"Loading solutions...");
 
             gbComponentTypes.Enabled = false;
-            gbComponents.Enabled = false;
-            gbChanges.Enabled = false;
+            gbLayers.Enabled = false;
 
             if (_working) { return; }
-
-            lvSolutions.Items.Clear();
-            lvComponentTypes.Items.Clear();
-
             ManageWorkingState(true);
 
             WorkAsync(new WorkAsyncInfo
@@ -281,6 +260,8 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 },
                 PostWorkCallBack = args =>
                 {
+                    ManageWorkingState(false);
+
                     if (args.Error != null)
                     {
                         throw new Exception(args.Error.Message);
@@ -290,29 +271,49 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                         // load solutions list
                         _solutions = args.Result as IEnumerable<Solution>;
                         LoadSolutionsList();
-
-                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Solutions load complete"));
                     }
                 }
             });
         }
 
-        // OK
         private void LoadSolutionsList()
         {
             LogInfo($"Rendering solutions list view...");
 
-            var textFilter = txtSolutionFilter.Text;
-            var filtered = _solutions.Where(sol => string.IsNullOrWhiteSpace(textFilter) || sol.MatchFilter(textFilter));
+            if (_working) { return; }
+            ManageWorkingState(true);
 
-            foreach (var sol in filtered)
+            lvSolutions.Items.Clear();
+            lvComponentTypes.Items.Clear();
+
+            WorkAsync(new WorkAsyncInfo
             {
-                var item = sol.ToListViewItem();
-                lvSolutions.Items.Add(item);
-            }
+                Message = "Rendering solutions...",
+                Work = (worker, args) =>
+                {
+                    var textFilter = txtSolutionFilter.Text;
+                    var filtered = _solutions.Where(sol => string.IsNullOrWhiteSpace(textFilter) || sol.MatchFilter(textFilter));
 
-            gbSolutions.Enabled = true;
-            ManageWorkingState(false);
+                    args.Result = filtered.Select(sol => sol.ToListViewItem());
+                },
+                PostWorkCallBack = args =>
+                {
+                    ManageWorkingState(false);
+
+                    if (args.Error != null)
+                    {
+                        throw new Exception(args.Error.Message);
+                    }
+                    else
+                    {
+                        var items = args.Result as IEnumerable<ListViewItem>;
+                        lvSolutions.Items.AddRange(items.ToArray());
+
+                        gbSolutions.Enabled = true;
+                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Solutions load complete"));
+                    }
+                }
+            });
         }
 
         private void LoadSolutionComponentTypes(Solution solution)
@@ -320,10 +321,6 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             LogInfo($"Loading solution component types...");
 
             if (_working) { return; }
-
-            lvComponentTypes.Items.Clear();
-            cbCmpTypSelectAll.Checked = false;
-
             ManageWorkingState(true);
 
             WorkAsync(new WorkAsyncInfo
@@ -337,18 +334,28 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                     var solutionId = solution.SolutionId;
                     var components = repo.GetSolutionComponents(new string[] { "solutionid", "objectid", "componenttype" }, solutionId);
 
-                    args.Result = components.Select(sct => new SolutionComponent
+                    if (components != null)
                     {
-                        Id = sct.GetAttributeValue<Guid>("solutioncomponentid"),
-                        SolutionId = sct.GetAttributeValue<EntityReference>("solutionid").Id,
-                        ObjectId = sct.GetAttributeValue<Guid>("objectid"),
-                        Type = sct.GetAttributeValue<OptionSetValue>("componenttype").Value,
-                        TypeName = _componentTypes.FirstOrDefault(ct => ct.Value.Equals(sct.GetAttributeValue<OptionSetValue>("componenttype").Value)).Label,
-                        ActiveLayers = 0
-                    }).OrderBy(sc => sc.TypeName);
+                        args.Result = components
+                            .Where(sct => _componentTypes.Any(ct => ct.Value.Equals(sct.GetAttributeValue<OptionSetValue>("componenttype").Value)))
+                            .Select(sct => new SolutionComponent
+                            {
+                                Id = sct.GetAttributeValue<Guid>("solutioncomponentid"),
+                                SolutionId = sct.GetAttributeValue<EntityReference>("solutionid").Id,
+                                ObjectId = sct.GetAttributeValue<Guid>("objectid"),
+                                Type = new ComponentType {
+                                    Value = sct.GetAttributeValue<OptionSetValue>("componenttype").Value,
+                                    LogicalName = _componentTypes.FirstOrDefault(ct => ct.Value.Equals(sct.GetAttributeValue<OptionSetValue>("componenttype").Value)).LogicalName,
+                                    DisplayName = _componentTypes.FirstOrDefault(ct => ct.Value.Equals(sct.GetAttributeValue<OptionSetValue>("componenttype").Value)).DisplayName
+                                },
+                            })
+                            .OrderBy(sc => sc.Type.DisplayName);
+                    }
                 },
                 PostWorkCallBack = args =>
                 {
+                    ManageWorkingState(false);
+
                     if (args.Error != null)
                     {
                         throw new Exception(args.Error.Message);
@@ -358,36 +365,178 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                         // load component types list (also load solution components for later use)
                         _solutionComponents = args.Result as IEnumerable<SolutionComponent>;
 
-                        var groupByType = _solutionComponents.GroupBy(sc => sc.Type);
+                        var groupByType = _solutionComponents.GroupBy(sc => sc.Type.DisplayName);
 
                         _solutionComponentTypes = groupByType.Select(sc => sc.First()).Select(sc => new ComponentType
                         {
-                            Label = sc.TypeName,
-                            Value = sc.Type,
-                            ComponentCount = groupByType.Where(grp => grp.Key.Equals(sc.Type)).Select(grp => grp.Count()).First()
-                        }).OrderBy(ct => ct.Label);
+                            Value = sc.Type.Value,
+                            LogicalName = sc.Type.LogicalName,
+                            DisplayName = sc.Type.DisplayName,
+                            ComponentCount = groupByType.Where(grp => grp.Key.Equals(sc.Type.DisplayName)).Select(grp => grp.Count()).First()
+                        }).OrderBy(ct => ct.DisplayName);
 
-                        LoadSolutionComponentTypesList();
+                        LoadSolutionComponentTypesList(false);
+                    }
+                }
+            });
+        }
 
+        private void LoadSolutionComponentTypesList(bool remember)
+        {
+            LogInfo($"Rendering solution component types list view...");
+
+            if (_working) { return; }
+            ManageWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Rendering solution component types...",
+                Work = (worker, args) =>
+                {
+                    var @checked = lvComponentTypes.Items.Cast<ListViewItem>().ToList().Where(lvi => lvi.Checked);
+
+                    lvComponentTypes.Items.Clear();
+
+                    args.Result = _solutionComponentTypes.Select(sct =>
+                    {
+                        var item = sct.ToListViewItem();
+
+                        if (remember) { item.Checked = @checked.Select(lvi => lvi.Tag).Contains(item.Tag); }
+
+                        return item;
+                    });
+                },
+                PostWorkCallBack = args =>
+                {
+                    ManageWorkingState(false);
+
+                    if (args.Error != null)
+                    {
+                        throw new Exception(args.Error.Message);
+                    }
+                    else
+                    {
+                        var items = args.Result as IEnumerable<ListViewItem>;
+                        lvComponentTypes.Items.AddRange(items.ToArray());
+
+
+                        gbComponentTypes.Enabled = true;
                         SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Solution component types load complete"));
                     }
                 }
             });
         }
 
-        // OK
-        private void LoadSolutionComponentTypesList()
+        private void LoadActiveLayers(IEnumerable<Solution> solution, IEnumerable<ComponentType> types)
+        {
+            LogInfo($"Loading active layers...");
+
+            if (_working) { return; }
+
+            lvLayers.Items.Clear();
+
+            ManageWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Loading active layers...",
+                Work = (worker, args) =>
+                {
+                    var components = _solutionComponents.Where(sc => types.Select(typ => typ.Value).Contains(sc.Type.Value));
+
+                    var repo = new CrmRepo(Service, worker);
+                    _activeLayers = repo.GetActiveLayers(new string[] { "msdyn_name" }, components);
+
+                    args.Result = _activeLayers.GroupBy(al => al.SolutionComponent.Type.Value);
+                },
+                PostWorkCallBack = args =>
+                {
+                    if (args.Error != null)
+                    {
+                        throw new Exception(args.Error.Message);
+                    }
+                    else
+                    {
+                        // group layers by solution component type
+                        var groups = args.Result as IEnumerable<IGrouping<int, ActiveLayer>>;
+
+                        _solutionComponentTypes = _solutionComponentTypes
+                            .Select(sct =>
+                            {
+                                var typeGrp = groups.FirstOrDefault(grp => grp.Key.Equals(sct.Value));
+                                if (typeGrp != null) { sct.LayersCount = typeGrp.Count(); }
+                                else { sct.LayersCount = null; }
+
+                                return sct;
+                            });
+
+                        // re-render component types list (with active layer count)
+                        LoadSolutionComponentTypesList(true);
+                        LoadActiveLayersList();
+
+                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Active layers load complete"));
+                        ManageWorkingState(false);
+                    }
+                }
+            });
+        }
+
+        private void LoadActiveLayersList()
         {
             LogInfo($"Rendering solution component types list view...");
 
-            foreach (var sct in _solutionComponentTypes)
+            foreach (var al in _activeLayers)
             {
-                var item = sct.ToListViewItem();
-                lvComponentTypes.Items.Add(item);
+                var item = al.ToListViewItem();
+                lvLayers.Items.Add(item);
             }
 
-            gbComponentTypes.Enabled = true;
+            gbLayers.Enabled = true;
             ManageWorkingState(false);
+        }
+
+        private void RemoveActiveLayers(IEnumerable<ActiveLayer> layers)
+        {
+            LogInfo($"Removing active layers...");
+
+            if (_working) { return; }
+
+            ManageWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Removing active layers...",
+                Work = (worker, args) =>
+                {
+                    var repo = new CrmRepo(Service, worker);
+                    var responses = repo.DeleteLayers(layers);
+
+                    args.Result = responses.Select(resp => new OperationResult
+                    {
+                        ComponentId = (Guid)resp.Request.Parameters["ComponentId"],
+                        ComponentName = resp.Request.Parameters["SolutionComponentName"].ToString(),
+                        Description = resp.Success ? "Ok" : resp.Message
+                    }.ToListViewItem());
+                },
+                PostWorkCallBack = args =>
+                {
+                    if (args.Error != null)
+                    {
+                        throw new Exception(args.Error.Message);
+                    }
+                    else
+                    {
+                        // show preview form
+                        var items = args.Result as IEnumerable<ListViewItem>;
+
+                        var resDialog = new Results(items, _settings);
+                        resDialog.ShowDialog(ParentForm);
+
+                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Active layers removal operation complete"));
+                        ManageWorkingState(false);
+                    }
+                }
+            });
         }
         #endregion Private Main Methods
 
@@ -402,101 +551,41 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             tsbAbort.Visible = working;
         }
 
-        private void RenderConnectionLabel(string name)
+        private void RenderInitialComponents(string connectionName)
         {
-            lblSourceValue.Text = name;
+            lblSourceValue.Text = connectionName;
             lblSourceValue.ForeColor = Color.MediumSeaGreen;
+
+            cbCmpTypSelectAll.Checked = false;
+            cbLayersSelectAll.Checked = false;
+
+            gbSolutions.Enabled = false;
+            gbComponentTypes.Enabled = false;
+            gbLayers.Enabled = false;
         }
-
-        private void ReRenderComponents(bool enable)
-        {
-            var sourceReady = _sourceClient != null && _sourceClient.IsReady;
-            var solutionSelected = lvSolutions.SelectedItems.Count > 0;
-
-            if (sourceReady) // source connection is available
-            {
-                gbSolutions.Enabled = enable;
-
-                if(solutionSelected) // source connection is available and table is selected
-                {
-                    gbComponentTypes.Enabled = true;
-                }
-            }
-        }
-
-        //private TableData GetSelectedSolutionItemData(bool targetRequired = true, bool attributeRequired = false)
-        //{
-        //    LogInfo($"Parsing solution data...");
-
-        //    if (Service == null || (targetRequired && _targetClient == null))
-        //    {
-        //        throw new Exception("You must select both a source and a target organization");
-        //    }
-        //    if (targetRequired && !(cbCreate.Checked || cbUpdate.Checked || cbDelete.Checked))
-        //    {
-        //        throw new Exception("You must select at least one setting for transporting the data");
-        //    }
-        //    if (lvSolutions.SelectedItems.Count == 0)
-        //    {
-        //        throw new Exception("You must select a table first");
-        //    }
-        //    if (attributeRequired && lvAttributes.CheckedItems.Count == 0)
-        //    {
-        //        throw new Exception("At least one attribute must be selected");
-        //    }
-
-        //    var tableItem = lvTables.SelectedItems[0].ToObject(new Table()) as Table;
-        //    if (tableItem == null || string.IsNullOrEmpty(tableItem.DisplayName) || string.IsNullOrEmpty(tableItem.LogicalName) || !_tables.Any(tbl => tbl.LogicalName.Equals(tableItem.LogicalName)))
-        //    {
-        //        throw new Exception("Invalid Table: Please reload tables and try again");
-        //    }
-
-        //    var table = _tables.FirstOrDefault(tbl => tbl.LogicalName.Equals(tableItem.LogicalName));
-
-        //    var repo = new CrmRepo(Service);
-        //    var metadata = repo.GetTableMetadata(table.LogicalName);
-
-        //    var tableSettings = _settings.GetTableSettings(_tables, table.LogicalName);
-        //    if (tableSettings == null)
-        //    {
-        //        throw new Exception("Invalid Table: Please reload tables and try again");
-        //    }
-
-        //    return new TableData { };
-        //}
         #endregion Private Helper Methods
 
         #region Form events
-        private void DataMigrationControl_Resize(object sender, EventArgs e)
-        {
-            //// re-render main panel
-            //var firstColumn = pnlMain.ColumnStyles[0];
-            //firstColumn.SizeType = SizeType.Absolute;
-            //firstColumn.Width = 200;
-
-            //// re-render settings panel
-            //var settingsRows = pnlSettings.RowStyles;
-            //settingsRows[0].SizeType = SizeType.Absolute;
-            //settingsRows[0].Height = 115;
-            //settingsRows[1].SizeType = SizeType.Absolute;
-            //settingsRows[1].Height = 185;
-            //settingsRows[2].SizeType = SizeType.Absolute;
-            //settingsRows[2].Height = 129;
-        }
-
         private void lvSolutions_Resize(object sender, EventArgs e)
         {
-            // re-render list view columns
             var maxWidth = lvSolutions.Width >= 300 ? lvSolutions.Width : 300;
             chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.99);
         }
 
         private void lvComponentTypes_Resize(object sender, EventArgs e)
         {
-            // re-render list view columns
             var maxWidth = lvComponentTypes.Width >= 500 ? lvComponentTypes.Width : 500;
             chCmpTypComponentName.Width = (int)Math.Floor(maxWidth * 0.49);
-            chCmpTypActiveLayerCount.Width = (int)Math.Floor(maxWidth * 0.49);
+            chCmpTypComponentCount.Width = (int)Math.Floor(maxWidth * 0.2);
+            chCmpTypActiveLayerCount.Width = (int)Math.Floor(maxWidth * 0.3);
+        }
+
+        private void lvLayers_Resize(object sender, EventArgs e)
+        {
+            var maxWidth = lvLayers.Width >= 750 ? lvLayers.Width : 750;
+            chLayDisplayName.Width = (int)Math.Floor(maxWidth * 0.39);
+            chLayObjectId.Width = (int)Math.Floor(maxWidth * 0.4);
+            chLayType.Width = (int)Math.Floor(maxWidth * 0.2);
         }
 
         private async void txtSolutionFilter_TextChanged(object sender, EventArgs e)
@@ -514,14 +603,10 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             // user is done typing -> execute logic
             try
             {
-                lvSolutions.Items.Clear();
-                ManageWorkingState(true);
-
                 LoadSolutionsList();
             }
             catch (Exception ex)
             {
-                ManageWorkingState(false);
                 LogError(ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -553,7 +638,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             }
         }
 
-        private void lvSolutions_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             try
             {
@@ -567,7 +652,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             }
         }
 
-        private void tsbRefreshSolutions_Click(object sender, EventArgs e)
+        private void tsbLoadSolutions_Click(object sender, EventArgs e)
         {
             try
             {
@@ -600,23 +685,12 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
         {
             try
             {
-                //if (lvComponentTypes.Items.Count == 0) { return; }
+                if (lvComponentTypes.Items.Count == 0) { return; }
 
-                //var allAttributes = (sender as CheckBox).Checked;
+                var allTypes = (sender as CheckBox).Checked;
 
-                //var tableData = GetSelectedSolutionItemData(false);
-                //if (tableData == null)
-                //{
-                //    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Error saving selected attributes"));
-                //    return;
-                //}
-
-                //// check/uncheck all attributes
-                //lvComponentTypes.Items.Cast<ListViewItem>().ToList().ForEach(item => item.Checked = allAttributes);
-
-                //// save settings
-                //if (allAttributes) { tableData.Settings.DeselectedAttributes.Clear(); }
-                //else { tableData.Settings.DeselectedAttributes = tableData.Table.AllAttributes.Select(attr => attr.LogicalName).ToList(); }
+                // check/uncheck all component types
+                lvComponentTypes.Items.Cast<ListViewItem>().ToList().ForEach(item => item.Checked = allTypes);
             }
             catch (Exception ex)
             {
@@ -626,26 +700,59 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
             }
         }
 
-        private void lvComponentTypes_ItemChecked(object sender, ItemCheckedEventArgs e)
+        private void cbLayersSelectAll_CheckedChanged(object sender, EventArgs e)
         {
             try
             {
-                //var listView = sender as ListView;
-                //if (listView.FocusedItem != null && lvSolutions.SelectedItems.Count > 0)
-                //{
-                //    var tableData = GetSelectedSolutionItemData(false);
-                //    if (tableData == null)
-                //    {
-                //        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Error saving selected attributes"));
-                //        return;
-                //    }
+                if (lvLayers.Items.Count == 0) { return; }
 
-                //    // save deselected attributes to settings
-                //    var deselected = lvComponentTypes.Items.Cast<ListViewItem>().ToList().Where(lvi => !lvi.Checked).Select(lvi => lvi.SubItems[1].Text);
+                var allLayers = (sender as CheckBox).Checked;
 
-                //    tableData.Settings.DeselectedAttributes.Clear();
-                //    tableData.Settings.DeselectedAttributes.AddRange(deselected);
-                //}
+                // check/uncheck all layers
+                lvLayers.Items.Cast<ListViewItem>().ToList().ForEach(item => item.Checked = allLayers);
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void tsbLoadLayers_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (lvSolutions.SelectedItems.Count.Equals(1) && lvComponentTypes.CheckedItems.Count > 0)
+                {
+                    var selectedSolution = lvSolutions.Items.Cast<ListViewItem>().ToList().Where(lvi => lvi.Selected)
+                        .Select(lvi => _solutions.FirstOrDefault(sol => sol.SolutionId.Equals((Guid)lvi.Tag))).ToList();
+
+                    var selectedTypes = lvComponentTypes.Items.Cast<ListViewItem>().ToList().Where(lvi => lvi.Checked)
+                        .Select(lvi => _componentTypes.FirstOrDefault(ct => ct.Value.Equals((int)lvi.Tag))).ToList();
+
+                    LoadActiveLayers(selectedSolution, selectedTypes);
+                }
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void tsbRemoveLayers_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (lvLayers.CheckedItems.Count > 0)
+                {
+                    var selectedLayers = lvLayers.Items.Cast<ListViewItem>().ToList().Where(lvi => lvi.Checked)
+                        .Select(lvi => _activeLayers.FirstOrDefault(al => al.Id.Equals((Guid)lvi.Tag))).ToList();
+
+                    RemoveActiveLayers(selectedLayers);
+                }
             }
             catch (Exception ex)
             {

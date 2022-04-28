@@ -22,7 +22,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.RepoInterfaces
         IEnumerable<Entity> GetManagedSolutions(string[] columns);
 
         /// <summary>
-        /// 
+        /// Retrieve all components for a given solution
         /// </summary>
         /// <param name="columns">Columns to be retrieved</param>
         /// <param name="solutionId">Solution ID</param>
@@ -30,17 +30,18 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.RepoInterfaces
         IEnumerable<Entity> GetSolutionComponents(string[] columns, Guid solutionId);
 
         /// <summary>
-        /// Retrieve Metadata from all Tables
+        /// Retrieve all active solution layers for a list of solution components
         /// </summary>
-        /// <returns>A list of EntityMetadata</returns>
-        IEnumerable<EntityMetadata> GetOrgTables();
+        /// <param name="columns">Columns to be retrieved</param>
+        /// <param name="solutionComponents">The solution components to check for active layers</param>
+        /// <returns>A list of Active Layers</returns>
+        IEnumerable<ActiveLayer> GetActiveLayers(string[] columns, IEnumerable<SolutionComponent> solutionComponents);
 
         /// <summary>
-        /// Retrieve Metadata of a single Table
+        /// Delete active solution layers
         /// </summary>
-        /// <param name="logicalName">Logical name of the Table</param>
-        /// <returns>EntityMetadata of a Table</returns>
-        EntityMetadata GetTableMetadata(string logicalName);
+        /// <param name="layers">Solution layers list to be deleted</param>
+        IEnumerable<CrmBulkResponse> DeleteLayers(IEnumerable<ActiveLayer> layers);
 
         /// <summary>
         /// Retrieve Metadata of a single Table Column
@@ -59,54 +60,10 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.RepoInterfaces
         IEnumerable<Entity> GetRecords(QueryExpression query, int batchSize = 250);
 
         /// <summary>
-        /// Retrieve a list of users by an array of domains
-        /// </summary>
-        /// <param name="domainList">The array of domains to be used in the query</param>
-        /// <param name="columns">Select columns to be retrieved</param>
-        /// <returns>Enumerable list of records</returns>
-        IEnumerable<Entity> GetUsersInDomainList(string[] domainList, string[] columns);
-
-        /// <summary>
-        /// Retrieve a list of teams by an array of names
-        /// </summary>
-        /// <param name="nameList">The array of names to be used in the query</param>
-        /// <param name="columns">Select columns to be retrieved</param>
-        /// <returns>Enumerable list of records</returns>
-        IEnumerable<Entity> GetTeamsInNameList(string[] nameList, string[] columns);
-
-        /// <summary>
         /// Retrieves records by using Query Expression
         /// </summary>
         /// <param name="query">Query Expression object</param>
         /// <returns>The Entity Collection with the result of the query</returns>
         EntityCollection GetCollectionByExpression(QueryExpression query, int batchSize = 250);
-
-        /// <summary>
-        /// Retrieves records by using fetch XML
-        /// </summary>
-        /// <param name="fetchXml">Fetch XML string query</param>
-        /// <returns>The Entity Collection with the result of the fetch query</returns>
-        EntityCollection GetCollectionByFetchXml(string fetchXml, int batchSize = 250);
-
-        /// <summary>
-        /// Create records in bulk
-        /// </summary>
-        /// <param name="records">Entity list of the records to be created</param>
-        /// <returns>List of responses</returns>
-        IEnumerable<CrmBulkResponse> CreateRecords(IEnumerable<Entity> records);
-
-        /// <summary>
-        /// Update records in bulk
-        /// </summary>
-        /// <param name="records">Entity list of the records to be updated</param>
-        /// <returns>List of responses</returns>
-        IEnumerable<CrmBulkResponse> UpdateRecords(IEnumerable<Entity> records);
-
-        /// <summary>
-        /// Delete records in bulk
-        /// </summary>
-        /// <param name="records">Entity list of the records to be deleted</param>
-        /// <returns>List of responses</returns>
-        IEnumerable<CrmBulkResponse> DeleteRecords(IEnumerable<Entity> records);
     }
 }
