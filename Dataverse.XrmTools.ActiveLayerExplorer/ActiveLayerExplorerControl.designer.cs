@@ -35,6 +35,9 @@
             this.gbEnvironments = new System.Windows.Forms.GroupBox();
             this.lblSource = new System.Windows.Forms.Label();
             this.lblSourceValue = new System.Windows.Forms.Label();
+            this.gbSettings = new System.Windows.Forms.GroupBox();
+            this.txtBatchSize = new System.Windows.Forms.TextBox();
+            this.lblBatchSize = new System.Windows.Forms.Label();
             this.gbSolutions = new System.Windows.Forms.GroupBox();
             this.lblSolutionFilter = new System.Windows.Forms.Label();
             this.txtSolutionFilter = new System.Windows.Forms.TextBox();
@@ -57,6 +60,7 @@
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
             this.gbEnvironments.SuspendLayout();
+            this.gbSettings.SuspendLayout();
             this.gbSolutions.SuspendLayout();
             this.pnlBody.SuspendLayout();
             this.gbComponentTypes.SuspendLayout();
@@ -146,14 +150,16 @@
             this.pnlSettings.ColumnCount = 1;
             this.pnlSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.pnlSettings.Controls.Add(this.gbEnvironments, 0, 0);
-            this.pnlSettings.Controls.Add(this.gbSolutions, 0, 1);
+            this.pnlSettings.Controls.Add(this.gbSettings, 0, 1);
+            this.pnlSettings.Controls.Add(this.gbSolutions, 0, 2);
             this.pnlSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlSettings.Location = new System.Drawing.Point(2, 2);
             this.pnlSettings.Margin = new System.Windows.Forms.Padding(2);
             this.pnlSettings.Name = "pnlSettings";
-            this.pnlSettings.RowCount = 2;
-            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.5F));
-            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 92.5F));
+            this.pnlSettings.RowCount = 3;
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.5F));
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.5F));
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 87F));
             this.pnlSettings.Size = new System.Drawing.Size(318, 759);
             this.pnlSettings.TabIndex = 0;
             // 
@@ -166,7 +172,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(2);
-            this.gbEnvironments.Size = new System.Drawing.Size(314, 52);
+            this.gbEnvironments.Size = new System.Drawing.Size(314, 45);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -193,6 +199,41 @@
             this.lblSourceValue.TabIndex = 1;
             this.lblSourceValue.Text = "Disconnected";
             // 
+            // gbSettings
+            // 
+            this.gbSettings.Controls.Add(this.txtBatchSize);
+            this.gbSettings.Controls.Add(this.lblBatchSize);
+            this.gbSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbSettings.Location = new System.Drawing.Point(2, 51);
+            this.gbSettings.Margin = new System.Windows.Forms.Padding(2);
+            this.gbSettings.Name = "gbSettings";
+            this.gbSettings.Padding = new System.Windows.Forms.Padding(2);
+            this.gbSettings.Size = new System.Drawing.Size(314, 45);
+            this.gbSettings.TabIndex = 0;
+            this.gbSettings.TabStop = false;
+            this.gbSettings.Text = "Settings";
+            // 
+            // txtBatchSize
+            // 
+            this.txtBatchSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBatchSize.Location = new System.Drawing.Point(67, 21);
+            this.txtBatchSize.Name = "txtBatchSize";
+            this.txtBatchSize.Size = new System.Drawing.Size(59, 20);
+            this.txtBatchSize.TabIndex = 2;
+            this.txtBatchSize.Text = "1000";
+            this.txtBatchSize.TextChanged += new System.EventHandler(this.txtBatchSize_TextChanged);
+            // 
+            // lblBatchSize
+            // 
+            this.lblBatchSize.AutoSize = true;
+            this.lblBatchSize.Location = new System.Drawing.Point(4, 24);
+            this.lblBatchSize.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblBatchSize.Name = "lblBatchSize";
+            this.lblBatchSize.Size = new System.Drawing.Size(58, 13);
+            this.lblBatchSize.TabIndex = 0;
+            this.lblBatchSize.Text = "Batch Size";
+            // 
             // gbSolutions
             // 
             this.pnlSettings.SetColumnSpan(this.gbSolutions, 2);
@@ -201,11 +242,11 @@
             this.gbSolutions.Controls.Add(this.lvSolutions);
             this.gbSolutions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbSolutions.Enabled = false;
-            this.gbSolutions.Location = new System.Drawing.Point(2, 58);
+            this.gbSolutions.Location = new System.Drawing.Point(2, 100);
             this.gbSolutions.Margin = new System.Windows.Forms.Padding(2);
             this.gbSolutions.Name = "gbSolutions";
             this.gbSolutions.Padding = new System.Windows.Forms.Padding(2);
-            this.gbSolutions.Size = new System.Drawing.Size(314, 699);
+            this.gbSolutions.Size = new System.Drawing.Size(314, 657);
             this.gbSolutions.TabIndex = 0;
             this.gbSolutions.TabStop = false;
             this.gbSolutions.Text = "Managed Solutions";
@@ -241,7 +282,7 @@
             this.lvSolutions.Location = new System.Drawing.Point(7, 44);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(300, 650);
+            this.lvSolutions.Size = new System.Drawing.Size(300, 608);
             this.lvSolutions.TabIndex = 2;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -427,6 +468,8 @@
             this.pnlSettings.ResumeLayout(false);
             this.gbEnvironments.ResumeLayout(false);
             this.gbEnvironments.PerformLayout();
+            this.gbSettings.ResumeLayout(false);
+            this.gbSettings.PerformLayout();
             this.gbSolutions.ResumeLayout(false);
             this.gbSolutions.PerformLayout();
             this.pnlBody.ResumeLayout(false);
@@ -454,6 +497,8 @@
         private System.Windows.Forms.GroupBox gbEnvironments;
         private System.Windows.Forms.Label lblSource;
         private System.Windows.Forms.Label lblSourceValue;
+        private System.Windows.Forms.GroupBox gbSettings;
+        private System.Windows.Forms.Label lblBatchSize;
 
         // Solutions Group
         private System.Windows.Forms.GroupBox gbSolutions;
@@ -481,5 +526,6 @@
         private System.Windows.Forms.ToolStripButton tsbAbort;
         private System.Windows.Forms.ToolStripButton tsbLoadLayers;
         private System.Windows.Forms.ToolStripButton tsbRemoveLayers;
+        private System.Windows.Forms.TextBox txtBatchSize;
     }
 }

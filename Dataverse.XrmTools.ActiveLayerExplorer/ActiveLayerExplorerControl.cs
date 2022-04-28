@@ -36,12 +36,9 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
 
         // service
         private CrmServiceClient _client;
-        private CrmServiceClient _targetClient;
-
-        // main objects
-        private Instance _instance;
 
         // models
+        private Instance _instance;
         private IEnumerable<Solution> _solutions;
         private IEnumerable<ComponentType> _componentTypes;
         private IEnumerable<ComponentType> _solutionComponentTypes;
@@ -50,6 +47,9 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
 
         // flags
         private bool _working;
+
+        // other
+        private int? _batchSize;
         #endregion Variables
 
         #region Handlers
@@ -204,7 +204,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 Message = "Loading component types...",
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(Service, worker);
+                    var repo = new CrmRepo(Service, _batchSize.HasValue ? _batchSize.Value : 1000, worker);
                     var metadata = repo.GetOptionSetMetadata("solutioncomponent", "componenttype");
 
                     args.Result = metadata.OptionSet.Options.Select(ct => new ComponentType
@@ -224,6 +224,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                     }
                     else
                     {
+                        _batchSize = txtBatchSize.Text.ToInt();
                         _componentTypes = args.Result as IEnumerable<ComponentType>;
                         SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Component types load complete"));
 
@@ -248,7 +249,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 Message = "Loading solutions...",
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(Service, worker);
+                    var repo = new CrmRepo(Service, _batchSize.HasValue ? _batchSize.Value : 1000, worker);
                     var solutions = repo.GetManagedSolutions(new string[] { "uniquename", "friendlyname" });
 
                     args.Result = solutions.Select(sol => new Solution
@@ -328,7 +329,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 Message = "Loading solution component types...",
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(Service, worker);
+                    var repo = new CrmRepo(Service, _batchSize.HasValue ? _batchSize.Value : 1000, worker);
 
                     // get component types present in selected solution
                     var solutionId = solution.SolutionId;
@@ -444,7 +445,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 {
                     var components = _solutionComponents.Where(sc => types.Select(typ => typ.Value).Contains(sc.Type.Value));
 
-                    var repo = new CrmRepo(Service, worker);
+                    var repo = new CrmRepo(Service, _batchSize.HasValue ? _batchSize.Value : 1000, worker);
                     _activeLayers = repo.GetActiveLayers(new string[] { "msdyn_name" }, components);
 
                     args.Result = _activeLayers.GroupBy(al => al.SolutionComponent.Type.Value);
@@ -508,7 +509,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 Message = "Removing active layers...",
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(Service, worker);
+                    var repo = new CrmRepo(Service, _batchSize.HasValue ? _batchSize.Value : 1000, worker);
                     var responses = repo.DeleteLayers(layers);
 
                     args.Result = responses.Select(resp => new OperationResult
@@ -759,6 +760,41 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer
                 ManageWorkingState(false);
                 LogError(ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void txtBatchSize_TextChanged(object sender, EventArgs e)
+        {
+            async Task<bool> UserKeepsTyping()
+            {
+                var txt = txtBatchSize.Text;
+                await Task.Delay(500);
+
+                return txt != txtBatchSize.Text;
+            }
+
+            if (await UserKeepsTyping()) return;
+
+            // user is done typing -> execute logic
+            try
+            {
+                var batch = txtBatchSize.Text.ToInt();
+                if(batch is null)
+                {
+                    throw new Exception($"Enter a valid batch size");
+                }
+
+                _batchSize = batch;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+                txtBatchSize.Focus();
             }
         }
         #endregion Form events

@@ -12,7 +12,6 @@ using Microsoft.Xrm.Sdk.Messages;
 
 // ActiveLayerExplorer
 using Dataverse.XrmTools.ActiveLayerExplorer.Models;
-using Dataverse.XrmTools.ActiveLayerExplorer.AppSettings;
 using Dataverse.XrmTools.ActiveLayerExplorer.RepoInterfaces;
 
 namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
@@ -21,6 +20,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
     {
         #region Private Fields
         private readonly IOrganizationService _service;
+        private readonly int _batchSize;
         private readonly BackgroundWorker _worker;
         #endregion Private Fields
 
@@ -29,9 +29,10 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
         /// Creates an instance of the CRM Repository using the specified CRM service.
         /// </summary>
         /// <param name="crmContext">Instantiated crmContext object</param>
-        public CrmRepo(IOrganizationService service, BackgroundWorker worker = null)
+        public CrmRepo(IOrganizationService service, int batchSize, BackgroundWorker worker = null)
         {
             _service = service;
+            _batchSize = batchSize;
             _worker = worker;
         }
         #endregion Constructors
@@ -221,11 +222,11 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
                 var bulkResponses = new List<CrmBulkResponse>();
                 var done = 0;
                 var reqCount = requests.Count();
-                var maxBatch = (int)Math.Ceiling((decimal)(reqCount) / 1000);
+                var maxBatch = (int)Math.Ceiling((decimal)(reqCount) / _batchSize);
                 for (int i = 0; i < maxBatch; i++)
                 {
                     var batchNum = i + 1;
-                    var batchReqs = requests.Skip(done).Take(1000);
+                    var batchReqs = requests.Skip(done).Take(_batchSize);
 
                     var multipleReq = new ExecuteMultipleRequest
                     {
