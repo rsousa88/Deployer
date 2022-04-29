@@ -3,15 +3,14 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-// ActiveLayerExplorer
-using Dataverse.XrmTools.ActiveLayerExplorer.Models;
-
 namespace Dataverse.XrmTools.ActiveLayerExplorer.AppSettings
 {
     public class Settings
     {
         public List<Instance> Instances { get; set; }
         public List<Sort> Sorts { get; set; }
+        public int BatchSize { get; set; }
+        public string Filter { get; set; }
 
         public Instance this[Guid orgId]
         {

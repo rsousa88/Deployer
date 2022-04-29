@@ -59,7 +59,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
 
                 return GetRecords(query);
             }
-            catch (Exception)
+            catch
             {
                 throw;
             }
@@ -86,7 +86,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
 
                 return GetRecords(query);
             }
-            catch (Exception)
+            catch
             {
                 throw;
             }
@@ -135,7 +135,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
 
                 return layers.Where(lay => lay != null);
             }
-            catch (Exception)
+            catch
             {
                 throw;
             }
@@ -153,9 +153,36 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
                     return request;
                 });
 
-                return ExecuteMultiple(requests);
+                var responses = new List<CrmBulkResponse>();
+                foreach (var req in requests)
+                {
+                    var response = new OrganizationResponse();
+                    try
+                    {
+                        response = _service.Execute(req);
+
+                        responses.Add(new CrmBulkResponse
+                        {
+                            Id = req.RequestId.GetValueOrDefault(Guid.Empty),
+                            Success = true,
+                            Request = req
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        responses.Add(new CrmBulkResponse
+                        {
+                            Id = req.RequestId.GetValueOrDefault(Guid.Empty),
+                            Success = false,
+                            Message = ex.Message,
+                            Request = req
+                        });
+                    }
+                }
+
+                return responses;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
@@ -176,7 +203,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
 
                 return response.AttributeMetadata as EnumAttributeMetadata;
             }
-            catch (Exception)
+            catch
             {
                 throw;
             }
@@ -184,33 +211,47 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
 
         public IEnumerable<Entity> GetRecords(QueryExpression query, int batchSize = 250)
         {
-            // page info settings
-            query.PageInfo.PageNumber = 1;
-            query.PageInfo.Count = batchSize;
-
-            RetrieveMultipleResponse response;
-
-            var records = new List<Entity>();
-            do
+            try
             {
-                if (_worker != null && _worker.CancellationPending) return null;
+                // page info settings
+                query.PageInfo.PageNumber = 1;
+                query.PageInfo.Count = batchSize;
 
-                response = _service.Execute(new RetrieveMultipleRequest() { Query = query }) as RetrieveMultipleResponse;
-                if (response == null || response.EntityCollection == null) { break; }
+                RetrieveMultipleResponse response;
 
-                records.AddRange(response.EntityCollection.Entities);
-                query.PageInfo.PageNumber++;
-                query.PageInfo.PagingCookie = response.EntityCollection.PagingCookie;
+                var records = new List<Entity>();
+                do
+                {
+                    if (_worker != null && _worker.CancellationPending) return null;
+
+                    response = _service.Execute(new RetrieveMultipleRequest() { Query = query }) as RetrieveMultipleResponse;
+                    if (response == null || response.EntityCollection == null) { break; }
+
+                    records.AddRange(response.EntityCollection.Entities);
+                    query.PageInfo.PageNumber++;
+                    query.PageInfo.PagingCookie = response.EntityCollection.PagingCookie;
+                }
+                while (response.EntityCollection.MoreRecords);
+
+                return records.AsEnumerable();
             }
-            while (response.EntityCollection.MoreRecords);
-
-            return records.AsEnumerable();
+            catch
+            {
+                throw;
+            }
         }
 
         public EntityCollection GetCollectionByExpression(QueryExpression query, int batchSize = 250)
         {
-            var records = GetRecords(query, batchSize).ToList();
-            return new EntityCollection(records);
+            try
+            {
+                var records = GetRecords(query, batchSize).ToList();
+                return new EntityCollection(records);
+            }
+            catch
+            {
+                throw;
+            }
         }
         #endregion Interface Methods
 
@@ -256,7 +297,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Repositories
 
                 return bulkResponses;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }

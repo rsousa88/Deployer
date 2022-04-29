@@ -198,6 +198,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings\ComboboxItem.cs" />
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />

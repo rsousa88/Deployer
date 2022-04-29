@@ -199,7 +199,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Forms
             // 
             // lblSumErrorValue
             // 
-            this.lblSumErrorValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.lblSumErrorValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblSumErrorValue.Location = new System.Drawing.Point(63, 34);
             this.lblSumErrorValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);

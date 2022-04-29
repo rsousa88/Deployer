@@ -3,7 +3,6 @@ using System.Text;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using static System.Windows.Forms.ListViewItem;
 using Dataverse.XrmTools.ActiveLayerExplorer.Helpers;
 using Dataverse.XrmTools.ActiveLayerExplorer.AppSettings;
@@ -13,9 +12,9 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Forms
     public partial class Results : Form
     {
         private Settings _settings;
-        private IEnumerable<ListViewItem> _recordItems;
+        private ListViewItem[] _recordItems;
 
-        public Results(IEnumerable<ListViewItem> recordItems, Settings settings)
+        public Results(ListViewItem[] recordItems, Settings settings)
         {
             _settings = settings;
             _recordItems = recordItems;
@@ -25,7 +24,7 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Forms
         private void LoadRecords(object sender, EventArgs e)
         {
             lvItems.Items.Clear();
-            lvItems.Items.AddRange(_recordItems.ToArray());
+            lvItems.Items.AddRange(_recordItems);
 
             // Set summary
             SetSummary();
@@ -33,8 +32,8 @@ namespace Dataverse.XrmTools.ActiveLayerExplorer.Forms
 
         private void SetSummary()
         {
-            var successCount = _recordItems.Where(prv => prv.SubItems[1].Equals("Ok")).Count();
-            var errorCount = _recordItems.Where(prv => !prv.SubItems[1].Equals("Ok")).Count();
+            var successCount = _recordItems.Where(prv => prv.SubItems[1].Text.Equals("Ok")).Count();
+            var errorCount = _recordItems.Where(prv => !prv.SubItems[1].Text.Equals("Ok")).Count();
 
             lblSumSuccessValue.Text = successCount.ToString();
             lblSumErrorValue.Text = errorCount.ToString();

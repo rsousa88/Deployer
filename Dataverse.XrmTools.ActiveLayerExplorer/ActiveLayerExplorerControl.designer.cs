@@ -23,13 +23,6 @@
         #region Code généré par le Concepteur de composants
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ActiveLayerExplorerControl));
-            this.tsMain = new System.Windows.Forms.ToolStrip();
-            this.tsbLoadSolutions = new System.Windows.Forms.ToolStripButton();
-            this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbLoadLayers = new System.Windows.Forms.ToolStripButton();
-            this.tsbRemoveLayers = new System.Windows.Forms.ToolStripButton();
-            this.tsbAbort = new System.Windows.Forms.ToolStripButton();
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbEnvironments = new System.Windows.Forms.GroupBox();
@@ -38,96 +31,38 @@
             this.gbSettings = new System.Windows.Forms.GroupBox();
             this.txtBatchSize = new System.Windows.Forms.TextBox();
             this.lblBatchSize = new System.Windows.Forms.Label();
+            this.btnLoadSolutions = new System.Windows.Forms.Button();
             this.gbSolutions = new System.Windows.Forms.GroupBox();
             this.lblSolutionFilter = new System.Windows.Forms.Label();
             this.txtSolutionFilter = new System.Windows.Forms.TextBox();
             this.lvSolutions = new System.Windows.Forms.ListView();
             this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
-            this.gbComponentTypes = new System.Windows.Forms.GroupBox();
-            this.cbCmpTypSelectAll = new System.Windows.Forms.CheckBox();
-            this.lvComponentTypes = new System.Windows.Forms.ListView();
-            this.chCmpTypComponentName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chCmpTypComponentCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chCmpTypActiveLayerCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.gbComponents = new System.Windows.Forms.GroupBox();
+            this.btnLoadLayers = new System.Windows.Forms.Button();
+            this.cbCmpSelectAll = new System.Windows.Forms.CheckBox();
+            this.lvComponents = new System.Windows.Forms.ListView();
+            this.chCmpComponentName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chCmpComponentCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chCmpActiveLayerCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.gbLayers = new System.Windows.Forms.GroupBox();
+            this.btnRemoveLayers = new System.Windows.Forms.Button();
             this.cbLayersSelectAll = new System.Windows.Forms.CheckBox();
             this.lvLayers = new System.Windows.Forms.ListView();
             this.chLayDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chLayObjectId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chLayType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tsMain.SuspendLayout();
+            this.cbFilterLayers = new System.Windows.Forms.ComboBox();
+            this.lblFilterLayers = new System.Windows.Forms.Label();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
             this.gbEnvironments.SuspendLayout();
             this.gbSettings.SuspendLayout();
             this.gbSolutions.SuspendLayout();
             this.pnlBody.SuspendLayout();
-            this.gbComponentTypes.SuspendLayout();
+            this.gbComponents.SuspendLayout();
             this.gbLayers.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // tsMain
-            // 
-            this.tsMain.AutoSize = false;
-            this.tsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbLoadSolutions,
-            this.tsSeparator1,
-            this.tsbLoadLayers,
-            this.tsbRemoveLayers,
-            this.tsbAbort});
-            this.tsMain.Location = new System.Drawing.Point(0, 0);
-            this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(1610, 25);
-            this.tsMain.TabIndex = 90;
-            this.tsMain.Text = "toolStrip1";
-            // 
-            // tsbLoadSolutions
-            // 
-            this.tsbLoadSolutions.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbLoadSolutions.Image = global::Dataverse.XrmTools.ActiveLayerExplorer.Properties.Resources.solutions;
-            this.tsbLoadSolutions.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbLoadSolutions.Name = "tsbLoadSolutions";
-            this.tsbLoadSolutions.Size = new System.Drawing.Size(108, 22);
-            this.tsbLoadSolutions.Text = "Load Solutions";
-            this.tsbLoadSolutions.Click += new System.EventHandler(this.tsbLoadSolutions_Click);
-            // 
-            // tsSeparator1
-            // 
-            this.tsSeparator1.Name = "tsSeparator1";
-            this.tsSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbLoadLayers
-            // 
-            this.tsbLoadLayers.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbLoadLayers.Image = global::Dataverse.XrmTools.ActiveLayerExplorer.Properties.Resources.solutions;
-            this.tsbLoadLayers.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbLoadLayers.Name = "tsbLoadLayers";
-            this.tsbLoadLayers.Size = new System.Drawing.Size(123, 22);
-            this.tsbLoadLayers.Text = "Load Active Layers";
-            this.tsbLoadLayers.Click += new System.EventHandler(this.tsbLoadLayers_Click);
-            // 
-            // tsbRemoveLayers
-            // 
-            this.tsbRemoveLayers.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbRemoveLayers.Image = global::Dataverse.XrmTools.ActiveLayerExplorer.Properties.Resources.solutions;
-            this.tsbRemoveLayers.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbRemoveLayers.Name = "tsbRemoveLayers";
-            this.tsbRemoveLayers.Size = new System.Drawing.Size(105, 22);
-            this.tsbRemoveLayers.Text = "Remove Layers";
-            this.tsbRemoveLayers.Click += new System.EventHandler(this.tsbRemoveLayers_Click);
-            // 
-            // tsbAbort
-            // 
-            this.tsbAbort.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbAbort.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbAbort.Image = ((System.Drawing.Image)(resources.GetObject("tsbAbort.Image")));
-            this.tsbAbort.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbAbort.Name = "tsbAbort";
-            this.tsbAbort.Size = new System.Drawing.Size(40, 22);
-            this.tsbAbort.Text = "Abort";
-            this.tsbAbort.Visible = false;
             // 
             // pnlMain
             // 
@@ -137,12 +72,12 @@
             this.pnlMain.Controls.Add(this.pnlSettings, 0, 0);
             this.pnlMain.Controls.Add(this.pnlBody, 1, 0);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 25);
+            this.pnlMain.Location = new System.Drawing.Point(0, 0);
             this.pnlMain.Margin = new System.Windows.Forms.Padding(2);
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.RowCount = 1;
             this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlMain.Size = new System.Drawing.Size(1610, 763);
+            this.pnlMain.Size = new System.Drawing.Size(1610, 788);
             this.pnlMain.TabIndex = 91;
             // 
             // pnlSettings
@@ -160,7 +95,7 @@
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.5F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.5F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 87F));
-            this.pnlSettings.Size = new System.Drawing.Size(318, 759);
+            this.pnlSettings.Size = new System.Drawing.Size(318, 784);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbEnvironments
@@ -172,7 +107,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(2);
-            this.gbEnvironments.Size = new System.Drawing.Size(314, 45);
+            this.gbEnvironments.Size = new System.Drawing.Size(314, 46);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -203,12 +138,13 @@
             // 
             this.gbSettings.Controls.Add(this.txtBatchSize);
             this.gbSettings.Controls.Add(this.lblBatchSize);
+            this.gbSettings.Controls.Add(this.btnLoadSolutions);
             this.gbSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSettings.Location = new System.Drawing.Point(2, 51);
+            this.gbSettings.Location = new System.Drawing.Point(2, 52);
             this.gbSettings.Margin = new System.Windows.Forms.Padding(2);
             this.gbSettings.Name = "gbSettings";
             this.gbSettings.Padding = new System.Windows.Forms.Padding(2);
-            this.gbSettings.Size = new System.Drawing.Size(314, 45);
+            this.gbSettings.Size = new System.Drawing.Size(314, 46);
             this.gbSettings.TabIndex = 0;
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
@@ -234,6 +170,18 @@
             this.lblBatchSize.TabIndex = 0;
             this.lblBatchSize.Text = "Batch Size";
             // 
+            // btnLoadSolutions
+            // 
+            this.btnLoadSolutions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadSolutions.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnLoadSolutions.Location = new System.Drawing.Point(180, 19);
+            this.btnLoadSolutions.Name = "btnLoadSolutions";
+            this.btnLoadSolutions.Size = new System.Drawing.Size(127, 23);
+            this.btnLoadSolutions.TabIndex = 5;
+            this.btnLoadSolutions.Text = "Reload Solutions";
+            this.btnLoadSolutions.UseVisualStyleBackColor = true;
+            this.btnLoadSolutions.Click += new System.EventHandler(this.tsbLoadSolutions_Click);
+            // 
             // gbSolutions
             // 
             this.pnlSettings.SetColumnSpan(this.gbSolutions, 2);
@@ -242,11 +190,11 @@
             this.gbSolutions.Controls.Add(this.lvSolutions);
             this.gbSolutions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbSolutions.Enabled = false;
-            this.gbSolutions.Location = new System.Drawing.Point(2, 100);
+            this.gbSolutions.Location = new System.Drawing.Point(2, 102);
             this.gbSolutions.Margin = new System.Windows.Forms.Padding(2);
             this.gbSolutions.Name = "gbSolutions";
             this.gbSolutions.Padding = new System.Windows.Forms.Padding(2);
-            this.gbSolutions.Size = new System.Drawing.Size(314, 657);
+            this.gbSolutions.Size = new System.Drawing.Size(314, 680);
             this.gbSolutions.TabIndex = 0;
             this.gbSolutions.TabStop = false;
             this.gbSolutions.Text = "Managed Solutions";
@@ -282,7 +230,7 @@
             this.lvSolutions.Location = new System.Drawing.Point(7, 44);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(300, 608);
+            this.lvSolutions.Size = new System.Drawing.Size(300, 631);
             this.lvSolutions.TabIndex = 2;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -308,7 +256,7 @@
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.Controls.Add(this.gbComponentTypes, 0, 0);
+            this.pnlBody.Controls.Add(this.gbComponents, 0, 0);
             this.pnlBody.Controls.Add(this.gbLayers, 4, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlBody.Location = new System.Drawing.Point(324, 2);
@@ -318,77 +266,93 @@
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.pnlBody.Size = new System.Drawing.Size(1284, 759);
+            this.pnlBody.Size = new System.Drawing.Size(1284, 784);
             this.pnlBody.TabIndex = 1;
             // 
-            // gbComponentTypes
+            // gbComponents
             // 
-            this.pnlBody.SetColumnSpan(this.gbComponentTypes, 4);
-            this.gbComponentTypes.Controls.Add(this.cbCmpTypSelectAll);
-            this.gbComponentTypes.Controls.Add(this.lvComponentTypes);
-            this.gbComponentTypes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbComponentTypes.Location = new System.Drawing.Point(2, 2);
-            this.gbComponentTypes.Margin = new System.Windows.Forms.Padding(2);
-            this.gbComponentTypes.Name = "gbComponentTypes";
-            this.gbComponentTypes.Padding = new System.Windows.Forms.Padding(2);
-            this.pnlBody.SetRowSpan(this.gbComponentTypes, 2);
-            this.gbComponentTypes.Size = new System.Drawing.Size(508, 755);
-            this.gbComponentTypes.TabIndex = 1;
-            this.gbComponentTypes.TabStop = false;
-            this.gbComponentTypes.Text = "Component Types";
+            this.pnlBody.SetColumnSpan(this.gbComponents, 4);
+            this.gbComponents.Controls.Add(this.btnLoadLayers);
+            this.gbComponents.Controls.Add(this.cbCmpSelectAll);
+            this.gbComponents.Controls.Add(this.lvComponents);
+            this.gbComponents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbComponents.Location = new System.Drawing.Point(2, 2);
+            this.gbComponents.Margin = new System.Windows.Forms.Padding(2);
+            this.gbComponents.Name = "gbComponents";
+            this.gbComponents.Padding = new System.Windows.Forms.Padding(2);
+            this.pnlBody.SetRowSpan(this.gbComponents, 2);
+            this.gbComponents.Size = new System.Drawing.Size(508, 780);
+            this.gbComponents.TabIndex = 1;
+            this.gbComponents.TabStop = false;
+            this.gbComponents.Text = "Component Types";
             // 
-            // cbCmpTypSelectAll
+            // btnLoadLayers
             // 
-            this.cbCmpTypSelectAll.AutoSize = true;
-            this.cbCmpTypSelectAll.Checked = true;
-            this.cbCmpTypSelectAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCmpTypSelectAll.Location = new System.Drawing.Point(6, 21);
-            this.cbCmpTypSelectAll.Name = "cbCmpTypSelectAll";
-            this.cbCmpTypSelectAll.Size = new System.Drawing.Size(117, 17);
-            this.cbCmpTypSelectAll.TabIndex = 0;
-            this.cbCmpTypSelectAll.Text = "Select/Unselect All";
-            this.cbCmpTypSelectAll.UseVisualStyleBackColor = true;
-            this.cbCmpTypSelectAll.CheckedChanged += new System.EventHandler(this.cbCmpTypSelectAll_CheckedChanged);
+            this.btnLoadLayers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadLayers.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnLoadLayers.Location = new System.Drawing.Point(376, 14);
+            this.btnLoadLayers.Name = "btnLoadLayers";
+            this.btnLoadLayers.Size = new System.Drawing.Size(127, 23);
+            this.btnLoadLayers.TabIndex = 4;
+            this.btnLoadLayers.Text = "Load Active Layers";
+            this.btnLoadLayers.UseVisualStyleBackColor = true;
+            this.btnLoadLayers.Click += new System.EventHandler(this.tsbLoadLayers_Click);
             // 
-            // lvComponentTypes
+            // cbCmpSelectAll
             // 
-            this.lvComponentTypes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.cbCmpSelectAll.AutoSize = true;
+            this.cbCmpSelectAll.Checked = true;
+            this.cbCmpSelectAll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbCmpSelectAll.Location = new System.Drawing.Point(6, 21);
+            this.cbCmpSelectAll.Name = "cbCmpSelectAll";
+            this.cbCmpSelectAll.Size = new System.Drawing.Size(117, 17);
+            this.cbCmpSelectAll.TabIndex = 0;
+            this.cbCmpSelectAll.Text = "Select/Unselect All";
+            this.cbCmpSelectAll.UseVisualStyleBackColor = true;
+            this.cbCmpSelectAll.CheckedChanged += new System.EventHandler(this.cbCmpTypSelectAll_CheckedChanged);
+            // 
+            // lvComponents
+            // 
+            this.lvComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvComponentTypes.CheckBoxes = true;
-            this.lvComponentTypes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chCmpTypComponentName,
-            this.chCmpTypComponentCount,
-            this.chCmpTypActiveLayerCount});
-            this.lvComponentTypes.FullRowSelect = true;
-            this.lvComponentTypes.HideSelection = false;
-            this.lvComponentTypes.Location = new System.Drawing.Point(6, 44);
-            this.lvComponentTypes.Name = "lvComponentTypes";
-            this.lvComponentTypes.Size = new System.Drawing.Size(500, 706);
-            this.lvComponentTypes.TabIndex = 3;
-            this.lvComponentTypes.UseCompatibleStateImageBehavior = false;
-            this.lvComponentTypes.View = System.Windows.Forms.View.Details;
-            this.lvComponentTypes.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
-            this.lvComponentTypes.Resize += new System.EventHandler(this.lvComponentTypes_Resize);
+            this.lvComponents.CheckBoxes = true;
+            this.lvComponents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chCmpComponentName,
+            this.chCmpComponentCount,
+            this.chCmpActiveLayerCount});
+            this.lvComponents.FullRowSelect = true;
+            this.lvComponents.HideSelection = false;
+            this.lvComponents.Location = new System.Drawing.Point(6, 44);
+            this.lvComponents.Name = "lvComponents";
+            this.lvComponents.Size = new System.Drawing.Size(500, 731);
+            this.lvComponents.TabIndex = 3;
+            this.lvComponents.UseCompatibleStateImageBehavior = false;
+            this.lvComponents.View = System.Windows.Forms.View.Details;
+            this.lvComponents.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
+            this.lvComponents.Resize += new System.EventHandler(this.lvComponentTypes_Resize);
             // 
-            // chCmpTypComponentName
+            // chCmpComponentName
             // 
-            this.chCmpTypComponentName.Text = "Component Type";
-            this.chCmpTypComponentName.Width = 200;
+            this.chCmpComponentName.Text = "Component Type";
+            this.chCmpComponentName.Width = 200;
             // 
-            // chCmpTypComponentCount
+            // chCmpComponentCount
             // 
-            this.chCmpTypComponentCount.Text = "Count";
-            this.chCmpTypComponentCount.Width = 75;
+            this.chCmpComponentCount.Text = "Count";
+            this.chCmpComponentCount.Width = 75;
             // 
-            // chCmpTypActiveLayerCount
+            // chCmpActiveLayerCount
             // 
-            this.chCmpTypActiveLayerCount.Text = "Active Layers";
-            this.chCmpTypActiveLayerCount.Width = 100;
+            this.chCmpActiveLayerCount.Text = "Active Layers";
+            this.chCmpActiveLayerCount.Width = 100;
             // 
             // gbLayers
             // 
             this.pnlBody.SetColumnSpan(this.gbLayers, 6);
+            this.gbLayers.Controls.Add(this.lblFilterLayers);
+            this.gbLayers.Controls.Add(this.cbFilterLayers);
+            this.gbLayers.Controls.Add(this.btnRemoveLayers);
             this.gbLayers.Controls.Add(this.cbLayersSelectAll);
             this.gbLayers.Controls.Add(this.lvLayers);
             this.gbLayers.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -397,10 +361,22 @@
             this.gbLayers.Name = "gbLayers";
             this.gbLayers.Padding = new System.Windows.Forms.Padding(2);
             this.pnlBody.SetRowSpan(this.gbLayers, 2);
-            this.gbLayers.Size = new System.Drawing.Size(768, 755);
+            this.gbLayers.Size = new System.Drawing.Size(768, 780);
             this.gbLayers.TabIndex = 2;
             this.gbLayers.TabStop = false;
             this.gbLayers.Text = "Active Layers";
+            // 
+            // btnRemoveLayers
+            // 
+            this.btnRemoveLayers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemoveLayers.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnRemoveLayers.Location = new System.Drawing.Point(629, 14);
+            this.btnRemoveLayers.Name = "btnRemoveLayers";
+            this.btnRemoveLayers.Size = new System.Drawing.Size(127, 23);
+            this.btnRemoveLayers.TabIndex = 5;
+            this.btnRemoveLayers.Text = "Remove Layers";
+            this.btnRemoveLayers.UseVisualStyleBackColor = true;
+            this.btnRemoveLayers.Click += new System.EventHandler(this.tsbRemoveLayers_Click);
             // 
             // cbLayersSelectAll
             // 
@@ -429,7 +405,7 @@
             this.lvLayers.HideSelection = false;
             this.lvLayers.Location = new System.Drawing.Point(6, 44);
             this.lvLayers.Name = "lvLayers";
-            this.lvLayers.Size = new System.Drawing.Size(750, 706);
+            this.lvLayers.Size = new System.Drawing.Size(750, 731);
             this.lvLayers.TabIndex = 3;
             this.lvLayers.UseCompatibleStateImageBehavior = false;
             this.lvLayers.View = System.Windows.Forms.View.Details;
@@ -439,7 +415,7 @@
             // chLayDisplayName
             // 
             this.chLayDisplayName.Text = "Display Name";
-            this.chLayDisplayName.Width = 300;
+            this.chLayDisplayName.Width = 294;
             // 
             // chLayObjectId
             // 
@@ -451,19 +427,37 @@
             this.chLayType.Text = "Type";
             this.chLayType.Width = 150;
             // 
+            // cbFilterLayers
+            // 
+            this.cbFilterLayers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbFilterLayers.FormattingEnabled = true;
+            this.cbFilterLayers.Location = new System.Drawing.Point(411, 16);
+            this.cbFilterLayers.Name = "cbFilterLayers";
+            this.cbFilterLayers.Size = new System.Drawing.Size(212, 21);
+            this.cbFilterLayers.TabIndex = 6;
+            this.cbFilterLayers.SelectedIndexChanged += new System.EventHandler(this.cbFilterLayers_SelectedIndexChanged);
+            // 
+            // lblFilterLayers
+            // 
+            this.lblFilterLayers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblFilterLayers.AutoSize = true;
+            this.lblFilterLayers.Location = new System.Drawing.Point(333, 19);
+            this.lblFilterLayers.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblFilterLayers.Name = "lblFilterLayers";
+            this.lblFilterLayers.Size = new System.Drawing.Size(73, 13);
+            this.lblFilterLayers.TabIndex = 7;
+            this.lblFilterLayers.Text = "Filter by Type:";
+            // 
             // ActiveLayerExplorerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.pnlMain);
-            this.Controls.Add(this.tsMain);
             this.MinimumSize = new System.Drawing.Size(450, 325);
             this.Name = "ActiveLayerExplorerControl";
             this.Size = new System.Drawing.Size(1610, 788);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
-            this.tsMain.ResumeLayout(false);
-            this.tsMain.PerformLayout();
             this.pnlMain.ResumeLayout(false);
             this.pnlSettings.ResumeLayout(false);
             this.gbEnvironments.ResumeLayout(false);
@@ -473,8 +467,8 @@
             this.gbSolutions.ResumeLayout(false);
             this.gbSolutions.PerformLayout();
             this.pnlBody.ResumeLayout(false);
-            this.gbComponentTypes.ResumeLayout(false);
-            this.gbComponentTypes.PerformLayout();
+            this.gbComponents.ResumeLayout(false);
+            this.gbComponents.PerformLayout();
             this.gbLayers.ResumeLayout(false);
             this.gbLayers.PerformLayout();
             this.ResumeLayout(false);
@@ -482,23 +476,20 @@
         }
         #endregion
 
-        // Main Tool Strip
-        private System.Windows.Forms.ToolStrip tsMain;
-        private System.Windows.Forms.ToolStripButton tsbLoadSolutions;
-        private System.Windows.Forms.ToolStripSeparator tsSeparator1;
-
         // Main panel
         private System.Windows.Forms.TableLayoutPanel pnlMain;
 
-        // Settings
-        private System.Windows.Forms.TableLayoutPanel pnlSettings;
-
-        // Environment settings group
+        // Environments group
         private System.Windows.Forms.GroupBox gbEnvironments;
         private System.Windows.Forms.Label lblSource;
         private System.Windows.Forms.Label lblSourceValue;
+
+        // Settings
+        private System.Windows.Forms.TableLayoutPanel pnlSettings;
         private System.Windows.Forms.GroupBox gbSettings;
         private System.Windows.Forms.Label lblBatchSize;
+        private System.Windows.Forms.TextBox txtBatchSize;
+        private System.Windows.Forms.Button btnLoadSolutions;
 
         // Solutions Group
         private System.Windows.Forms.GroupBox gbSolutions;
@@ -510,22 +501,24 @@
         // Body
         private System.Windows.Forms.TableLayoutPanel pnlBody;
 
-        // Component Types Group
-        private System.Windows.Forms.GroupBox gbComponentTypes;
-        private System.Windows.Forms.CheckBox cbCmpTypSelectAll;
-        private System.Windows.Forms.ListView lvComponentTypes;
-        private System.Windows.Forms.ColumnHeader chCmpTypComponentName;
-        private System.Windows.Forms.ColumnHeader chCmpTypComponentCount;
-        private System.Windows.Forms.ColumnHeader chCmpTypActiveLayerCount;
+        // Components Group
+        private System.Windows.Forms.GroupBox gbComponents;
+        private System.Windows.Forms.CheckBox cbCmpSelectAll;
+        private System.Windows.Forms.ListView lvComponents;
+        private System.Windows.Forms.ColumnHeader chCmpComponentName;
+        private System.Windows.Forms.ColumnHeader chCmpComponentCount;
+        private System.Windows.Forms.ColumnHeader chCmpActiveLayerCount;
+        private System.Windows.Forms.Button btnLoadLayers;
+
+        // Layers Group
         private System.Windows.Forms.GroupBox gbLayers;
         private System.Windows.Forms.CheckBox cbLayersSelectAll;
         private System.Windows.Forms.ListView lvLayers;
         private System.Windows.Forms.ColumnHeader chLayDisplayName;
         private System.Windows.Forms.ColumnHeader chLayObjectId;
         private System.Windows.Forms.ColumnHeader chLayType;
-        private System.Windows.Forms.ToolStripButton tsbAbort;
-        private System.Windows.Forms.ToolStripButton tsbLoadLayers;
-        private System.Windows.Forms.ToolStripButton tsbRemoveLayers;
-        private System.Windows.Forms.TextBox txtBatchSize;
+        private System.Windows.Forms.Button btnRemoveLayers;
+        private System.Windows.Forms.ComboBox cbFilterLayers;
+        private System.Windows.Forms.Label lblFilterLayers;
     }
 }
