@@ -1,2 +1,2 @@
-# ActiveLayerExplorer
-Plugin for XrmToolBox to explore and delete managed solution active layers
+# Deployer
+Plugin for XrmToolBox to deploy dataverse solutions to a target environment
