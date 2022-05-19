@@ -8,7 +8,7 @@
 **/[Bb]in/**/Metadata
 **/[Bb]in/**/Plugins
 **/[Bb]in/**/Settings
-**/[Bb]in/**/Dataverse.XrmTools.ActiveLayerExplorer*
+**/[Bb]in/**/Dataverse.XrmTools.Deployer*
 **/[Bb]in/Release
 
 [Oo]bj
@@ -16,5 +16,5 @@
 /TODO.md
 /DEV-NOTES.md
 
-**/Dataverse.XrmTools.ActiveLayerExplorer.Tests/[Bb]in/*
-**/Dataverse.XrmTools.ActiveLayerExplorer/[Bb]in/*
+**/Dataverse.XrmTools.Deployer.Tests/[Bb]in/*
+**/Dataverse.XrmTools.Deployer/[Bb]in/*
