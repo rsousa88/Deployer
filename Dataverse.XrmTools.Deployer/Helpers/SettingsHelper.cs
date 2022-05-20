@@ -1,7 +1,7 @@
 ﻿// System
 using System.Collections.Generic;
 
-// ActiveLayerExplorer
+// Deployer
 using Dataverse.XrmTools.Deployer.AppSettings;
 
 // 3rd Party

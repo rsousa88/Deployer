@@ -199,7 +199,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings\ComboboxItem.cs" />
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
@@ -211,25 +210,11 @@
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Enums\Action.cs" />
-    <Compile Include="Forms\Results.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Results.Designer.cs">
-      <DependentUpon>Results.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ActiveLayer.cs" />
     <Compile Include="Models\ImportAndUpgradeResponse.cs" />
-    <Compile Include="Models\SolutionComponent.cs" />
-    <Compile Include="Models\ComponentType.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\Utils.cs" />
-    <Compile Include="Logic\DataLogic.cs" />
-    <Compile Include="Logic\MappingsLogic.cs" />
-    <Compile Include="Models\Attribute.cs" />
-    <Compile Include="Models\CrmBulkResponse.cs" />
-    <Compile Include="Models\OperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -248,9 +233,6 @@
     <EmbeddedResource Include="DeployerControl.resx">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Results.resx">
-      <DependentUpon>Results.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -264,7 +246,10 @@
     <Content Include="Resources\icon80.png" />
     <Content Include="Resources\solutions.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Forms\" />
+    <Folder Include="Logic\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Debug (

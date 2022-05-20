@@ -1,10 +1,12 @@
 ﻿// System
 using System;
+using System.IO;
 using System.Data;
 using System.Linq;
 using System.Drawing;
+using System.Xml.Linq;
 using System.Windows.Forms;
-using System.Threading.Tasks;
+using System.IO.Compression;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
@@ -19,15 +21,11 @@ using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Args;
 using XrmToolBox.Extensibility.Interfaces;
 
-// ActiveLayerExplorer
+// Deployer
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
-using Dataverse.XrmTools.Deployer.Forms;
-using System.IO;
-using System.IO.Compression;
-using System.Xml.Linq;
 
 namespace Dataverse.XrmTools.Deployer
 {
@@ -42,17 +40,10 @@ namespace Dataverse.XrmTools.Deployer
 
         // models
         private Instance _instance;
-        private List<Solution> _solutions;
-        private List<ComponentType> _componentsList;
-        private List<ComponentType> _solutionComponentTypes;
-        private List<SolutionComponent> _solutionComponents;
-        private IEnumerable<ActiveLayer> _activeLayers;
+        private readonly List<Solution> _solutions = new List<Solution>();
 
         // flags
         private bool _working;
-
-        // other
-        private int _batchSize = 0;
         #endregion Variables
 
         #region Handlers
@@ -61,7 +52,7 @@ namespace Dataverse.XrmTools.Deployer
 
         public DeployerControl()
         {
-            LogInfo("----- Starting Active Layer Explorer -----");
+            LogInfo("----- Starting Deployer -----");
 
             LogInfo("Loading Settings...");
             SettingsHelper.GetSettings(out _settings);
@@ -116,9 +107,6 @@ namespace Dataverse.XrmTools.Deployer
                     // render UI components
                     LogInfo($"Rendering UI components...");
                     RenderInitialComponents(_instance.FriendlyName);
-
-                    // load component types and solutions when source connection changes
-                    LoadInitialData();
                 }
             }
             catch (Exception ex)
@@ -189,93 +177,52 @@ namespace Dataverse.XrmTools.Deployer
             Service.Execute(new WhoAmIRequest());
         }
 
-        private void LoadInitialData()
+        private void QueueSolution()
         {
-            LogInfo($"Loading initial data...");
-
-            if (Service == null)
+            var solution = GetSolutionData();
+            if (solution != null)
             {
-                ExecuteMethod(WhoAmI);
-                return;
+                _solutions.Add(solution);
+
+                var lvItem = solution.ToListViewItem();
+                lvSolutions.Items.Add(lvItem);
             }
-
-            if (_working) { return; }
-            ManageWorkingState(true);
-
-            if (string.IsNullOrEmpty(_settings.Filter))
-            {
-                _settings.Filter = string.Empty;
-                SettingsHelper.SetSettings(_settings);
-            }
-
-            if (_settings.BatchSize.Equals(0))
-            {
-                _settings.BatchSize = 1000;
-                SettingsHelper.SetSettings(_settings);
-            }
-
-            _batchSize = _settings.BatchSize;
-            txtBatchSize.Text = _batchSize.ToString();
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Loading initial data...",
-                Work = (worker, args) =>
-                {
-                    var repo = new CrmRepo(Service, _batchSize, worker);
-                    var metadata = repo.GetOptionSetMetadata("solutioncomponent", "componenttype");
-
-                    args.Result = metadata.OptionSet.Options.Select(ct => new ComponentType
-                    {
-                        Value = ct.Value.Value,
-                        LogicalName = ct.Label.UserLocalizedLabel.Label.RemoveSpaces(),
-                        DisplayName = ct.Label.UserLocalizedLabel.Label
-                    }).ToList();
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        _componentsList = args.Result as List<ComponentType>;
-                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Initial data load complete"));
-
-                        LoadSolutions();
-                    }
-                }
-            });
         }
 
-        private void LoadSolutions()
+        private void DeployQueue()
         {
-            LogInfo($"Loading solutions...");
+            var count = _solutions.Count;
+            if (DialogResult.No == MessageBox.Show(this, $@"Are you sure you want to deploy {count} solutions?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
 
-            gbComponents.Enabled = false;
-            gbLayers.Enabled = false;
-
+            LogInfo($"Deploying queued solutions...");
             if (_working) { return; }
             ManageWorkingState(true);
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Loading solutions...",
+                Message = $"Deploying queued solutions...",
+                IsCancelable = true,
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(Service, _batchSize, worker);
-                    var solutions = repo.GetManagedSolutions(new string[] { "uniquename", "friendlyname" });
+                    var repo = new CrmRepo(Service, _client);
 
-                    args.Result = solutions.Select(sol => new Solution
+                    var index = 1;
+                    foreach (var solution in _solutions)
                     {
-                        SolutionId = sol.GetAttributeValue<Guid>("solutionid"),
-                        LogicalName = sol.GetAttributeValue<string>("uniquename"),
-                        DisplayName = sol.GetAttributeValue<string>("friendlyname")
-                    }).OrderBy(sol => sol.DisplayName).ToList();
+                        if (worker.CancellationPending) { return; }
+
+                        var progress = 100 * index / count;
+
+                        worker.ReportProgress(progress, $"Importing '{solution.DisplayName}' solution ({index}/{count})");
+                        LogInfo($"Importing '{solution.DisplayName}' solution...");
+                        repo.ImportSolution(solution);
+
+                        worker.ReportProgress(progress, $"Upgrading '{solution.DisplayName}' solution ({index}/{count})");
+                        LogInfo($"Upgrading '{solution.DisplayName}' solution...");
+                        repo.UpgradeSolution(solution);
+
+                        index++;
+                    }
                 },
                 PostWorkCallBack = args =>
                 {
@@ -284,53 +231,16 @@ namespace Dataverse.XrmTools.Deployer
                     if (args.Error != null)
                     {
                         LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(this, "Deploy complete", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
-                        // load solutions list
-                        _solutions = args.Result as List<Solution>;
-                        LoadSolutionsList();
+
                     }
-                }
-            });
-        }
-
-        private void LoadSolutionsList()
-        {
-            LogInfo($"Rendering solutions list view...");
-
-            if (_working) { return; }
-            ManageWorkingState(true);
-
-            lvSolutions.Items.Clear();
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Rendering solutions...",
-                Work = (worker, args) =>
-                {
-                    var filtered = _solutions.Where(sol => string.IsNullOrWhiteSpace(string.Empty) || sol.MatchFilter(string.Empty));
-
-                    args.Result = filtered.Select(sol => sol.ToListViewItem()).ToArray();
                 },
-                PostWorkCallBack = args =>
+                ProgressChanged = args =>
                 {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        var items = args.Result as ListViewItem[];
-                        lvSolutions.Items.AddRange(items);
-
-                        gbSolutions.Enabled = true;
-                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Solutions load complete"));
-                    }
+                    SetWorkingMessage(args.UserState.ToString());
                 }
             });
         }
@@ -347,96 +257,15 @@ namespace Dataverse.XrmTools.Deployer
 
         private void RenderInitialComponents(string connectionName)
         {
-            lblSourceValue.Text = connectionName;
-            lblSourceValue.ForeColor = Color.MediumSeaGreen;
+            lblTargetValue.Text = connectionName;
+            lblTargetValue.ForeColor = Color.MediumSeaGreen;
 
-            gbSolutions.Enabled = false;
-            gbComponents.Enabled = false;
             gbLayers.Enabled = false;
         }
-        #endregion Private Helper Methods
 
-        #region Form events
-        private void lvSolutions_Resize(object sender, EventArgs e)
-        {
-            var maxWidth = lvSolutions.Width >= 300 ? lvSolutions.Width : 300;
-            chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.99);
-        }
-
-        private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            try
-            {
-                (sender as ListView).Sort(_settings, e.Column);
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private async void txtBatchSize_TextChanged(object sender, EventArgs e)
-        {
-            async Task<bool> UserKeepsTyping()
-            {
-                var txt = txtBatchSize.Text;
-                await Task.Delay(500);
-
-                return txt != txtBatchSize.Text;
-            }
-
-            if (await UserKeepsTyping()) return;
-
-            // user is done typing -> execute logic
-            try
-            {
-                var batch = txtBatchSize.Text.ToInt();
-                if(!batch.HasValue)
-                {
-                    throw new Exception($"Enter a valid batch size");
-                }
-                if(batch.Value > 1000)
-                {
-                    var msg = $"WARNING: Setting batch size above 1000 is not recommended!\n\nContinue?";
-                    var result = MessageBox.Show(msg, "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                    if (result.Equals(DialogResult.No))
-                    {
-                        batch = 1000;
-                        txtBatchSize.Text = batch.ToString();
-                        return;
-                    }
-                }
-
-                _settings.BatchSize = batch.Value;
-                _batchSize = _settings.BatchSize;
-                SettingsHelper.SetSettings(_settings);
-            }
-            catch (Exception ex)
-            {
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                ManageWorkingState(false);
-                txtBatchSize.Focus();
-            }
-        }
-        #endregion Form events
-
-
-
-
-
-        #region Private Main Methods
         private Solution GetSolutionData()
         {
             LogInfo($"Loading solution file...");
-
-            //gbComponents.Enabled = false;
-            //gbLayers.Enabled = false;
 
             var dialog = new OpenFileDialog
             {
@@ -484,71 +313,6 @@ namespace Dataverse.XrmTools.Deployer
             };
         }
 
-        private void ImportAndUpgradeSolution(Solution solution)
-        {
-            LogInfo($"Importing solution...");
-            if (_working) { return; }
-            ManageWorkingState(true);
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Importing solution...",
-                AsyncArgument = solution,
-                Work = (worker, args) =>
-                {
-                    var repo = new CrmRepo(Service, _client);
-                    args.Result = repo.ImportSolution(solution);
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        UpgradeSolution(solution);
-                    }
-                }
-            });
-        }
-
-        private void UpgradeSolution(Solution solution)
-        {
-            LogInfo($"Upgrading solution...");
-            if (_working) { return; }
-            ManageWorkingState(true);
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Upgrading solution...",
-                AsyncArgument = solution,
-                Work = (worker, args) =>
-                {
-                    var repo = new CrmRepo(Service, _client);
-                    args.Result = repo.UpgradeSolution(solution);
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        var result = args.Result as ImportAndUpgradeResponse;
-                        MessageBox.Show(this, result.Message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            });
-        }
-
         private string GetFileDialogPath(FileDialog dialog)
         {
             var path = string.Empty;
@@ -563,18 +327,52 @@ namespace Dataverse.XrmTools.Deployer
 
             return path;
         }
-        #endregion Private Main Methods
+        #endregion Private Helper Methods
 
         #region Form Events
-        private void btnAddSolutionToQueue_Click(object sender, EventArgs e)
+        private void lvSolutions_Resize(object sender, EventArgs e)
+        {
+            var maxWidth = lvSolutions.Width >= 713 ? lvSolutions.Width : 713;
+            chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.34);
+            chSolVersion.Width = (int)Math.Floor(maxWidth * 0.15);
+            chSolManaged.Width = (int)Math.Floor(maxWidth * 0.15);
+            chSolPublisher.Width = (int)Math.Floor(maxWidth * 0.34);
+            chSolPublisherLogicalNameHidden.Width = 0;
+        }
+
+        private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             try
             {
-                var solution = GetSolutionData();
-                if (solution != null)
-                {
-                    ImportAndUpgradeSolution(solution);
-                }
+                (sender as ListView).Sort(_settings, e.Column);
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnAddSolution_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                QueueSolution();
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnDeploy_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DeployQueue();
             }
             catch (Exception ex)
             {

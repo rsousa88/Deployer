@@ -9,8 +9,6 @@ namespace Dataverse.XrmTools.Deployer.AppSettings
     {
         public List<Instance> Instances { get; set; }
         public List<Sort> Sorts { get; set; }
-        public int BatchSize { get; set; }
-        public string Filter { get; set; }
 
         public Instance this[Guid orgId]
         {

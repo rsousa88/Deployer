@@ -1,13 +1,7 @@
-﻿using System;
-
-namespace Dataverse.XrmTools.Deployer.Models
+﻿namespace Dataverse.XrmTools.Deployer.Models
 {
     public class Solution
     {
-        // LEGACY
-        public Guid SolutionId{ get; set; }
-
-
         public string LogicalName { get; set; }
         public string DisplayName { get; set; }
         public string Version { get; set; }
