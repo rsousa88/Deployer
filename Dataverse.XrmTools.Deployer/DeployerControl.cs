@@ -230,14 +230,20 @@ namespace Dataverse.XrmTools.Deployer
                 {
                     ManageWorkingState(false);
 
+                    if(args.Cancelled)
+                    {
+                        MessageBox.Show(this, "Operation canceled", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     if (args.Error != null)
                     {
                         LogError(args.Error.Message);
-                        MessageBox.Show(this, "Deploy complete", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     else
                     {
-
+                        MessageBox.Show(this, "Deploy complete", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 },
                 ProgressChanged = args =>

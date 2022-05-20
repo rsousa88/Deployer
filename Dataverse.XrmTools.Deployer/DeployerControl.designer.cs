@@ -57,27 +57,29 @@
             this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbDeploy,
             this.tsbAbort});
-            this.tsMain.Location = new System.Drawing.Point(3, 17);
+            this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(1014, 25);
+            this.tsMain.Size = new System.Drawing.Size(2147, 30);
             this.tsMain.TabIndex = 9;
             this.tsMain.Text = "Queue Toolstrip";
             // 
             // tsbDeploy
             // 
+            this.tsbDeploy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.tsbDeploy.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsbDeploy.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDeploy.Name = "tsbDeploy";
-            this.tsbDeploy.Size = new System.Drawing.Size(89, 22);
+            this.tsbDeploy.Size = new System.Drawing.Size(89, 27);
             this.tsbDeploy.Text = "Start Deploy";
             this.tsbDeploy.Click += new System.EventHandler(this.tsbDeploy_Click);
             // 
             // tsbAbort
             // 
             this.tsbAbort.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbAbort.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsbAbort.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbAbort.Name = "tsbAbort";
-            this.tsbAbort.Size = new System.Drawing.Size(51, 22);
+            this.tsbAbort.Size = new System.Drawing.Size(48, 27);
             this.tsbAbort.Text = "Abort";
             this.tsbAbort.Visible = false;
             this.tsbAbort.Click += new System.EventHandler(this.tsbAbort_Click);
@@ -90,12 +92,12 @@
             this.pnlMain.Controls.Add(this.pnlSettings, 0, 0);
             this.pnlMain.Controls.Add(this.pnlBody, 1, 0);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 0);
+            this.pnlMain.Location = new System.Drawing.Point(0, 30);
             this.pnlMain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.RowCount = 1;
             this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlMain.Size = new System.Drawing.Size(2147, 970);
+            this.pnlMain.Size = new System.Drawing.Size(2147, 940);
             this.pnlMain.TabIndex = 91;
             // 
             // pnlSettings
@@ -111,7 +113,7 @@
             this.pnlSettings.RowCount = 2;
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
-            this.pnlSettings.Size = new System.Drawing.Size(423, 966);
+            this.pnlSettings.Size = new System.Drawing.Size(423, 936);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbEnvironments
@@ -123,7 +125,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(417, 92);
+            this.gbEnvironments.Size = new System.Drawing.Size(417, 89);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -151,11 +153,11 @@
             // gbSettings
             // 
             this.gbSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSettings.Location = new System.Drawing.Point(3, 98);
+            this.gbSettings.Location = new System.Drawing.Point(3, 95);
             this.gbSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSettings.Name = "gbSettings";
             this.gbSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSettings.Size = new System.Drawing.Size(417, 866);
+            this.gbSettings.Size = new System.Drawing.Size(417, 839);
             this.gbSettings.TabIndex = 0;
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
@@ -183,7 +185,7 @@
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlBody.Size = new System.Drawing.Size(1712, 966);
+            this.pnlBody.Size = new System.Drawing.Size(1712, 936);
             this.pnlBody.TabIndex = 1;
             // 
             // gbQueue
@@ -197,7 +199,7 @@
             this.gbQueue.Name = "gbQueue";
             this.gbQueue.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbQueue, 2);
-            this.gbQueue.Size = new System.Drawing.Size(1020, 962);
+            this.gbQueue.Size = new System.Drawing.Size(1020, 932);
             this.gbQueue.TabIndex = 1;
             this.gbQueue.TabStop = false;
             this.gbQueue.Text = "Queue";
@@ -207,7 +209,7 @@
             this.btnAddSolution.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddSolution.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnAddSolution.Location = new System.Drawing.Point(7, 46);
+            this.btnAddSolution.Location = new System.Drawing.Point(7, 21);
             this.btnAddSolution.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddSolution.Name = "btnAddSolution";
             this.btnAddSolution.Size = new System.Drawing.Size(1006, 29);
@@ -229,11 +231,11 @@
             this.chSolPublisherLogicalNameHidden});
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
-            this.lvSolutions.Location = new System.Drawing.Point(7, 83);
+            this.lvSolutions.Location = new System.Drawing.Point(7, 58);
             this.lvSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(1006, 873);
+            this.lvSolutions.Size = new System.Drawing.Size(1006, 868);
             this.lvSolutions.TabIndex = 2;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -274,7 +276,7 @@
             this.gbLayers.Name = "gbLayers";
             this.gbLayers.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbLayers, 2);
-            this.gbLayers.Size = new System.Drawing.Size(680, 962);
+            this.gbLayers.Size = new System.Drawing.Size(680, 932);
             this.gbLayers.TabIndex = 2;
             this.gbLayers.TabStop = false;
             this.gbLayers.Text = "Active Layers";
