@@ -23,6 +23,9 @@
         #region Code généré par le Concepteur de composants
         private void InitializeComponent()
         {
+            this.tsMain = new System.Windows.Forms.ToolStrip();
+            this.tsbDeploy = new System.Windows.Forms.ToolStripButton();
+            this.tsbAbort = new System.Windows.Forms.ToolStripButton();
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbEnvironments = new System.Windows.Forms.GroupBox();
@@ -31,7 +34,6 @@
             this.gbSettings = new System.Windows.Forms.GroupBox();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbQueue = new System.Windows.Forms.GroupBox();
-            this.btnDeploy = new System.Windows.Forms.Button();
             this.btnAddSolution = new System.Windows.Forms.Button();
             this.lvSolutions = new System.Windows.Forms.ListView();
             this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -40,12 +42,45 @@
             this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.gbLayers = new System.Windows.Forms.GroupBox();
+            this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
             this.gbEnvironments.SuspendLayout();
             this.pnlBody.SuspendLayout();
             this.gbQueue.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // tsMain
+            // 
+            this.tsMain.AutoSize = false;
+            this.tsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbDeploy,
+            this.tsbAbort});
+            this.tsMain.Location = new System.Drawing.Point(3, 17);
+            this.tsMain.Name = "tsMain";
+            this.tsMain.Size = new System.Drawing.Size(1014, 25);
+            this.tsMain.TabIndex = 9;
+            this.tsMain.Text = "Queue Toolstrip";
+            // 
+            // tsbDeploy
+            // 
+            this.tsbDeploy.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbDeploy.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbDeploy.Name = "tsbDeploy";
+            this.tsbDeploy.Size = new System.Drawing.Size(89, 22);
+            this.tsbDeploy.Text = "Start Deploy";
+            this.tsbDeploy.Click += new System.EventHandler(this.tsbDeploy_Click);
+            // 
+            // tsbAbort
+            // 
+            this.tsbAbort.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbAbort.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbAbort.Name = "tsbAbort";
+            this.tsbAbort.Size = new System.Drawing.Size(51, 22);
+            this.tsbAbort.Text = "Abort";
+            this.tsbAbort.Visible = false;
+            this.tsbAbort.Click += new System.EventHandler(this.tsbAbort_Click);
             // 
             // pnlMain
             // 
@@ -154,7 +189,6 @@
             // gbQueue
             // 
             this.pnlBody.SetColumnSpan(this.gbQueue, 6);
-            this.gbQueue.Controls.Add(this.btnDeploy);
             this.gbQueue.Controls.Add(this.btnAddSolution);
             this.gbQueue.Controls.Add(this.lvSolutions);
             this.gbQueue.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -168,29 +202,15 @@
             this.gbQueue.TabStop = false;
             this.gbQueue.Text = "Queue";
             // 
-            // btnDeploy
-            // 
-            this.btnDeploy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeploy.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnDeploy.Location = new System.Drawing.Point(684, 21);
-            this.btnDeploy.Margin = new System.Windows.Forms.Padding(4);
-            this.btnDeploy.Name = "btnDeploy";
-            this.btnDeploy.Size = new System.Drawing.Size(329, 29);
-            this.btnDeploy.TabIndex = 8;
-            this.btnDeploy.Text = "Deploy";
-            this.btnDeploy.UseVisualStyleBackColor = true;
-            this.btnDeploy.Click += new System.EventHandler(this.btnDeploy_Click);
-            // 
             // btnAddSolution
             // 
             this.btnAddSolution.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddSolution.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnAddSolution.Location = new System.Drawing.Point(7, 21);
+            this.btnAddSolution.Location = new System.Drawing.Point(7, 46);
             this.btnAddSolution.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddSolution.Name = "btnAddSolution";
-            this.btnAddSolution.Size = new System.Drawing.Size(300, 29);
+            this.btnAddSolution.Size = new System.Drawing.Size(1006, 29);
             this.btnAddSolution.TabIndex = 7;
             this.btnAddSolution.Text = "Add Solution to Queue";
             this.btnAddSolution.UseVisualStyleBackColor = true;
@@ -209,11 +229,11 @@
             this.chSolPublisherLogicalNameHidden});
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
-            this.lvSolutions.Location = new System.Drawing.Point(7, 58);
+            this.lvSolutions.Location = new System.Drawing.Point(7, 83);
             this.lvSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(1006, 898);
+            this.lvSolutions.Size = new System.Drawing.Size(1006, 873);
             this.lvSolutions.TabIndex = 2;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -265,11 +285,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.pnlMain);
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Controls.Add(this.tsMain);
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "DeployerControl";
             this.Size = new System.Drawing.Size(2147, 970);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
+            this.tsMain.ResumeLayout(false);
+            this.tsMain.PerformLayout();
             this.pnlMain.ResumeLayout(false);
             this.pnlSettings.ResumeLayout(false);
             this.gbEnvironments.ResumeLayout(false);
@@ -281,7 +303,8 @@
         }
         #endregion
 
-        // Main panel
+        // Main components
+        private System.Windows.Forms.ToolStrip tsMain;
         private System.Windows.Forms.TableLayoutPanel pnlMain;
 
         // Environments group
@@ -293,23 +316,22 @@
         private System.Windows.Forms.TableLayoutPanel pnlSettings;
         private System.Windows.Forms.GroupBox gbSettings;
 
-        // Solutions Group
+        // Body
+        private System.Windows.Forms.TableLayoutPanel pnlBody;
+
+        // Queue Group
+        private System.Windows.Forms.GroupBox gbQueue;
+        private System.Windows.Forms.ToolStripButton tsbDeploy;
+        private System.Windows.Forms.ToolStripButton tsbAbort;
         private System.Windows.Forms.ListView lvSolutions;
         private System.Windows.Forms.ColumnHeader chSolDisplayName;
         private System.Windows.Forms.ColumnHeader chSolVersion;
         private System.Windows.Forms.ColumnHeader chSolManaged;
         private System.Windows.Forms.ColumnHeader chSolPublisher;
         private System.Windows.Forms.ColumnHeader chSolPublisherLogicalNameHidden;
-
-        // Body
-        private System.Windows.Forms.TableLayoutPanel pnlBody;
-
-        // Components Group
-        private System.Windows.Forms.GroupBox gbQueue;
+        private System.Windows.Forms.Button btnAddSolution;
 
         // Layers Group
         private System.Windows.Forms.GroupBox gbLayers;
-        private System.Windows.Forms.Button btnAddSolution;
-        private System.Windows.Forms.Button btnDeploy;
     }
 }

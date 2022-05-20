@@ -186,6 +186,8 @@ namespace Dataverse.XrmTools.Deployer
 
                 var lvItem = solution.ToListViewItem();
                 lvSolutions.Items.Add(lvItem);
+
+                tsbDeploy.Enabled = true;
             }
         }
 
@@ -253,6 +255,9 @@ namespace Dataverse.XrmTools.Deployer
 
             _working = working;
             Cursor = working ? Cursors.WaitCursor : Cursors.Default;
+
+            tsbAbort.Text = "Abort";
+            tsbAbort.Visible = working;
         }
 
         private void RenderInitialComponents(string connectionName)
@@ -260,6 +265,7 @@ namespace Dataverse.XrmTools.Deployer
             lblTargetValue.Text = connectionName;
             lblTargetValue.ForeColor = Color.MediumSeaGreen;
 
+            tsbDeploy.Enabled = false;
             gbLayers.Enabled = false;
         }
 
@@ -354,11 +360,11 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void btnAddSolution_Click(object sender, EventArgs e)
+        private void tsbDeploy_Click(object sender, EventArgs e)
         {
             try
             {
-                QueueSolution();
+                DeployQueue();
             }
             catch (Exception ex)
             {
@@ -368,11 +374,26 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void btnDeploy_Click(object sender, EventArgs e)
+        private void tsbAbort_Click(object sender, EventArgs e)
         {
             try
             {
-                DeployQueue();
+                CancelWorker();
+                tsbAbort.Text = "Aborting...";
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnAddSolution_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                QueueSolution();
             }
             catch (Exception ex)
             {
