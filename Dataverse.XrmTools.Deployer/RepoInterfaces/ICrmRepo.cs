@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Crm.Sdk.Messages;
 
 // ActiveLayerExplorer
 using Dataverse.XrmTools.Deployer.Models;
@@ -14,6 +15,27 @@ namespace Dataverse.XrmTools.Deployer.RepoInterfaces
 {
     public interface ICrmRepo
     {
+        /// <summary>
+        /// Import solution
+        /// </summary>
+        /// <param name="solution">Solution object to be imported</param>
+        /// <returns>A custom Import response object</returns>
+        ImportAndUpgradeResponse ImportSolution(Solution solution);
+
+        /// <summary>
+        /// Upgrade solution
+        /// </summary>
+        /// <param name="solution">Solution object to be upgraded</param>
+        /// <returns>A custom Upgrade response object</returns>
+        ImportAndUpgradeResponse UpgradeSolution(Solution solution);
+
+
+
+
+
+
+
+
         /// <summary>
         /// Retrieve all managed Solutions
         /// </summary>

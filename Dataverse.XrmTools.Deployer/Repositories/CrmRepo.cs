@@ -13,6 +13,10 @@ using Microsoft.Xrm.Sdk.Messages;
 // ActiveLayerExplorer
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.RepoInterfaces;
+using Microsoft.Crm.Sdk.Messages;
+using System.Xml.Linq;
+using Microsoft.Xrm.Tooling.Connector;
+using Dataverse.XrmTools.Deployer.Enums;
 
 namespace Dataverse.XrmTools.Deployer.Repositories
 {
@@ -20,11 +24,26 @@ namespace Dataverse.XrmTools.Deployer.Repositories
     {
         #region Private Fields
         private readonly IOrganizationService _service;
+        private readonly CrmServiceClient _client;
         private readonly int _batchSize;
         private readonly BackgroundWorker _worker;
         #endregion Private Fields
 
         #region Constructors
+        /// <summary>
+        /// Creates an instance of the CRM Repository using the specified CRM client.
+        /// </summary>
+        /// <param name="service">Instantiated IOrganizationService object</param>
+        /// <param name="client">Instantiated CrmServiceClient object</param>
+        public CrmRepo(IOrganizationService service, CrmServiceClient client)
+        {
+            _service = service;
+            _client = client;
+        }
+
+
+
+
         /// <summary>
         /// Creates an instance of the CRM Repository using the specified CRM service.
         /// </summary>
@@ -38,6 +57,100 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         #endregion Constructors
 
         #region Interface Methods
+        public ImportAndUpgradeResponse ImportSolution(Solution solution)
+        {
+            try
+            {
+                var request = new ImportSolutionAsyncRequest
+                {
+                    CustomizationFile = solution.SolutionBytes,
+                    OverwriteUnmanagedCustomizations = true,
+                    PublishWorkflows = true,
+                    HoldingSolution = true
+                };
+
+                var response = _service.Execute(request) as ImportSolutionAsyncResponse;
+                var result = CheckProgress(response.AsyncOperationId, Operation.Import);
+                if(!result.Success)
+                {
+                    throw new Exception($"Error on Import operation:\n{result.Message}");
+                }
+
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public ImportAndUpgradeResponse UpgradeSolution(Solution solution)
+        {
+            try
+            {
+                var operationId = _client.DeleteAndPromoteSolutionAsync(solution.LogicalName);
+                var result = CheckProgress(operationId, Operation.Upgrade);
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Upgrade operation:\n{result.Message}");
+                }
+
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private ImportAndUpgradeResponse CheckProgress(Guid operationId, Operation operation)
+        {
+            var success = false;
+            var message = string.Empty;
+
+            var completed = false;
+            while (!completed)
+            {
+                var async = _service.Retrieve("asyncoperation", operationId, new ColumnSet(new string[] { "statecode", "statuscode", "message" }));
+
+                var state = async.GetAttributeValue<OptionSetValue>("statecode").Value;
+                var status = async.GetAttributeValue<OptionSetValue>("statuscode").Value;
+
+                if (state.Equals(3))
+                {
+                    completed = true;
+
+                    if(status.Equals(31))
+                    {
+                        var raw = async.GetAttributeValue<string>("message");
+
+                        var delimiters = new string[] { "Message: ", "Detail: " };
+                        var splitArr = raw.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+                        message = splitArr[1];
+                    }
+                }
+
+                success = completed && status.Equals(30) ? true : false;
+                message = completed && status.Equals(30) ? "Solution successfully imported and upgraded" : message;
+
+                System.Threading.Thread.Sleep(10000);
+            }
+
+            return new ImportAndUpgradeResponse
+            {
+                Operation = operation,
+                Success = success,
+                Message = message
+            };
+        }
+
+
+
+
+
+
+
         public IEnumerable<Entity> GetManagedSolutions(string[] columns)
         {
             try

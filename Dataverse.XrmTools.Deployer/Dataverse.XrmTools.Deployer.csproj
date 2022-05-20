@@ -119,6 +119,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
@@ -209,6 +210,7 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\Action.cs" />
     <Compile Include="Forms\Results.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -216,6 +218,7 @@
       <DependentUpon>Results.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\ActiveLayer.cs" />
+    <Compile Include="Models\ImportAndUpgradeResponse.cs" />
     <Compile Include="Models\SolutionComponent.cs" />
     <Compile Include="Models\ComponentType.cs" />
     <Compile Include="Models\Solution.cs" />
@@ -261,9 +264,7 @@
     <Content Include="Resources\icon80.png" />
     <Content Include="Resources\solutions.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Enums\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Debug (

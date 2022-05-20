@@ -25,6 +25,9 @@ using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
 using Dataverse.XrmTools.Deployer.Forms;
+using System.IO;
+using System.IO.Compression;
+using System.Xml.Linq;
 
 namespace Dataverse.XrmTools.Deployer
 {
@@ -211,7 +214,6 @@ namespace Dataverse.XrmTools.Deployer
                 SettingsHelper.SetSettings(_settings);
             }
 
-            txtSolutionFilter.Text = _settings.Filter;
             _batchSize = _settings.BatchSize;
             txtBatchSize.Text = _batchSize.ToString();
 
@@ -302,15 +304,13 @@ namespace Dataverse.XrmTools.Deployer
             ManageWorkingState(true);
 
             lvSolutions.Items.Clear();
-            lvComponents.Items.Clear();
 
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Rendering solutions...",
                 Work = (worker, args) =>
                 {
-                    var textFilter = txtSolutionFilter.Text;
-                    var filtered = _solutions.Where(sol => string.IsNullOrWhiteSpace(textFilter) || sol.MatchFilter(textFilter));
+                    var filtered = _solutions.Where(sol => string.IsNullOrWhiteSpace(string.Empty) || sol.MatchFilter(string.Empty));
 
                     args.Result = filtered.Select(sol => sol.ToListViewItem()).ToArray();
                 },
@@ -334,286 +334,6 @@ namespace Dataverse.XrmTools.Deployer
                 }
             });
         }
-
-        private void LoadSolutionComponents(Solution solution)
-        {
-            LogInfo($"Loading solution components...");
-
-            if (_working) { return; }
-            ManageWorkingState(true);
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Loading solution components...",
-                Work = (worker, args) =>
-                {
-                    var repo = new CrmRepo(Service, _batchSize, worker);
-
-                    // get solution components from selected solution
-                    _solutionComponents = new List<SolutionComponent>();
-                    var solutionId = solution.SolutionId;
-                    var components = repo.GetSolutionComponents(new string[] { "solutionid", "objectid", "componenttype" }, solutionId);
-                    foreach (var component in components)
-                    {
-                        var type = component.GetAttributeValue<OptionSetValue>("componenttype").Value;
-                        var typeFromList = _componentsList.FirstOrDefault(ct => ct.Value.Equals(type));
-                        if (typeFromList != null)
-                        {
-                            var solutionComponent = new SolutionComponent
-                            {
-                                Id = component.GetAttributeValue<Guid>("solutioncomponentid"),
-                                SolutionId = component.GetAttributeValue<EntityReference>("solutionid").Id,
-                                ObjectId = component.GetAttributeValue<Guid>("objectid"),
-                                Type = new ComponentType
-                                {
-                                    Value = type,
-                                    LogicalName = typeFromList.LogicalName,
-                                    DisplayName = typeFromList.DisplayName
-                                },
-                            };
-
-                            _solutionComponents.Add(solutionComponent);
-                        }
-                    }
-
-                    _solutionComponents.OrderBy(sc => sc.Type.DisplayName).Select(sct => sct.ToListViewItem());
-
-                    // get solution component types with component count
-                    _solutionComponentTypes = new List<ComponentType>();
-                    var groups = _solutionComponents.GroupBy(sc => sc.Type.DisplayName);
-                    foreach (var group in groups)
-                    {
-                        var first = group.First(); // get first item from group
-
-                        var component = new ComponentType
-                        {
-                            Value = first.Type.Value,
-                            LogicalName = first.Type.LogicalName,
-                            DisplayName = first.Type.DisplayName,
-                            ComponentCount = group.Count()
-                        };
-
-                        _solutionComponentTypes.Add(component);
-                    }
-
-                    args.Result = _solutionComponentTypes.OrderBy(ct => ct.DisplayName).Select(sct => sct.ToListViewItem());
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        var items = args.Result as IEnumerable<ListViewItem>;
-                        LoadSolutionComponentsList(new Tuple<IEnumerable<ListViewItem>, IEnumerable<ListViewItem>>(items, null), false);
-                    }
-                }
-            });
-        }
-
-        private void LoadSolutionComponentsList(Tuple<IEnumerable<ListViewItem>, IEnumerable<ListViewItem>> items, bool remember)
-        {
-            LogInfo($"Rendering solution component types list view...");
-
-            if (_working) { return; }
-            ManageWorkingState(true);
-
-            var @checked = lvComponents.Items.Cast<ListViewItem>().ToList().Where(lvi => lvi.Checked);
-            lvComponents.Items.Clear();
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Rendering solution component types...",
-                Work = (worker, args) =>
-                {
-                    var types = items.Item1.Select(lvi =>
-                    {
-                        if (remember) { lvi.Checked = @checked.Select(ini => ini.Tag).Contains(lvi.Tag); }
-                        return lvi;
-                    });
-
-                    args.Result = types.ToArray();
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        var updated = args.Result as ListViewItem[];
-                        lvComponents.Items.AddRange(updated);
-
-                        gbComponents.Enabled = true;
-                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Solution component types load complete"));
-
-                        if(items.Item2 != null)
-                        {
-                            LoadActiveLayersList(items.Item2);
-                            LoadTypesFilter(items.Item2);
-                        }
-                    }
-                }
-            });
-        }
-
-        private void LoadTypesFilter(IEnumerable<ListViewItem> items)
-        {
-            var cbItems = new List<ComboboxItem>
-            {
-                new ComboboxItem { Text = "All", Value = 0 }
-            };
-
-            cbItems.AddRange(_activeLayers.Select(lay => new ComboboxItem { Text = lay.SolutionComponent.Type.DisplayName, Value = lay.SolutionComponent.Type.Value }));
-
-            var boxOptions = cbItems.GroupBy(bo => bo.Value).Select(grp => grp.First()).ToArray();
-            cbFilterLayers.Items.AddRange(boxOptions);
-            cbFilterLayers.SelectedIndex = 0;
-        }
-
-        private void LoadActiveLayers(IEnumerable<ComponentType> types)
-        {
-            LogInfo($"Loading active layers...");
-
-            if (_working) { return; }
-
-            lvLayers.Items.Clear();
-
-            ManageWorkingState(true);
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Loading active layers...",
-                Work = (worker, args) =>
-                {
-                    var components = _solutionComponents.Where(sc => types.Select(typ => typ.Value).Contains(sc.Type.Value));
-
-                    var repo = new CrmRepo(Service, _batchSize, worker);
-                    _activeLayers = repo.GetActiveLayers(new string[] { "msdyn_name" }, components);
-
-                    var groups = _activeLayers.GroupBy(al => al.SolutionComponent.Type.Value);
-
-                    foreach (var sct in _solutionComponentTypes)
-                    {
-                        var typeGrp = groups.FirstOrDefault(grp => grp.Key.Equals(sct.Value));
-                        if (typeGrp != null) { sct.LayersCount = typeGrp.Count(); }
-                        else { sct.LayersCount = 0; }
-                    }
-
-                    // re-render component types list (with active layer count)
-                    var componentItems = _solutionComponentTypes.OrderBy(ct => ct.DisplayName).Select(sct => sct.ToListViewItem());
-                    var layerItems = _activeLayers.Select(sct => sct.ToListViewItem());
-                    args.Result = new Tuple<IEnumerable<ListViewItem>, IEnumerable<ListViewItem>>(componentItems, layerItems);
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        var items = args.Result as Tuple<IEnumerable<ListViewItem>, IEnumerable<ListViewItem>>;
-                        LoadSolutionComponentsList(items, true);
-                    }
-                }
-            });
-        }
-
-        private void LoadActiveLayersList(IEnumerable<ListViewItem> layers)
-        {
-            LogInfo($"Rendering active layers list view...");
-
-            if (_working) { return; }
-            ManageWorkingState(true);
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Rendering active layers...",
-                Work = (worker, args) =>
-                {
-                    args.Result = layers.ToArray();
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        var items = args.Result as ListViewItem[];
-                        lvLayers.Items.AddRange(items);
-
-                        gbLayers.Enabled = true;
-                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Active layers load complete"));
-                    }
-                }
-            });
-        }
-
-        private void RemoveActiveLayers(IEnumerable<ActiveLayer> layers)
-        {
-            LogInfo($"Removing active layers...");
-
-            if (_working) { return; }
-
-            ManageWorkingState(true);
-
-            WorkAsync(new WorkAsyncInfo
-            {
-                Message = "Removing active layers...",
-                Work = (worker, args) =>
-                {
-                    var repo = new CrmRepo(Service, _batchSize, worker);
-                    var responses = repo.DeleteLayers(layers);
-
-                    args.Result = responses.Select(resp => new OperationResult
-                    {
-                        ComponentId = (Guid)resp.Request.Parameters["ComponentId"],
-                        ComponentName = resp.Request.Parameters["SolutionComponentName"].ToString(),
-                        Description = resp.Success ? "Ok" : resp.Message
-                    }.ToListViewItem()).ToArray();
-                },
-                PostWorkCallBack = args =>
-                {
-                    ManageWorkingState(false);
-
-                    if (args.Error != null)
-                    {
-                        LogError(args.Error.Message);
-                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        // show preview form
-                        var items = args.Result as ListViewItem[];
-
-                        var resDialog = new Results(items, _settings);
-                        resDialog.FormClosed += new FormClosedEventHandler(Results_FormClosed);
-                        resDialog.ShowDialog(ParentForm);
-
-                        SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Active layers removal operation complete"));
-                        ManageWorkingState(false);
-                    }
-                }
-            });
-        }
         #endregion Private Main Methods
 
         #region Private Helper Methods
@@ -630,9 +350,6 @@ namespace Dataverse.XrmTools.Deployer
             lblSourceValue.Text = connectionName;
             lblSourceValue.ForeColor = Color.MediumSeaGreen;
 
-            cbCmpSelectAll.Checked = false;
-            cbLayersSelectAll.Checked = false;
-
             gbSolutions.Enabled = false;
             gbComponents.Enabled = false;
             gbLayers.Enabled = false;
@@ -646,176 +363,11 @@ namespace Dataverse.XrmTools.Deployer
             chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.99);
         }
 
-        private void lvComponentTypes_Resize(object sender, EventArgs e)
-        {
-            var maxWidth = lvComponents.Width >= 500 ? lvComponents.Width : 500;
-            chCmpComponentName.Width = (int)Math.Floor(maxWidth * 0.49);
-            chCmpComponentCount.Width = (int)Math.Floor(maxWidth * 0.2);
-            chCmpActiveLayerCount.Width = (int)Math.Floor(maxWidth * 0.3);
-        }
-
-        private void lvLayers_Resize(object sender, EventArgs e)
-        {
-            var maxWidth = lvLayers.Width >= 750 ? lvLayers.Width : 750;
-            chLayDisplayName.Width = (int)Math.Floor(maxWidth * 0.39);
-            chLayObjectId.Width = (int)Math.Floor(maxWidth * 0.4);
-            chLayType.Width = (int)Math.Floor(maxWidth * 0.2);
-        }
-
-        private async void txtSolutionFilter_TextChanged(object sender, EventArgs e)
-        {
-            async Task<bool> UserKeepsTyping()
-            {
-                var txt = txtSolutionFilter.Text;
-                await Task.Delay(500);
-
-                return txt != txtSolutionFilter.Text;
-            }
-
-            if (await UserKeepsTyping()) return;
-
-            // user is done typing -> execute logic
-            try
-            {
-                _settings.Filter = txtSolutionFilter.Text;
-                SettingsHelper.SetSettings(_settings);
-
-                LoadSolutionsList();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                ManageWorkingState(false);
-                txtSolutionFilter.Focus();
-            }
-        }
-
-        private void lvSolutions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (lvSolutions.SelectedItems.Count > 0)
-                {
-                    // get selected solution
-                    var solutionItem = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
-
-                    lvComponents.Items.Clear();
-                    cbCmpSelectAll.Checked = false;
-                    lvLayers.Items.Clear();
-
-                    // load component types
-                    LoadSolutionComponents(solutionItem);
-                }
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             try
             {
                 (sender as ListView).Sort(_settings, e.Column);
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void tsbLoadSolutions_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                LoadSolutions();
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void cbCmpTypSelectAll_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (lvComponents.Items.Count == 0) { return; }
-
-                var allTypes = (sender as CheckBox).Checked;
-
-                // check/uncheck all component types
-                lvComponents.Items.Cast<ListViewItem>().ToList().ForEach(item => item.Checked = allTypes);
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void cbLayersSelectAll_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (lvLayers.Items.Count == 0) { return; }
-
-                var allLayers = (sender as CheckBox).Checked;
-
-                // check/uncheck all layers
-                lvLayers.Items.Cast<ListViewItem>().ToList().ForEach(item => item.Checked = allLayers);
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void tsbLoadLayers_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (lvSolutions.SelectedItems.Count.Equals(1) && lvComponents.CheckedItems.Count > 0)
-                {
-                    var selectedTypes = lvComponents.Items.Cast<ListViewItem>().ToList().Where(lvi => lvi.Checked)
-                        .Select(lvi => _componentsList.FirstOrDefault(ct => ct.Value.Equals((int)lvi.Tag))).ToList();
-
-                    LoadActiveLayers(selectedTypes);
-                }
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void tsbRemoveLayers_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (lvLayers.CheckedItems.Count > 0)
-                {
-                    var selectedLayers = lvLayers.Items.Cast<ListViewItem>().ToList().Where(lvi => lvi.Checked)
-                        .Select(lvi => _activeLayers.FirstOrDefault(al => al.Id.Equals((Guid)lvi.Tag))).ToList();
-
-                    RemoveActiveLayers(selectedLayers);
-                }
             }
             catch (Exception ex)
             {
@@ -872,40 +424,165 @@ namespace Dataverse.XrmTools.Deployer
                 txtBatchSize.Focus();
             }
         }
+        #endregion Form events
 
-        private void Results_FormClosed(object sender, FormClosedEventArgs e)
+
+
+
+
+        #region Private Main Methods
+        private Solution GetSolutionData()
         {
-            cbFilterLayers.SelectedItem = null;
-            cbFilterLayers.Items.Clear();
+            LogInfo($"Loading solution file...");
 
-            cbLayersSelectAll.Checked = false;
-            lvLayers.Items.Clear();
-            gbLayers.Enabled = false;
+            //gbComponents.Enabled = false;
+            //gbLayers.Enabled = false;
 
-            cbCmpSelectAll.Checked = false;
-            lvComponents.Items.Clear();
-            gbComponents.Enabled = false;
+            var dialog = new OpenFileDialog
+            {
+                Title = "Select solution file...",
+                Filter = "Zip files (*.zip)|*.zip",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
 
-            // get selected solution
-            var solutionItem = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
+            var path = GetFileDialogPath(dialog);
+            if (string.IsNullOrEmpty(path)) { return null; }
 
-            // load component types
-            LoadSolutionComponents(solutionItem);
+            // read solution data
+            XDocument doc;
+            using (var zip = ZipFile.Open(path, ZipArchiveMode.Read))
+            {
+                var file = zip.Entries.FirstOrDefault(ent => ent.Name.Equals("solution.xml"));
+                if (file is null) { throw new Exception("Invalid solution file"); }
+
+                using (var stream = file.Open())
+                {
+                    doc = XDocument.Load(stream);
+                }
+            }
+
+            if (doc is null) { throw new Exception("Invalid solution file"); }
+
+            var solManifestNodes = doc.Descendants("SolutionManifest");
+            var solDisplayNames = solManifestNodes.Select(node => node.Element("LocalizedNames")).FirstOrDefault().Descendants();
+            var publisherNodes = solManifestNodes.Select(node => node.Element("Publisher")).FirstOrDefault().Descendants();
+            var pubDisplayNames = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("LocalizedNames")).Descendants();
+
+            return new Solution
+            {
+                LogicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value,
+                DisplayName = solDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value,
+                Version = solManifestNodes.Select(node => node.Element("Version")).FirstOrDefault().Value,
+                IsManaged = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? true : false,
+                Publisher = new Publisher
+                {
+                    LogicalName = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("UniqueName")).Value,
+                    DisplayName = pubDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value
+                },
+                SolutionBytes = File.ReadAllBytes(path)
+            };
         }
 
-        private void cbFilterLayers_SelectedIndexChanged(object sender, EventArgs e)
+        private void ImportAndUpgradeSolution(Solution solution)
         {
-            lvLayers.Items.Clear();
+            LogInfo($"Importing solution...");
+            if (_working) { return; }
+            ManageWorkingState(true);
 
-            var filter = (sender as ComboBox).SelectedItem as ComboboxItem;
-            if(filter != null)
+            WorkAsync(new WorkAsyncInfo
             {
-                var layers = filter.Value.Equals(0) ? _activeLayers : _activeLayers.Where(lay => lay.SolutionComponent.Type.Value.Equals(filter.Value));
-                var layerItems = layers.Select(sct => sct.ToListViewItem());
+                Message = "Importing solution...",
+                AsyncArgument = solution,
+                Work = (worker, args) =>
+                {
+                    var repo = new CrmRepo(Service, _client);
+                    args.Result = repo.ImportSolution(solution);
+                },
+                PostWorkCallBack = args =>
+                {
+                    ManageWorkingState(false);
 
-                LoadActiveLayersList(layerItems);
+                    if (args.Error != null)
+                    {
+                        LogError(args.Error.Message);
+                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        UpgradeSolution(solution);
+                    }
+                }
+            });
+        }
+
+        private void UpgradeSolution(Solution solution)
+        {
+            LogInfo($"Upgrading solution...");
+            if (_working) { return; }
+            ManageWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Upgrading solution...",
+                AsyncArgument = solution,
+                Work = (worker, args) =>
+                {
+                    var repo = new CrmRepo(Service, _client);
+                    args.Result = repo.UpgradeSolution(solution);
+                },
+                PostWorkCallBack = args =>
+                {
+                    ManageWorkingState(false);
+
+                    if (args.Error != null)
+                    {
+                        LogError(args.Error.Message);
+                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        var result = args.Result as ImportAndUpgradeResponse;
+                        MessageBox.Show(this, result.Message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            });
+        }
+
+        private string GetFileDialogPath(FileDialog dialog)
+        {
+            var path = string.Empty;
+
+            using (var ofd = dialog as OpenFileDialog)
+            {
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    path = ofd.FileName;
+                }
+            }
+
+            return path;
+        }
+        #endregion Private Main Methods
+
+        #region Form Events
+        private void btnAddSolutionToQueue_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var solution = GetSolutionData();
+                if (solution != null)
+                {
+                    ImportAndUpgradeSolution(solution);
+                }
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        #endregion Form events
+        #endregion Form Events
     }
 }
