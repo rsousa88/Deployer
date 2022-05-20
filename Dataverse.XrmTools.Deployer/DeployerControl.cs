@@ -180,15 +180,22 @@ namespace Dataverse.XrmTools.Deployer
         private void QueueSolution()
         {
             var solution = GetSolutionData();
-            if (solution != null)
+            if (solution is null)
             {
-                _solutions.Add(solution);
-
-                var lvItem = solution.ToListViewItem();
-                lvSolutions.Items.Add(lvItem);
-
-                tsbDeploy.Enabled = true;
+                throw new Exception("Invalid solution file");
             }
+
+            if (_solutions.Any(sol => sol.LogicalName.Equals(solution.LogicalName)))
+            {
+                throw new Exception($"Solution '{solution.DisplayName}' already exists");
+            }
+
+            _solutions.Add(solution);
+
+            var lvItem = solution.ToListViewItem();
+            lvSolutions.Items.Add(lvItem);
+
+            tsbDeploy.Enabled = true;
         }
 
         private void DeployQueue()
@@ -366,6 +373,20 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
+        private void btnAddSolution_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                QueueSolution();
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void tsbDeploy_Click(object sender, EventArgs e)
         {
             try
@@ -395,17 +416,19 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void btnAddSolution_Click(object sender, EventArgs e)
+        private void cmsiRemove_Click(object sender, EventArgs e)
         {
-            try
+            if (lvSolutions.FocusedItem != null && lvSolutions.SelectedItems.Count > 0)
             {
-                QueueSolution();
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var selected = lvSolutions.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+                lvSolutions.Items.RemoveAt(selected.Index);
+
+                var solution = selected.ToObject(new Solution()) as Solution;
+                var item = _solutions.FirstOrDefault(sol => sol.LogicalName.Equals(solution.LogicalName));
+                if (item != null)
+                {
+                    _solutions.Remove(item);
+                }
             }
         }
         #endregion Form Events

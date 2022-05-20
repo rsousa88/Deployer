@@ -209,7 +209,6 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Enums\Action.cs" />
     <Compile Include="Models\ImportAndUpgradeResponse.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
@@ -247,6 +246,7 @@
     <Content Include="Resources\solutions.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Enums\" />
     <Folder Include="Forms\" />
     <Folder Include="Logic\" />
   </ItemGroup>

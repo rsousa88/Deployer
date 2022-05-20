@@ -1,11 +1,6 @@
 ﻿// System
-using System;
-using System.IO;
-using System.Text;
 using System.Linq;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using System.Runtime.Serialization.Json;
 
 // Deployer
 using Dataverse.XrmTools.Deployer.Models;
@@ -24,7 +19,9 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                     solution.DisplayName,
                     solution.Version,
                     solution.IsManaged ? "Yes" : "No",
-                    solution.Publisher.DisplayName
+                    solution.Publisher.DisplayName,
+                    solution.Publisher.LogicalName
+
                 });
 
                 item.Tag = solution.LogicalName;

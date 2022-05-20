@@ -23,6 +23,7 @@
         #region Code généré par le Concepteur de composants
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tsMain = new System.Windows.Forms.ToolStrip();
             this.tsbDeploy = new System.Windows.Forms.ToolStripButton();
             this.tsbAbort = new System.Windows.Forms.ToolStripButton();
@@ -41,6 +42,8 @@
             this.chSolManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLayers = new System.Windows.Forms.GroupBox();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
@@ -48,6 +51,7 @@
             this.gbEnvironments.SuspendLayout();
             this.pnlBody.SuspendLayout();
             this.gbQueue.SuspendLayout();
+            this.cmsContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // tsMain
@@ -229,6 +233,7 @@
             this.chSolManaged,
             this.chSolPublisher,
             this.chSolPublisherLogicalNameHidden});
+            this.lvSolutions.ContextMenuStrip = this.cmsContextMenu;
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
             this.lvSolutions.Location = new System.Drawing.Point(7, 58);
@@ -267,6 +272,21 @@
             this.chSolPublisherLogicalNameHidden.Text = "[Hidden] Publisher Logical Name";
             this.chSolPublisherLogicalNameHidden.Width = 0;
             // 
+            // cmsContextMenu
+            // 
+            this.cmsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmsiRemove});
+            this.cmsContextMenu.Name = "cms_ContextMenu";
+            this.cmsContextMenu.Size = new System.Drawing.Size(133, 28);
+            // 
+            // cmsiRemove
+            // 
+            this.cmsiRemove.Name = "cmsiRemove";
+            this.cmsiRemove.Size = new System.Drawing.Size(132, 24);
+            this.cmsiRemove.Text = "Remove";
+            this.cmsiRemove.Click += new System.EventHandler(this.cmsiRemove_Click);
+            // 
             // gbLayers
             // 
             this.pnlBody.SetColumnSpan(this.gbLayers, 4);
@@ -300,6 +320,7 @@
             this.gbEnvironments.PerformLayout();
             this.pnlBody.ResumeLayout(false);
             this.gbQueue.ResumeLayout(false);
+            this.cmsContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -325,13 +346,15 @@
         private System.Windows.Forms.GroupBox gbQueue;
         private System.Windows.Forms.ToolStripButton tsbDeploy;
         private System.Windows.Forms.ToolStripButton tsbAbort;
+        private System.Windows.Forms.Button btnAddSolution;
         private System.Windows.Forms.ListView lvSolutions;
         private System.Windows.Forms.ColumnHeader chSolDisplayName;
         private System.Windows.Forms.ColumnHeader chSolVersion;
         private System.Windows.Forms.ColumnHeader chSolManaged;
         private System.Windows.Forms.ColumnHeader chSolPublisher;
         private System.Windows.Forms.ColumnHeader chSolPublisherLogicalNameHidden;
-        private System.Windows.Forms.Button btnAddSolution;
+        private System.Windows.Forms.ContextMenuStrip cmsContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem cmsiRemove;
 
         // Layers Group
         private System.Windows.Forms.GroupBox gbLayers;

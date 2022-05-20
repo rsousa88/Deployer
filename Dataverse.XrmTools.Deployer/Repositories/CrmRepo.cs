@@ -1,6 +1,5 @@
 ﻿// System
 using System;
-using System.ComponentModel;
 
 // Microsoft
 using Microsoft.Xrm.Sdk;
@@ -11,7 +10,6 @@ using Microsoft.Xrm.Tooling.Connector;
 // Deployer
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.RepoInterfaces;
-using Dataverse.XrmTools.Deployer.Enums;
 
 namespace Dataverse.XrmTools.Deployer.Repositories
 {
