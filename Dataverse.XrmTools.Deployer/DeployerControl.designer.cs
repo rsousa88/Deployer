@@ -44,7 +44,8 @@
             this.chSolPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
-            this.gbLayers = new System.Windows.Forms.GroupBox();
+            this.gbLogs = new System.Windows.Forms.GroupBox();
+            this.txtLogs = new System.Windows.Forms.TextBox();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -52,6 +53,7 @@
             this.pnlBody.SuspendLayout();
             this.gbQueue.SuspendLayout();
             this.cmsContextMenu.SuspendLayout();
+            this.gbLogs.SuspendLayout();
             this.SuspendLayout();
             // 
             // tsMain
@@ -180,7 +182,7 @@
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
-            this.pnlBody.Controls.Add(this.gbLayers, 4, 0);
+            this.pnlBody.Controls.Add(this.gbLogs, 4, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlBody.Location = new System.Drawing.Point(432, 2);
             this.pnlBody.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -287,19 +289,33 @@
             this.cmsiRemove.Text = "Remove";
             this.cmsiRemove.Click += new System.EventHandler(this.cmsiRemove_Click);
             // 
-            // gbLayers
+            // gbLogs
             // 
-            this.pnlBody.SetColumnSpan(this.gbLayers, 4);
-            this.gbLayers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLayers.Location = new System.Drawing.Point(1029, 2);
-            this.gbLayers.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbLayers.Name = "gbLayers";
-            this.gbLayers.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pnlBody.SetRowSpan(this.gbLayers, 2);
-            this.gbLayers.Size = new System.Drawing.Size(680, 932);
-            this.gbLayers.TabIndex = 2;
-            this.gbLayers.TabStop = false;
-            this.gbLayers.Text = "Active Layers";
+            this.pnlBody.SetColumnSpan(this.gbLogs, 4);
+            this.gbLogs.Controls.Add(this.txtLogs);
+            this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbLogs.Location = new System.Drawing.Point(1029, 2);
+            this.gbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbLogs.Name = "gbLogs";
+            this.gbLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.pnlBody.SetRowSpan(this.gbLogs, 2);
+            this.gbLogs.Size = new System.Drawing.Size(680, 932);
+            this.gbLogs.TabIndex = 2;
+            this.gbLogs.TabStop = false;
+            this.gbLogs.Text = "Logs";
+            // 
+            // txtLogs
+            // 
+            this.txtLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLogs.Location = new System.Drawing.Point(6, 20);
+            this.txtLogs.Multiline = true;
+            this.txtLogs.Name = "txtLogs";
+            this.txtLogs.ReadOnly = true;
+            this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtLogs.Size = new System.Drawing.Size(668, 907);
+            this.txtLogs.TabIndex = 2;
             // 
             // DeployerControl
             // 
@@ -321,6 +337,8 @@
             this.pnlBody.ResumeLayout(false);
             this.gbQueue.ResumeLayout(false);
             this.cmsContextMenu.ResumeLayout(false);
+            this.gbLogs.ResumeLayout(false);
+            this.gbLogs.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -357,6 +375,7 @@
         private System.Windows.Forms.ToolStripMenuItem cmsiRemove;
 
         // Layers Group
-        private System.Windows.Forms.GroupBox gbLayers;
+        private System.Windows.Forms.GroupBox gbLogs;
+        private System.Windows.Forms.TextBox txtLogs;
     }
 }

@@ -8,7 +8,6 @@ using System.Xml.Linq;
 using System.Windows.Forms;
 using System.IO.Compression;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 // Microsoft
 using Microsoft.Xrm.Sdk;
@@ -18,18 +17,17 @@ using Microsoft.Xrm.Tooling.Connector;
 // 3rd Party
 using McTools.Xrm.Connection;
 using XrmToolBox.Extensibility;
-using XrmToolBox.Extensibility.Args;
-using XrmToolBox.Extensibility.Interfaces;
 
 // Deployer
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
+using Dataverse.XrmTools.Deployer.Enums;
 
 namespace Dataverse.XrmTools.Deployer
 {
-    public partial class DeployerControl : MultipleConnectionsPluginControlBase, IStatusBarMessenger
+    public partial class DeployerControl : PluginControlBase
     {
         #region Variables
         // settings
@@ -46,18 +44,14 @@ namespace Dataverse.XrmTools.Deployer
         private bool _working;
         #endregion Variables
 
-        #region Handlers
-        public event EventHandler<StatusBarMessageEventArgs> SendMessageToStatusBar;
-        #endregion Variables
-
         public DeployerControl()
         {
-            LogInfo("----- Starting Deployer -----");
+            Log(LogLevel.Information, "----- Starting Deployer -----");
 
-            LogInfo("Loading Settings...");
+            Log(LogLevel.Debug, "Loading Settings...");
             SettingsHelper.GetSettings(out _settings);
 
-            LogInfo("Initializing components...");
+            Log(LogLevel.Debug, "Initializing components...");
             InitializeComponent();
         }
 
@@ -74,19 +68,19 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
-                LogInfo($"Updating connection...");
+                Log(LogLevel.Debug, $"Updating connection...");
                 base.UpdateConnection(newService, detail, actionName, parameter);
-                LogInfo($"Connection successfully updated...");
+                Log(LogLevel.Debug, $"Connection successfully updated...");
 
                 _client = detail.ServiceClient;
 
                 if (!actionName.Equals("AdditionalOrganization"))
                 {
-                    LogInfo($"Checking settings for known instances...");
+                    Log(LogLevel.Debug, $"Checking settings for known instances...");
                     _instance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_client.ConnectedOrgUniqueName));
                     if (_instance is null)
                     {
-                        LogInfo($"New instance '{_client.ConnectedOrgUniqueName}': Adding to settings...");
+                        Log(LogLevel.Debug, $"New instance '{_client.ConnectedOrgUniqueName}': Adding to settings...");
                         _instance = new Instance
                         {
                             Id = _client.ConnectedOrgId,
@@ -98,74 +92,21 @@ namespace Dataverse.XrmTools.Deployer
                     }
                     else
                     {
-                        LogInfo($"Found known instance '{_instance.UniqueName}'");
+                        Log(LogLevel.Debug, $"Found known instance '{_instance.UniqueName}'");
                     }
 
                     // save settings file
                     SettingsHelper.SetSettings(_settings);
 
                     // render UI components
-                    LogInfo($"Rendering UI components...");
+                    Log(LogLevel.Debug, $"Rendering UI components...");
                     RenderInitialComponents(_instance.FriendlyName);
                 }
             }
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                LogError(ex.Message);
-                MessageBox.Show(this, $"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        protected override void ConnectionDetailsUpdated(NotifyCollectionChangedEventArgs args)
-        {
-            try
-            {
-                if (args.Action.Equals(NotifyCollectionChangedAction.Add))
-                {
-                    var detail = (ConnectionDetail)args.NewItems[0];
-                    var client = detail.ServiceClient;
-
-                    if (_client == null) { throw new Exception("Source connection is invalid"); }
-                    LogInfo($"Source OrgId: {_client.ConnectedOrgId}");
-                    LogInfo($"Source OrgUniqueName: {_client.ConnectedOrgUniqueName}");
-                    LogInfo($"Source OrgFriendlyName: {_client.ConnectedOrgFriendlyName}");
-                    LogInfo($"Source EnvId: {_client.EnvironmentId}");
-
-                    if (client == null) { throw new Exception("Target connection is invalid"); }
-                    LogInfo($"Target OrgId: {client.ConnectedOrgId}");
-                    LogInfo($"Target OrgUniqueName: {client.ConnectedOrgUniqueName}");
-                    LogInfo($"Target OrgFriendlyName: {client.ConnectedOrgFriendlyName}");
-                    LogInfo($"Target EnvId: {client.EnvironmentId}");
-
-                    if (_client.ConnectedOrgUniqueName.Equals(client.ConnectedOrgUniqueName))
-                    {
-                        throw new Exception("Source and Target connections must refer to different Dataverse instances");
-                    }
-
-                    _instance = _settings.Instances.FirstOrDefault(inst => !string.IsNullOrEmpty(inst.UniqueName) && inst.UniqueName.Equals(client.ConnectedOrgUniqueName));
-                    if (_instance == null)
-                    {
-                        _instance = new Instance
-                        {
-                            Id = client.ConnectedOrgId,
-                            UniqueName = client.ConnectedOrgUniqueName,
-                            FriendlyName = client.ConnectedOrgFriendlyName
-                        };
-
-                        _settings.Instances.Add(_instance);
-                    }
-
-                    SettingsHelper.SetSettings(_settings);
-
-                    RenderInitialComponents(_instance.FriendlyName);
-                    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs("Connection ready"));
-                }
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                LogError(ex.Message);
+                Log(LogLevel.Error, ex.Message);
                 MessageBox.Show(this, $"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -203,7 +144,7 @@ namespace Dataverse.XrmTools.Deployer
             var count = _solutions.Count;
             if (DialogResult.No == MessageBox.Show(this, $@"Are you sure you want to deploy {count} solutions?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
 
-            LogInfo($"Deploying queued solutions...");
+            Log(LogLevel.Debug, $"Deploying queued solutions...");
             if (_working) { return; }
             ManageWorkingState(true);
 
@@ -223,11 +164,11 @@ namespace Dataverse.XrmTools.Deployer
                         var progress = 100 * index / count;
 
                         worker.ReportProgress(progress, $"Importing '{solution.DisplayName}' solution ({index}/{count})");
-                        LogInfo($"Importing '{solution.DisplayName}' solution...");
+                        Log(LogLevel.Debug, $"Importing '{solution.DisplayName}' solution...");
                         repo.ImportSolution(solution);
 
                         worker.ReportProgress(progress, $"Upgrading '{solution.DisplayName}' solution ({index}/{count})");
-                        LogInfo($"Upgrading '{solution.DisplayName}' solution...");
+                        Log(LogLevel.Debug, $"Upgrading '{solution.DisplayName}' solution...");
                         repo.UpgradeSolution(solution);
 
                         index++;
@@ -245,7 +186,7 @@ namespace Dataverse.XrmTools.Deployer
 
                     if (args.Error != null)
                     {
-                        LogError(args.Error.Message);
+                        Log(LogLevel.Error, args.Error.Message);
                         MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     else
@@ -262,6 +203,30 @@ namespace Dataverse.XrmTools.Deployer
         #endregion Private Main Methods
 
         #region Private Helper Methods
+        private void Log(LogLevel level, string message)
+        {
+            switch (level)
+            {
+                case LogLevel.Debug:
+                    LogInfo(message);
+                    break;
+                case LogLevel.Information:
+                    LogInfo(message);
+                    if (txtLogs != null) { txtLogs.AppendText($"INFO | {DateTime.Now} | {message}"); }
+                    break;
+                case LogLevel.Warning:
+                    LogWarning(message);
+                    if (txtLogs != null) { txtLogs.AppendText($"WARN | {DateTime.Now} | {message}"); }
+                    break;
+                case LogLevel.Error:
+                    LogError(message);
+                    if (txtLogs != null) { txtLogs.AppendText($"ERROR | {DateTime.Now} | {message}"); }
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void ManageWorkingState(bool working)
         {
             pnlMain.Enabled = !working;
@@ -279,12 +244,12 @@ namespace Dataverse.XrmTools.Deployer
             lblTargetValue.ForeColor = Color.MediumSeaGreen;
 
             tsbDeploy.Enabled = false;
-            gbLayers.Enabled = false;
+            gbLogs.Enabled = false;
         }
 
         private Solution GetSolutionData()
         {
-            LogInfo($"Loading solution file...");
+            Log(LogLevel.Debug, $"Loading solution file...");
 
             var dialog = new OpenFileDialog
             {
@@ -368,7 +333,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                LogError(ex.Message);
+                Log(LogLevel.Error, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -382,7 +347,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                LogError(ex.Message);
+                Log(LogLevel.Error, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -396,7 +361,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                LogError(ex.Message);
+                Log(LogLevel.Error, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -411,7 +376,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                LogError(ex.Message);
+                Log(LogLevel.Error, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
