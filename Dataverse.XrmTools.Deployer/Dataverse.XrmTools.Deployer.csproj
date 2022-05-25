@@ -202,6 +202,12 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
+    <Compile Include="Controls\ExportOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExportOptions.Designer.cs">
+      <DependentUpon>ExportOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Deployer.cs" />
     <Compile Include="DeployerControl.cs">
       <SubType>UserControl</SubType>
@@ -210,6 +216,12 @@
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Enums\LogLevel.cs" />
+    <Compile Include="Forms\AddOperation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddOperation.Designer.cs">
+      <DependentUpon>AddOperation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Models\ImportAndUpgradeResponse.cs" />
     <Compile Include="Models\Solution.cs" />
@@ -231,8 +243,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ExportOptions.resx">
+      <DependentUpon>ExportOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DeployerControl.resx">
       <DependentUpon>DeployerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddOperation.resx">
+      <DependentUpon>AddOperation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -248,7 +266,6 @@
     <Content Include="Resources\solutions.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Forms\" />
     <Folder Include="Logic\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

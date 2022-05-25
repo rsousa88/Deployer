@@ -24,6 +24,7 @@ using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
 using Dataverse.XrmTools.Deployer.Enums;
+using Dataverse.XrmTools.Deployer.Forms;
 
 namespace Dataverse.XrmTools.Deployer
 {
@@ -353,7 +354,10 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
-                QueueSolution();
+                //QueueSolution();
+
+                var addOpDlg = new AddOperation();
+                addOpDlg.ShowDialog(ParentForm);
             }
             catch (Exception ex)
             {

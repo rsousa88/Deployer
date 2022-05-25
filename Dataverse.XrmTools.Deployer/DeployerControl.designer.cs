@@ -35,7 +35,7 @@
             this.gbSettings = new System.Windows.Forms.GroupBox();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbQueue = new System.Windows.Forms.GroupBox();
-            this.btnAddSolution = new System.Windows.Forms.Button();
+            this.btnAddOperation = new System.Windows.Forms.Button();
             this.lvSolutions = new System.Windows.Forms.ListView();
             this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -119,7 +119,7 @@
             this.pnlSettings.RowCount = 2;
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
-            this.pnlSettings.Size = new System.Drawing.Size(423, 936);
+            this.pnlSettings.Size = new System.Drawing.Size(316, 936);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbEnvironments
@@ -131,7 +131,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(417, 89);
+            this.gbEnvironments.Size = new System.Drawing.Size(310, 89);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -163,7 +163,7 @@
             this.gbSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSettings.Name = "gbSettings";
             this.gbSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSettings.Size = new System.Drawing.Size(417, 839);
+            this.gbSettings.Size = new System.Drawing.Size(310, 839);
             this.gbSettings.TabIndex = 0;
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
@@ -184,20 +184,20 @@
             this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
             this.pnlBody.Controls.Add(this.gbLogs, 4, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlBody.Location = new System.Drawing.Point(432, 2);
+            this.pnlBody.Location = new System.Drawing.Point(325, 2);
             this.pnlBody.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.Name = "pnlBody";
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlBody.Size = new System.Drawing.Size(1712, 936);
+            this.pnlBody.Size = new System.Drawing.Size(1819, 936);
             this.pnlBody.TabIndex = 1;
             // 
             // gbQueue
             // 
             this.pnlBody.SetColumnSpan(this.gbQueue, 6);
-            this.gbQueue.Controls.Add(this.btnAddSolution);
+            this.gbQueue.Controls.Add(this.btnAddOperation);
             this.gbQueue.Controls.Add(this.lvSolutions);
             this.gbQueue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbQueue.Location = new System.Drawing.Point(3, 2);
@@ -205,24 +205,24 @@
             this.gbQueue.Name = "gbQueue";
             this.gbQueue.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbQueue, 2);
-            this.gbQueue.Size = new System.Drawing.Size(1020, 932);
+            this.gbQueue.Size = new System.Drawing.Size(1080, 932);
             this.gbQueue.TabIndex = 1;
             this.gbQueue.TabStop = false;
             this.gbQueue.Text = "Queue";
             // 
-            // btnAddSolution
+            // btnAddOperation
             // 
-            this.btnAddSolution.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnAddOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddSolution.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnAddSolution.Location = new System.Drawing.Point(7, 21);
-            this.btnAddSolution.Margin = new System.Windows.Forms.Padding(4);
-            this.btnAddSolution.Name = "btnAddSolution";
-            this.btnAddSolution.Size = new System.Drawing.Size(1006, 29);
-            this.btnAddSolution.TabIndex = 7;
-            this.btnAddSolution.Text = "Add Solution to Queue";
-            this.btnAddSolution.UseVisualStyleBackColor = true;
-            this.btnAddSolution.Click += new System.EventHandler(this.btnAddSolution_Click);
+            this.btnAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnAddOperation.Location = new System.Drawing.Point(7, 21);
+            this.btnAddOperation.Margin = new System.Windows.Forms.Padding(4);
+            this.btnAddOperation.Name = "btnAddOperation";
+            this.btnAddOperation.Size = new System.Drawing.Size(1066, 29);
+            this.btnAddOperation.TabIndex = 7;
+            this.btnAddOperation.Text = "Add Operation to Queue";
+            this.btnAddOperation.UseVisualStyleBackColor = true;
+            this.btnAddOperation.Click += new System.EventHandler(this.btnAddSolution_Click);
             // 
             // lvSolutions
             // 
@@ -242,7 +242,7 @@
             this.lvSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(1006, 868);
+            this.lvSolutions.Size = new System.Drawing.Size(1066, 868);
             this.lvSolutions.TabIndex = 2;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -294,12 +294,12 @@
             this.pnlBody.SetColumnSpan(this.gbLogs, 4);
             this.gbLogs.Controls.Add(this.txtLogs);
             this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLogs.Location = new System.Drawing.Point(1029, 2);
+            this.gbLogs.Location = new System.Drawing.Point(1089, 2);
             this.gbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbLogs.Name = "gbLogs";
             this.gbLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbLogs, 2);
-            this.gbLogs.Size = new System.Drawing.Size(680, 932);
+            this.gbLogs.Size = new System.Drawing.Size(727, 932);
             this.gbLogs.TabIndex = 2;
             this.gbLogs.TabStop = false;
             this.gbLogs.Text = "Logs";
@@ -312,10 +312,10 @@
             this.txtLogs.Location = new System.Drawing.Point(6, 20);
             this.txtLogs.Multiline = true;
             this.txtLogs.Name = "txtLogs";
-            this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(668, 907);
-            this.txtLogs.TabIndex = 2;
             this.txtLogs.ReadOnly = true;
+            this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtLogs.Size = new System.Drawing.Size(715, 907);
+            this.txtLogs.TabIndex = 2;
             // 
             // DeployerControl
             // 
@@ -364,7 +364,7 @@
         private System.Windows.Forms.GroupBox gbQueue;
         private System.Windows.Forms.ToolStripButton tsbDeploy;
         private System.Windows.Forms.ToolStripButton tsbAbort;
-        private System.Windows.Forms.Button btnAddSolution;
+        private System.Windows.Forms.Button btnAddOperation;
         private System.Windows.Forms.ListView lvSolutions;
         private System.Windows.Forms.ColumnHeader chSolDisplayName;
         private System.Windows.Forms.ColumnHeader chSolVersion;
