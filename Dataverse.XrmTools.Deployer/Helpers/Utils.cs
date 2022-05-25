@@ -12,19 +12,20 @@ namespace Dataverse.XrmTools.Deployer.Helpers
     {
         public static ListViewItem ToListViewItem<T>(this T value)
         {
-            if (value is Solution) {
-                var solution = value as Solution;
+            if (value is Operation) {
+                var operation = value as Operation;
 
                 var item = new ListViewItem(new string[] {
-                    solution.DisplayName,
-                    solution.Version,
-                    solution.IsManaged ? "Yes" : "No",
-                    solution.Publisher.DisplayName,
-                    solution.Publisher.LogicalName
+                    operation.Type.ToString(),
+                    operation.Solution.DisplayName,
+                    operation.Solution.Version,
+                    operation.Solution.IsManaged ? "Yes" : "No",
+                    operation.Solution.Publisher.DisplayName,
+                    operation.Solution.Publisher.LogicalName
 
                 });
 
-                item.Tag = solution.LogicalName;
+                item.Tag = operation.Solution.LogicalName;
                 return item;
             }
 
@@ -33,15 +34,19 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
         public static object ToObject<T>(this ListViewItem lvItem, T output)
         {
-            if (output is Solution)
+            if (output is Operation)
             {
-                return new Solution
+                return new Operation
                 {
-                    LogicalName = (string)lvItem.Tag,
-                    DisplayName = lvItem.SubItems[0].Text,
-                    Version = lvItem.SubItems[1].Text,
-                    IsManaged = lvItem.SubItems[2].Text.Equals("Yes") ? true : false,
-                    Publisher = new Publisher { DisplayName = lvItem.SubItems[3].Text, LogicalName = lvItem.SubItems[4].Text }
+                    Type = Enums.OperationType.IMPORT,
+                    Solution = new Solution
+                    {
+                        LogicalName = (string)lvItem.Tag,
+                        DisplayName = lvItem.SubItems[0].Text,
+                        Version = lvItem.SubItems[1].Text,
+                        IsManaged = lvItem.SubItems[2].Text.Equals("Yes") ? true : false,
+                        Publisher = new Publisher { DisplayName = lvItem.SubItems[3].Text, LogicalName = lvItem.SubItems[4].Text }
+                    }
                 };
             }
 

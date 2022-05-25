@@ -202,6 +202,18 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
+    <Compile Include="Controls\DeleteOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DeleteOptions.Designer.cs">
+      <DependentUpon>DeleteOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ImportOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ImportOptions.Designer.cs">
+      <DependentUpon>ImportOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExportOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -215,6 +227,7 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="Forms\AddOperation.cs">
       <SubType>Form</SubType>
@@ -222,8 +235,13 @@
     <Compile Include="Forms\AddOperation.Designer.cs">
       <DependentUpon>AddOperation.cs</DependentUpon>
     </Compile>
+    <Compile Include="HandlerArgs\DeleteEventArgs.cs" />
+    <Compile Include="HandlerArgs\ExportEventArgs.cs" />
+    <Compile Include="HandlerArgs\ImportEventArgs.cs" />
+    <Compile Include="HandlerArgs\OperationEventArgs.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Models\ImportAndUpgradeResponse.cs" />
+    <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
@@ -243,6 +261,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\DeleteOptions.resx">
+      <DependentUpon>DeleteOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ImportOptions.resx">
+      <DependentUpon>ImportOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExportOptions.resx">
       <DependentUpon>ExportOptions.cs</DependentUpon>
     </EmbeddedResource>

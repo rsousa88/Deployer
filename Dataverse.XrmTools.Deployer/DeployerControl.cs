@@ -25,6 +25,7 @@ using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Forms;
+using Dataverse.XrmTools.Deployer.HandlerArgs;
 
 namespace Dataverse.XrmTools.Deployer
 {
@@ -39,7 +40,7 @@ namespace Dataverse.XrmTools.Deployer
 
         // models
         private Instance _instance;
-        private readonly List<Solution> _solutions = new List<Solution>();
+        private readonly List<Operation> _operations = new List<Operation>();
 
         // flags
         private bool _working;
@@ -126,33 +127,10 @@ namespace Dataverse.XrmTools.Deployer
             Service.Execute(new WhoAmIRequest());
         }
 
-        private void QueueSolution()
-        {
-            var solution = GetSolutionData();
-            if (solution is null)
-            {
-                throw new Exception("Invalid solution file");
-            }
-
-            if (_solutions.Any(sol => sol.LogicalName.Equals(solution.LogicalName)))
-            {
-                throw new Exception($"Solution '{solution.DisplayName}' already exists");
-            }
-
-            _solutions.Add(solution);
-
-            var lvItem = solution.ToListViewItem();
-            lvSolutions.Items.Add(lvItem);
-
-            _logger.Log(LogLevel.INFO, $"Added solution {solution.DisplayName} to queue");
-
-            tsbDeploy.Enabled = true;
-        }
-
         private void DeployQueue()
         {
-            var count = _solutions.Count;
-            if (DialogResult.No == MessageBox.Show(this, $@"Are you sure you want to deploy {count} solutions?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
+            var count = _operations.Count;
+            if (DialogResult.No == MessageBox.Show(this, $@"{count} operations will be executed sequentially in the presented order. Are you sure you want to continue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
 
             _logger.Log(LogLevel.DEBUG, $"Deploying queued solutions...");
             if (_working) { return; }
@@ -167,17 +145,17 @@ namespace Dataverse.XrmTools.Deployer
                     var repo = new CrmRepo(Service, _client, _logger);
 
                     var index = 1;
-                    foreach (var solution in _solutions)
+                    foreach (var operation in _operations)
                     {
                         if (worker.CancellationPending) { return; }
 
                         var progress = 100 * index / count;
 
-                        worker.ReportProgress(progress, $"Importing '{solution.DisplayName}' solution ({index}/{count})");
-                        repo.ImportSolution(solution);
+                        worker.ReportProgress(progress, $"Importing '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                        repo.ImportSolution(operation.Solution);
 
-                        worker.ReportProgress(progress, $"Upgrading '{solution.DisplayName}' solution ({index}/{count})");
-                        repo.UpgradeSolution(solution);
+                        worker.ReportProgress(progress, $"Upgrading '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                        repo.UpgradeSolution(operation.Solution);
 
                         index++;
                     }
@@ -256,84 +234,20 @@ namespace Dataverse.XrmTools.Deployer
             lblTargetValue.Text = connectionName;
             lblTargetValue.ForeColor = Color.MediumSeaGreen;
 
-            tsbDeploy.Enabled = false;
-        }
-
-        private Solution GetSolutionData()
-        {
-            _logger.Log(LogLevel.DEBUG, $"Loading solution file...");
-
-            var dialog = new OpenFileDialog
-            {
-                Title = "Select solution file...",
-                Filter = "Zip files (*.zip)|*.zip",
-                FilterIndex = 2,
-                RestoreDirectory = true
-            };
-
-            var path = GetFileDialogPath(dialog);
-            if (string.IsNullOrEmpty(path)) { return null; }
-
-            // read solution data
-            XDocument doc;
-            using (var zip = ZipFile.Open(path, ZipArchiveMode.Read))
-            {
-                var file = zip.Entries.FirstOrDefault(ent => ent.Name.Equals("solution.xml"));
-                if (file is null) { throw new Exception("Invalid solution file"); }
-
-                using (var stream = file.Open())
-                {
-                    doc = XDocument.Load(stream);
-                }
-            }
-
-            if (doc is null) { throw new Exception("Invalid solution file"); }
-
-            var solManifestNodes = doc.Descendants("SolutionManifest");
-            var solDisplayNames = solManifestNodes.Select(node => node.Element("LocalizedNames")).FirstOrDefault().Descendants();
-            var publisherNodes = solManifestNodes.Select(node => node.Element("Publisher")).FirstOrDefault().Descendants();
-            var pubDisplayNames = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("LocalizedNames")).Descendants();
-
-            return new Solution
-            {
-                LogicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value,
-                DisplayName = solDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value,
-                Version = solManifestNodes.Select(node => node.Element("Version")).FirstOrDefault().Value,
-                IsManaged = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? true : false,
-                Publisher = new Publisher
-                {
-                    LogicalName = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("UniqueName")).Value,
-                    DisplayName = pubDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value
-                },
-                SolutionBytes = File.ReadAllBytes(path)
-            };
-        }
-
-        private string GetFileDialogPath(FileDialog dialog)
-        {
-            var path = string.Empty;
-
-            using (var ofd = dialog as OpenFileDialog)
-            {
-                if (ofd.ShowDialog(this) == DialogResult.OK)
-                {
-                    path = ofd.FileName;
-                }
-            }
-
-            return path;
+            tsbExecute.Enabled = false;
         }
         #endregion Private Helper Methods
 
         #region Form Events
         private void lvSolutions_Resize(object sender, EventArgs e)
         {
-            var maxWidth = lvSolutions.Width >= 713 ? lvSolutions.Width : 713;
-            chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.34);
-            chSolVersion.Width = (int)Math.Floor(maxWidth * 0.15);
-            chSolManaged.Width = (int)Math.Floor(maxWidth * 0.15);
-            chSolPublisher.Width = (int)Math.Floor(maxWidth * 0.34);
-            chSolPublisherLogicalNameHidden.Width = 0;
+            var maxWidth = lvOperations.Width >= 713 ? lvOperations.Width : 713;
+            chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
+            chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.34);
+            chOpVersion.Width = (int)Math.Floor(maxWidth * 0.10);
+            chOpManaged.Width = (int)Math.Floor(maxWidth * 0.15);
+            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.29);
+            chOpPublisherLogicalNameHidden.Width = 0;
         }
 
         private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -352,18 +266,13 @@ namespace Dataverse.XrmTools.Deployer
 
         private void btnAddSolution_Click(object sender, EventArgs e)
         {
-            try
+            using (var form = new AddOperation(_logger))
             {
-                //QueueSolution();
+                form.OnExport += HandleExportOperationEvent;
+                form.OnImport += HandleImportOperationEvent;
+                form.OnDelete += HandleDeleteOperationEvent;
 
-                var addOpDlg = new AddOperation();
-                addOpDlg.ShowDialog(ParentForm);
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                _logger.Log(LogLevel.ERROR, ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                form.ShowDialog();
             }
         }
 
@@ -398,19 +307,74 @@ namespace Dataverse.XrmTools.Deployer
 
         private void cmsiRemove_Click(object sender, EventArgs e)
         {
-            if (lvSolutions.FocusedItem != null && lvSolutions.SelectedItems.Count > 0)
+            if (lvOperations.FocusedItem != null && lvOperations.SelectedItems.Count > 0)
             {
-                var selected = lvSolutions.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-                lvSolutions.Items.RemoveAt(selected.Index);
+                var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+                lvOperations.Items.RemoveAt(selected.Index);
 
-                var solution = selected.ToObject(new Solution()) as Solution;
-                var item = _solutions.FirstOrDefault(sol => sol.LogicalName.Equals(solution.LogicalName));
+                var operation = selected.ToObject(new Operation()) as Operation;
+                var item = _operations.FirstOrDefault(op => op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
                 if (item != null)
                 {
-                    _solutions.Remove(item);
+                    _operations.Remove(item);
+
+                    _logger.Log(LogLevel.INFO, $"Removed '{operation.Type}' operation from queue ({operation.Solution.DisplayName})");
                 }
             }
         }
         #endregion Form Events
+
+        #region Custom Handler Events
+        private void HandleExportOperationEvent(object sender, ExportEventArgs args)
+        {
+            var operation = new Operation { Type = OperationType.EXPORT, Solution = args.Solution };
+            if (_operations.Any(op => op.Type.Equals(OperationType.EXPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
+            {
+                throw new Exception($"{args.Solution.DisplayName} export operation is already added to queue");
+            }
+
+            _operations.Add(operation);
+            var lvItem = operation.ToListViewItem();
+            lvOperations.Items.Add(lvItem);
+
+            _logger.Log(LogLevel.INFO, $"Added 'Export' operation to queue ({args.Solution.DisplayName})");
+
+            tsbExecute.Enabled = true;
+        }
+
+        private void HandleImportOperationEvent(object sender, ImportEventArgs args)
+        {
+            var operation = new Operation { Type = OperationType.IMPORT, Solution = args.Solution };
+            if(_operations.Any(op => op.Type.Equals(OperationType.IMPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
+            {
+                throw new Exception($"{args.Solution.DisplayName} import operation is already added to queue");
+            }
+
+            _operations.Add(operation);
+            var lvItem = operation.ToListViewItem();
+            lvOperations.Items.Add(lvItem);
+
+            _logger.Log(LogLevel.INFO, $"Added 'Import' operation to queue ({args.Solution.DisplayName})");
+
+            tsbExecute.Enabled = true;
+        }
+
+        private void HandleDeleteOperationEvent(object sender, DeleteEventArgs args)
+        {
+            var operation = new Operation { Type = OperationType.DELETE, Solution = args.Solution };
+            if (_operations.Any(op => op.Type.Equals(OperationType.DELETE) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
+            {
+                throw new Exception($"{args.Solution.DisplayName} delete operation is already added to queue");
+            }
+
+            _operations.Add(operation);
+            var lvItem = operation.ToListViewItem();
+            lvOperations.Items.Add(lvItem);
+
+            _logger.Log(LogLevel.INFO, $"Added 'Delete' operation to queue ({args.Solution.DisplayName})");
+
+            tsbExecute.Enabled = true;
+        }
+        #endregion Custom Handler Events
     }
 }

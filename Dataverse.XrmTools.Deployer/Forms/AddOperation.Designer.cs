@@ -1,4 +1,6 @@
 ﻿
+using Dataverse.XrmTools.Deployer.Controls;
+
 namespace Dataverse.XrmTools.Deployer.Forms
 {
     partial class AddOperation
@@ -33,30 +35,31 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.lblATitle = new System.Windows.Forms.Label();
             this.lblADescription = new System.Windows.Forms.Label();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
+            this.pnlOperationDetails = new System.Windows.Forms.TableLayoutPanel();
             this.gbOperationType = new System.Windows.Forms.GroupBox();
             this.rbExport = new System.Windows.Forms.RadioButton();
             this.rbImport = new System.Windows.Forms.RadioButton();
             this.rbDelete = new System.Windows.Forms.RadioButton();
-            this.pnlOperationDetails = new System.Windows.Forms.TableLayoutPanel();
-            this.gbExport = new System.Windows.Forms.GroupBox();
-            this.gbImport = new System.Windows.Forms.GroupBox();
-            this.gbDelete = new System.Windows.Forms.GroupBox();
+            this.pnlFooter = new System.Windows.Forms.Panel();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
             this.pnlHeader.SuspendLayout();
             this.pnlBody.SuspendLayout();
-            this.pnlOperationDetails.SuspendLayout();
             this.gbOperationType.SuspendLayout();
+            this.pnlFooter.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlHeader
             // 
+            this.pnlHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlHeader.BackColor = System.Drawing.Color.White;
             this.pnlHeader.Controls.Add(this.lblATitle);
             this.pnlHeader.Controls.Add(this.lblADescription);
-            this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
             this.pnlHeader.Margin = new System.Windows.Forms.Padding(4);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(1245, 71);
+            this.pnlHeader.Size = new System.Drawing.Size(1203, 74);
             this.pnlHeader.TabIndex = 1;
             // 
             // lblATitle
@@ -83,18 +86,35 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // 
             // pnlBody
             // 
+            this.pnlBody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlBody.BackColor = System.Drawing.SystemColors.Window;
             this.pnlBody.ColumnCount = 1;
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.pnlBody.Controls.Add(this.pnlOperationDetails, 0, 1);
             this.pnlBody.Controls.Add(this.gbOperationType, 0, 0);
-            this.pnlBody.Location = new System.Drawing.Point(10, 78);
+            this.pnlBody.Location = new System.Drawing.Point(0, 78);
+            this.pnlBody.Margin = new System.Windows.Forms.Padding(0);
             this.pnlBody.Name = "pnlBody";
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 85F));
-            this.pnlBody.Size = new System.Drawing.Size(1223, 495);
+            this.pnlBody.Size = new System.Drawing.Size(1206, 440);
             this.pnlBody.TabIndex = 4;
+            // 
+            // pnlOperationDetails
+            // 
+            this.pnlOperationDetails.BackColor = System.Drawing.SystemColors.Window;
+            this.pnlOperationDetails.ColumnCount = 1;
+            this.pnlOperationDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1217F));
+            this.pnlOperationDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlOperationDetails.Location = new System.Drawing.Point(3, 69);
+            this.pnlOperationDetails.Name = "pnlOperationDetails";
+            this.pnlOperationDetails.RowCount = 1;
+            this.pnlOperationDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 440F));
+            this.pnlOperationDetails.Size = new System.Drawing.Size(1200, 368);
+            this.pnlOperationDetails.TabIndex = 5;
             // 
             // gbOperationType
             // 
@@ -103,7 +123,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.gbOperationType.Controls.Add(this.rbDelete);
             this.gbOperationType.Location = new System.Drawing.Point(3, 3);
             this.gbOperationType.Name = "gbOperationType";
-            this.gbOperationType.Size = new System.Drawing.Size(1217, 68);
+            this.gbOperationType.Size = new System.Drawing.Size(1200, 60);
             this.gbOperationType.TabIndex = 5;
             this.gbOperationType.TabStop = false;
             this.gbOperationType.Text = "Operation Type";
@@ -118,6 +138,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.rbExport.TabStop = true;
             this.rbExport.Text = "Export";
             this.rbExport.UseVisualStyleBackColor = true;
+            this.rbExport.CheckedChanged += new System.EventHandler(this.rbExport_CheckedChanged);
             // 
             // rbImport
             // 
@@ -129,6 +150,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.rbImport.TabStop = true;
             this.rbImport.Text = "Import";
             this.rbImport.UseVisualStyleBackColor = true;
+            this.rbImport.CheckedChanged += new System.EventHandler(this.rbImport_CheckedChanged);
             // 
             // rbDelete
             // 
@@ -140,63 +162,51 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.rbDelete.TabStop = true;
             this.rbDelete.Text = "Delete";
             this.rbDelete.UseVisualStyleBackColor = true;
+            this.rbDelete.CheckedChanged += new System.EventHandler(this.rbDelete_CheckedChanged);
             // 
-            // pnlOperationDetails
+            // pnlFooter
             // 
-            this.pnlOperationDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.pnlFooter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlOperationDetails.BackColor = System.Drawing.SystemColors.Window;
-            this.pnlOperationDetails.ColumnCount = 3;
-            this.pnlOperationDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.pnlOperationDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.pnlOperationDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.pnlOperationDetails.Controls.Add(this.gbDelete, 2, 0);
-            this.pnlOperationDetails.Controls.Add(this.gbImport, 1, 0);
-            this.pnlOperationDetails.Controls.Add(this.gbExport, 0, 0);
-            this.pnlOperationDetails.Location = new System.Drawing.Point(3, 77);
-            this.pnlOperationDetails.Name = "pnlOperationDetails";
-            this.pnlOperationDetails.RowCount = 1;
-            this.pnlOperationDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 440F));
-            this.pnlOperationDetails.Size = new System.Drawing.Size(1217, 415);
-            this.pnlOperationDetails.TabIndex = 5;
+            this.pnlFooter.BackColor = System.Drawing.Color.White;
+            this.pnlFooter.Controls.Add(this.btnCancel);
+            this.pnlFooter.Controls.Add(this.btnClose);
+            this.pnlFooter.Location = new System.Drawing.Point(0, 522);
+            this.pnlFooter.Margin = new System.Windows.Forms.Padding(4);
+            this.pnlFooter.Name = "pnlFooter";
+            this.pnlFooter.Size = new System.Drawing.Size(1203, 64);
+            this.pnlFooter.TabIndex = 12;
             // 
-            // gbExport
+            // btnCancel
             // 
-            this.gbExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbExport.Location = new System.Drawing.Point(3, 3);
-            this.gbExport.Name = "gbExport";
-            this.gbExport.Size = new System.Drawing.Size(399, 434);
-            this.gbExport.TabIndex = 0;
-            this.gbExport.TabStop = false;
-            this.gbExport.Text = "Export Options";
+            this.btnCancel.Location = new System.Drawing.Point(13, 18);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(133, 34);
+            this.btnCancel.TabIndex = 7;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // gbImport
+            // btnClose
             // 
-            this.gbImport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbImport.Location = new System.Drawing.Point(408, 3);
-            this.gbImport.Name = "gbImport";
-            this.gbImport.Size = new System.Drawing.Size(399, 434);
-            this.gbImport.TabIndex = 2;
-            this.gbImport.TabStop = false;
-            this.gbImport.Text = "Import Options";
-            // 
-            // gbDelete
-            // 
-            this.gbDelete.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbDelete.Location = new System.Drawing.Point(813, 3);
-            this.gbDelete.Name = "gbDelete";
-            this.gbDelete.Size = new System.Drawing.Size(401, 434);
-            this.gbDelete.TabIndex = 3;
-            this.gbDelete.TabStop = false;
-            this.gbDelete.Text = "Delete Options";
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(1087, 22);
+            this.btnClose.Margin = new System.Windows.Forms.Padding(4);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(100, 28);
+            this.btnClose.TabIndex = 5;
+            this.btnClose.Text = "OK";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // AddOperation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1245, 585);
+            this.ClientSize = new System.Drawing.Size(1203, 585);
+            this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlBody);
             this.Controls.Add(this.pnlHeader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
@@ -210,9 +220,9 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.pnlHeader.ResumeLayout(false);
             this.pnlHeader.PerformLayout();
             this.pnlBody.ResumeLayout(false);
-            this.pnlOperationDetails.ResumeLayout(false);
             this.gbOperationType.ResumeLayout(false);
             this.gbOperationType.PerformLayout();
+            this.pnlFooter.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -231,14 +241,8 @@ namespace Dataverse.XrmTools.Deployer.Forms
         private System.Windows.Forms.RadioButton rbImport;
         private System.Windows.Forms.RadioButton rbDelete;
         private System.Windows.Forms.TableLayoutPanel pnlOperationDetails;
-
-        // Export
-        private System.Windows.Forms.GroupBox gbExport;
-
-        // Import
-        private System.Windows.Forms.GroupBox gbImport;
-
-        // Delete
-        private System.Windows.Forms.GroupBox gbDelete;
+        private System.Windows.Forms.Panel pnlFooter;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnClose;
     }
 }

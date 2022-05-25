@@ -25,7 +25,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tsMain = new System.Windows.Forms.ToolStrip();
-            this.tsbDeploy = new System.Windows.Forms.ToolStripButton();
+            this.tsbExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbAbort = new System.Windows.Forms.ToolStripButton();
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
@@ -36,12 +36,13 @@
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbQueue = new System.Windows.Forms.GroupBox();
             this.btnAddOperation = new System.Windows.Forms.Button();
-            this.lvSolutions = new System.Windows.Forms.ListView();
-            this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvOperations = new System.Windows.Forms.ListView();
+            this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLogs = new System.Windows.Forms.GroupBox();
@@ -61,7 +62,7 @@
             this.tsMain.AutoSize = false;
             this.tsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbDeploy,
+            this.tsbExecute,
             this.tsbAbort});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
@@ -69,15 +70,15 @@
             this.tsMain.TabIndex = 9;
             this.tsMain.Text = "Queue Toolstrip";
             // 
-            // tsbDeploy
+            // tsbExecute
             // 
-            this.tsbDeploy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbDeploy.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbDeploy.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbDeploy.Name = "tsbDeploy";
-            this.tsbDeploy.Size = new System.Drawing.Size(89, 27);
-            this.tsbDeploy.Text = "Start Deploy";
-            this.tsbDeploy.Click += new System.EventHandler(this.tsbDeploy_Click);
+            this.tsbExecute.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbExecute.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbExecute.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbExecute.Name = "tsbExecute";
+            this.tsbExecute.Size = new System.Drawing.Size(59, 27);
+            this.tsbExecute.Text = "Execute";
+            this.tsbExecute.Click += new System.EventHandler(this.tsbDeploy_Click);
             // 
             // tsbAbort
             // 
@@ -198,7 +199,7 @@
             // 
             this.pnlBody.SetColumnSpan(this.gbQueue, 6);
             this.gbQueue.Controls.Add(this.btnAddOperation);
-            this.gbQueue.Controls.Add(this.lvSolutions);
+            this.gbQueue.Controls.Add(this.lvOperations);
             this.gbQueue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbQueue.Location = new System.Drawing.Point(3, 2);
             this.gbQueue.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -224,55 +225,61 @@
             this.btnAddOperation.UseVisualStyleBackColor = true;
             this.btnAddOperation.Click += new System.EventHandler(this.btnAddSolution_Click);
             // 
-            // lvSolutions
+            // lvOperations
             // 
-            this.lvSolutions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lvOperations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvSolutions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chSolDisplayName,
-            this.chSolVersion,
-            this.chSolManaged,
-            this.chSolPublisher,
-            this.chSolPublisherLogicalNameHidden});
-            this.lvSolutions.ContextMenuStrip = this.cmsContextMenu;
-            this.lvSolutions.FullRowSelect = true;
-            this.lvSolutions.HideSelection = false;
-            this.lvSolutions.Location = new System.Drawing.Point(7, 58);
-            this.lvSolutions.Margin = new System.Windows.Forms.Padding(4);
-            this.lvSolutions.MultiSelect = false;
-            this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(1066, 868);
-            this.lvSolutions.TabIndex = 2;
-            this.lvSolutions.UseCompatibleStateImageBehavior = false;
-            this.lvSolutions.View = System.Windows.Forms.View.Details;
-            this.lvSolutions.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
-            this.lvSolutions.Resize += new System.EventHandler(this.lvSolutions_Resize);
+            this.lvOperations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chOpType,
+            this.chOpDisplayName,
+            this.chOpVersion,
+            this.chOpManaged,
+            this.chOpPublisher,
+            this.chOpPublisherLogicalNameHidden});
+            this.lvOperations.ContextMenuStrip = this.cmsContextMenu;
+            this.lvOperations.FullRowSelect = true;
+            this.lvOperations.HideSelection = false;
+            this.lvOperations.Location = new System.Drawing.Point(7, 58);
+            this.lvOperations.Margin = new System.Windows.Forms.Padding(4);
+            this.lvOperations.MultiSelect = false;
+            this.lvOperations.Name = "lvOperations";
+            this.lvOperations.Size = new System.Drawing.Size(1066, 868);
+            this.lvOperations.TabIndex = 2;
+            this.lvOperations.UseCompatibleStateImageBehavior = false;
+            this.lvOperations.View = System.Windows.Forms.View.Details;
+            this.lvOperations.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
+            this.lvOperations.Resize += new System.EventHandler(this.lvSolutions_Resize);
             // 
-            // chSolDisplayName
+            // chOpType
             // 
-            this.chSolDisplayName.Text = "Display Name";
-            this.chSolDisplayName.Width = 350;
+            this.chOpType.Text = "Type";
+            this.chOpType.Width = 100;
             // 
-            // chSolVersion
+            // chOpDisplayName
             // 
-            this.chSolVersion.Text = "Version";
-            this.chSolVersion.Width = 150;
+            this.chOpDisplayName.Text = "Display Name";
+            this.chOpDisplayName.Width = 350;
             // 
-            // chSolManaged
+            // chOpVersion
             // 
-            this.chSolManaged.Text = "Is Managed";
-            this.chSolManaged.Width = 150;
+            this.chOpVersion.Text = "Version";
+            this.chOpVersion.Width = 100;
             // 
-            // chSolPublisher
+            // chOpManaged
             // 
-            this.chSolPublisher.Text = "Publisher";
-            this.chSolPublisher.Width = 350;
+            this.chOpManaged.Text = "Is Managed";
+            this.chOpManaged.Width = 150;
             // 
-            // chSolPublisherLogicalNameHidden
+            // chOpPublisher
             // 
-            this.chSolPublisherLogicalNameHidden.Text = "[Hidden] Publisher Logical Name";
-            this.chSolPublisherLogicalNameHidden.Width = 0;
+            this.chOpPublisher.Text = "Publisher";
+            this.chOpPublisher.Width = 300;
+            // 
+            // chOpPublisherLogicalNameHidden
+            // 
+            this.chOpPublisherLogicalNameHidden.Text = "[Hidden] Publisher Logical Name";
+            this.chOpPublisherLogicalNameHidden.Width = 0;
             // 
             // cmsContextMenu
             // 
@@ -362,15 +369,16 @@
 
         // Queue Group
         private System.Windows.Forms.GroupBox gbQueue;
-        private System.Windows.Forms.ToolStripButton tsbDeploy;
+        private System.Windows.Forms.ToolStripButton tsbExecute;
         private System.Windows.Forms.ToolStripButton tsbAbort;
         private System.Windows.Forms.Button btnAddOperation;
-        private System.Windows.Forms.ListView lvSolutions;
-        private System.Windows.Forms.ColumnHeader chSolDisplayName;
-        private System.Windows.Forms.ColumnHeader chSolVersion;
-        private System.Windows.Forms.ColumnHeader chSolManaged;
-        private System.Windows.Forms.ColumnHeader chSolPublisher;
-        private System.Windows.Forms.ColumnHeader chSolPublisherLogicalNameHidden;
+        private System.Windows.Forms.ListView lvOperations;
+        private System.Windows.Forms.ColumnHeader chOpType;
+        private System.Windows.Forms.ColumnHeader chOpDisplayName;
+        private System.Windows.Forms.ColumnHeader chOpVersion;
+        private System.Windows.Forms.ColumnHeader chOpManaged;
+        private System.Windows.Forms.ColumnHeader chOpPublisher;
+        private System.Windows.Forms.ColumnHeader chOpPublisherLogicalNameHidden;
         private System.Windows.Forms.ContextMenuStrip cmsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem cmsiRemove;
 
