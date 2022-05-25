@@ -1,8 +1,10 @@
 ﻿// System
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
 // Deployer
+using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.AppSettings;
 
@@ -36,16 +38,18 @@ namespace Dataverse.XrmTools.Deployer.Helpers
         {
             if (output is Operation)
             {
+                Enum.TryParse(lvItem.SubItems[0].Text, out OperationType type);
+
                 return new Operation
                 {
-                    Type = Enums.OperationType.IMPORT,
+                    Type = type,
                     Solution = new Solution
                     {
                         LogicalName = (string)lvItem.Tag,
-                        DisplayName = lvItem.SubItems[0].Text,
-                        Version = lvItem.SubItems[1].Text,
-                        IsManaged = lvItem.SubItems[2].Text.Equals("Yes") ? true : false,
-                        Publisher = new Publisher { DisplayName = lvItem.SubItems[3].Text, LogicalName = lvItem.SubItems[4].Text }
+                        DisplayName = lvItem.SubItems[1].Text,
+                        Version = lvItem.SubItems[2].Text,
+                        IsManaged = lvItem.SubItems[3].Text.Equals("Yes") ? true : false,
+                        Publisher = new Publisher { DisplayName = lvItem.SubItems[4].Text, LogicalName = lvItem.SubItems[5].Text }
                     }
                 };
             }
