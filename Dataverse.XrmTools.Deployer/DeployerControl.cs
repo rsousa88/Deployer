@@ -42,17 +42,23 @@ namespace Dataverse.XrmTools.Deployer
 
         // flags
         private bool _working;
+
+        // handlers
+        private Logger _logger;
         #endregion Variables
 
         public DeployerControl()
         {
-            Log(LogLevel.Information, "----- Starting Deployer -----");
+            LogInfo("----- Starting Deployer -----");
 
-            Log(LogLevel.Debug, "Loading Settings...");
+            LogInfo("Loading Settings...");
             SettingsHelper.GetSettings(out _settings);
 
-            Log(LogLevel.Debug, "Initializing components...");
+            LogInfo("Initializing components...");
             InitializeComponent();
+
+            _logger = new Logger();
+            _logger.OnLog += Log;
         }
 
         public void DataMigrationControl_Load(object sender, EventArgs e)
@@ -68,19 +74,19 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
-                Log(LogLevel.Debug, $"Updating connection...");
+                _logger.Log(LogLevel.DEBUG, $"Updating connection...");
                 base.UpdateConnection(newService, detail, actionName, parameter);
-                Log(LogLevel.Debug, $"Connection successfully updated...");
+                _logger.Log(LogLevel.DEBUG, $"Connection successfully updated...");
 
                 _client = detail.ServiceClient;
 
                 if (!actionName.Equals("AdditionalOrganization"))
                 {
-                    Log(LogLevel.Debug, $"Checking settings for known instances...");
+                    _logger.Log(LogLevel.DEBUG, $"Checking settings for known instances...");
                     _instance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_client.ConnectedOrgUniqueName));
                     if (_instance is null)
                     {
-                        Log(LogLevel.Debug, $"New instance '{_client.ConnectedOrgUniqueName}': Adding to settings...");
+                        _logger.Log(LogLevel.DEBUG, $"New instance '{_client.ConnectedOrgUniqueName}': Adding to settings...");
                         _instance = new Instance
                         {
                             Id = _client.ConnectedOrgId,
@@ -92,21 +98,21 @@ namespace Dataverse.XrmTools.Deployer
                     }
                     else
                     {
-                        Log(LogLevel.Debug, $"Found known instance '{_instance.UniqueName}'");
+                        _logger.Log(LogLevel.DEBUG, $"Found known instance '{_instance.UniqueName}'");
                     }
 
                     // save settings file
                     SettingsHelper.SetSettings(_settings);
 
                     // render UI components
-                    Log(LogLevel.Debug, $"Rendering UI components...");
+                    _logger.Log(LogLevel.DEBUG, $"Rendering UI components...");
                     RenderInitialComponents(_instance.FriendlyName);
                 }
             }
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                Log(LogLevel.Error, ex.Message);
+                _logger.Log(LogLevel.ERROR, ex.Message);
                 MessageBox.Show(this, $"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -144,7 +150,7 @@ namespace Dataverse.XrmTools.Deployer
             var count = _solutions.Count;
             if (DialogResult.No == MessageBox.Show(this, $@"Are you sure you want to deploy {count} solutions?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
 
-            Log(LogLevel.Debug, $"Deploying queued solutions...");
+            _logger.Log(LogLevel.DEBUG, $"Deploying queued solutions...");
             if (_working) { return; }
             ManageWorkingState(true);
 
@@ -154,7 +160,7 @@ namespace Dataverse.XrmTools.Deployer
                 IsCancelable = true,
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(Service, _client);
+                    var repo = new CrmRepo(Service, _client, _logger);
 
                     var index = 1;
                     foreach (var solution in _solutions)
@@ -164,11 +170,11 @@ namespace Dataverse.XrmTools.Deployer
                         var progress = 100 * index / count;
 
                         worker.ReportProgress(progress, $"Importing '{solution.DisplayName}' solution ({index}/{count})");
-                        Log(LogLevel.Debug, $"Importing '{solution.DisplayName}' solution...");
+                        //_logger.Log(LogLevel.DEBUG, $"Importing '{solution.DisplayName}' solution...");
                         repo.ImportSolution(solution);
 
                         worker.ReportProgress(progress, $"Upgrading '{solution.DisplayName}' solution ({index}/{count})");
-                        Log(LogLevel.Debug, $"Upgrading '{solution.DisplayName}' solution...");
+                        //_logger.Log(LogLevel.DEBUG, $"Upgrading '{solution.DisplayName}' solution...");
                         repo.UpgradeSolution(solution);
 
                         index++;
@@ -186,7 +192,7 @@ namespace Dataverse.XrmTools.Deployer
 
                     if (args.Error != null)
                     {
-                        Log(LogLevel.Error, args.Error.Message);
+                        _logger.Log(LogLevel.ERROR, args.Error.Message);
                         MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     else
@@ -203,27 +209,30 @@ namespace Dataverse.XrmTools.Deployer
         #endregion Private Main Methods
 
         #region Private Helper Methods
-        private void Log(LogLevel level, string message)
+        private void Log(object sender, LoggerEventArgs args)
         {
-            switch (level)
+            switch (args.Level)
             {
-                case LogLevel.Debug:
-                    LogInfo(message);
+                case LogLevel.DEBUG:
+                    LogInfo(args.Message);
                     break;
-                case LogLevel.Information:
-                    LogInfo(message);
-                    if (txtLogs != null) { txtLogs.AppendText($"INFO | {DateTime.Now} | {message}"); }
+                case LogLevel.INFO:
+                    LogInfo(args.Message);
                     break;
-                case LogLevel.Warning:
-                    LogWarning(message);
-                    if (txtLogs != null) { txtLogs.AppendText($"WARN | {DateTime.Now} | {message}"); }
+                case LogLevel.WARN:
+                    LogWarning(args.Message);
                     break;
-                case LogLevel.Error:
-                    LogError(message);
-                    if (txtLogs != null) { txtLogs.AppendText($"ERROR | {DateTime.Now} | {message}"); }
+                case LogLevel.ERROR:
+                    LogError(args.Message);
                     break;
                 default:
                     break;
+            }
+
+            if (/*!args.Level.Equals(LogLevel.DEBUG) && */txtLogs != null)
+            {
+                txtLogs.AppendText($"{args.Level} | {DateTime.Now} | {args.Message}");
+                txtLogs.AppendText(Environment.NewLine);
             }
         }
 
@@ -249,7 +258,7 @@ namespace Dataverse.XrmTools.Deployer
 
         private Solution GetSolutionData()
         {
-            Log(LogLevel.Debug, $"Loading solution file...");
+            _logger.Log(LogLevel.DEBUG, $"Loading solution file...");
 
             var dialog = new OpenFileDialog
             {
@@ -333,7 +342,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                Log(LogLevel.Error, ex.Message);
+                _logger.Log(LogLevel.ERROR, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -347,7 +356,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                Log(LogLevel.Error, ex.Message);
+                _logger.Log(LogLevel.ERROR, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -361,7 +370,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                Log(LogLevel.Error, ex.Message);
+                _logger.Log(LogLevel.ERROR, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -376,7 +385,7 @@ namespace Dataverse.XrmTools.Deployer
             catch (Exception ex)
             {
                 ManageWorkingState(false);
-                Log(LogLevel.Error, ex.Message);
+                _logger.Log(LogLevel.ERROR, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

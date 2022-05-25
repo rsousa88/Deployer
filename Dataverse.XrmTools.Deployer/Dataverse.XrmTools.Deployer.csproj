@@ -210,6 +210,7 @@
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Enums\LogLevel.cs" />
+    <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Models\ImportAndUpgradeResponse.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
