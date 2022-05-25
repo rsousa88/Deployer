@@ -93,8 +93,8 @@
             // pnlMain
             // 
             this.pnlMain.ColumnCount = 2;
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85F));
             this.pnlMain.Controls.Add(this.pnlSettings, 0, 0);
             this.pnlMain.Controls.Add(this.pnlBody, 1, 0);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -312,10 +312,10 @@
             this.txtLogs.Location = new System.Drawing.Point(6, 20);
             this.txtLogs.Multiline = true;
             this.txtLogs.Name = "txtLogs";
-            this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtLogs.Size = new System.Drawing.Size(668, 907);
             this.txtLogs.TabIndex = 2;
+            this.txtLogs.ReadOnly = true;
             // 
             // DeployerControl
             // 

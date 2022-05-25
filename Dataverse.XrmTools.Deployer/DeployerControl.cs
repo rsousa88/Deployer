@@ -63,6 +63,7 @@ namespace Dataverse.XrmTools.Deployer
 
         public void DataMigrationControl_Load(object sender, EventArgs e)
         {
+            _logger.Log(LogLevel.INFO, "Deployer tool initialized");
             ExecuteMethod(WhoAmI);
         }
 
@@ -142,6 +143,8 @@ namespace Dataverse.XrmTools.Deployer
             var lvItem = solution.ToListViewItem();
             lvSolutions.Items.Add(lvItem);
 
+            _logger.Log(LogLevel.INFO, $"Added solution {solution.DisplayName} to queue");
+
             tsbDeploy.Enabled = true;
         }
 
@@ -170,11 +173,9 @@ namespace Dataverse.XrmTools.Deployer
                         var progress = 100 * index / count;
 
                         worker.ReportProgress(progress, $"Importing '{solution.DisplayName}' solution ({index}/{count})");
-                        //_logger.Log(LogLevel.DEBUG, $"Importing '{solution.DisplayName}' solution...");
                         repo.ImportSolution(solution);
 
                         worker.ReportProgress(progress, $"Upgrading '{solution.DisplayName}' solution ({index}/{count})");
-                        //_logger.Log(LogLevel.DEBUG, $"Upgrading '{solution.DisplayName}' solution...");
                         repo.UpgradeSolution(solution);
 
                         index++;
@@ -229,10 +230,12 @@ namespace Dataverse.XrmTools.Deployer
                     break;
             }
 
-            if (/*!args.Level.Equals(LogLevel.DEBUG) && */txtLogs != null)
+            if (/*!args.Level.Equals(LogLevel.DEBUG) && */IsHandleCreated)
             {
-                txtLogs.AppendText($"{args.Level} | {DateTime.Now} | {args.Message}");
-                txtLogs.AppendText(Environment.NewLine);
+                txtLogs.Invoke(new MethodInvoker(delegate {
+                    txtLogs.AppendText($"{args.Level} | {DateTime.Now} | {args.Message}");
+                    txtLogs.AppendText(Environment.NewLine);
+                }));
             }
         }
 
@@ -253,7 +256,6 @@ namespace Dataverse.XrmTools.Deployer
             lblTargetValue.ForeColor = Color.MediumSeaGreen;
 
             tsbDeploy.Enabled = false;
-            gbLogs.Enabled = false;
         }
 
         private Solution GetSolutionData()
