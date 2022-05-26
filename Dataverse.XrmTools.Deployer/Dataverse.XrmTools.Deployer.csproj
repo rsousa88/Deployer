@@ -227,6 +227,7 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\OperationStatus.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="Forms\AddOperation.cs">
@@ -239,8 +240,9 @@
     <Compile Include="HandlerArgs\ExportEventArgs.cs" />
     <Compile Include="HandlerArgs\ImportEventArgs.cs" />
     <Compile Include="HandlerArgs\OperationEventArgs.cs" />
+    <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Helpers\Logger.cs" />
-    <Compile Include="Models\ImportAndUpgradeResponse.cs" />
+    <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />

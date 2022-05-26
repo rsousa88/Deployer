@@ -127,18 +127,40 @@ namespace Dataverse.XrmTools.Deployer
             Service.Execute(new WhoAmIRequest());
         }
 
+        private IEnumerable<Solution> RetrieveSolutions()
+        {
+            LogInfo($"Loading solutions...");
+
+            var repo = new CrmRepo(Service, _client, _logger);
+            var solutions = repo.GetManagedSolutions(new string[] { "uniquename", "friendlyname", "version", "ismanaged" });
+
+            return solutions.Select(sol => new Solution
+            {
+                SolutionId = sol.GetAttributeValue<Guid>("solutionid"),
+                LogicalName = sol.GetAttributeValue<string>("uniquename"),
+                DisplayName = sol.GetAttributeValue<string>("friendlyname"),
+                Version = sol.GetAttributeValue<string>("version"),
+                IsManaged = sol.GetAttributeValue<bool>("ismanaged"),
+                Publisher = new Publisher
+                {
+                    LogicalName = sol.GetAttributeValue<AliasedValue>("publisher.uniquename").Value.ToString(),
+                    DisplayName = sol.GetAttributeValue<AliasedValue>("publisher.friendlyname").Value.ToString()
+                }
+            }).OrderBy(sol => sol.DisplayName);
+        }
+
         private void DeployQueue()
         {
             var count = _operations.Count;
             if (DialogResult.No == MessageBox.Show(this, $@"{count} operations will be executed sequentially in the presented order. Are you sure you want to continue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
 
-            _logger.Log(LogLevel.DEBUG, $"Deploying queued solutions...");
+            _logger.Log(LogLevel.INFO, $"Executing queued operations...");
             if (_working) { return; }
             ManageWorkingState(true);
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = $"Deploying queued solutions...",
+                Message = $"Executing queued operations...",
                 IsCancelable = true,
                 Work = (worker, args) =>
                 {
@@ -151,11 +173,25 @@ namespace Dataverse.XrmTools.Deployer
 
                         var progress = 100 * index / count;
 
-                        worker.ReportProgress(progress, $"Importing '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                        repo.ImportSolution(operation.Solution);
+                        switch (operation.Type)
+                        {
+                            case OperationType.EXPORT:
+                                
+                                break;
+                            case OperationType.IMPORT:
+                                worker.ReportProgress(progress, $"Importing '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.ImportSolution(operation.Solution);
 
-                        worker.ReportProgress(progress, $"Upgrading '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                        repo.UpgradeSolution(operation.Solution);
+                                worker.ReportProgress(progress, $"Upgrading '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.UpgradeSolution(operation.Solution);
+                                break;
+                            case OperationType.DELETE:
+                                worker.ReportProgress(progress, $"Deleting '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.DeleteSolution(operation.Solution);
+                                break;
+                            default:
+                                break;
+                        }
 
                         index++;
                     }
@@ -166,7 +202,8 @@ namespace Dataverse.XrmTools.Deployer
 
                     if(args.Cancelled)
                     {
-                        MessageBox.Show(this, "Operation canceled", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        _logger.Log(LogLevel.INFO, $"Operation canceled by user");
+                        MessageBox.Show(this, "Operation canceled by user", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -177,7 +214,8 @@ namespace Dataverse.XrmTools.Deployer
                     }
                     else
                     {
-                        MessageBox.Show(this, "Deploy complete", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        _logger.Log(LogLevel.INFO, $"All operations were successfully executed");
+                        MessageBox.Show(this, "All operations were successfully executed", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 },
                 ProgressChanged = args =>
@@ -243,6 +281,7 @@ namespace Dataverse.XrmTools.Deployer
         {
             var maxWidth = lvOperations.Width >= 713 ? lvOperations.Width : 713;
             chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
+            chOpLogicalName.Width = 0;
             chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.34);
             chOpVersion.Width = (int)Math.Floor(maxWidth * 0.10);
             chOpManaged.Width = (int)Math.Floor(maxWidth * 0.15);
@@ -264,13 +303,14 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void btnAddSolution_Click(object sender, EventArgs e)
+        private void btnAddOperation_Click(object sender, EventArgs e)
         {
             using (var form = new AddOperation(_logger))
             {
                 form.OnExport += HandleExportOperationEvent;
                 form.OnImport += HandleImportOperationEvent;
                 form.OnDelete += HandleDeleteOperationEvent;
+                form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
 
                 form.ShowDialog();
             }
@@ -375,6 +415,16 @@ namespace Dataverse.XrmTools.Deployer
 
             tsbExecute.Enabled = true;
         }
+
+        private IEnumerable<Solution> HandleRetrieveSolutionsEvent()
+        {
+            return RetrieveSolutions();
+        }
         #endregion Custom Handler Events
+
+        private void btnClearQueue_Click(object sender, EventArgs e)
+        {
+            lvOperations.Items.Clear();
+        }
     }
 }

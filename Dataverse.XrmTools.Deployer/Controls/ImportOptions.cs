@@ -6,7 +6,6 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Windows.Forms;
 using System.IO.Compression;
-using System.Collections.Generic;
 
 // Dataverse
 using Dataverse.XrmTools.Deployer.Enums;
@@ -19,7 +18,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
     public partial class ImportOptions : UserControl
     {
         private readonly Logger _logger;
-
         public event EventHandler<OperationEventArgs> OnOperationSelected;
 
         public ImportOptions(Logger logger)

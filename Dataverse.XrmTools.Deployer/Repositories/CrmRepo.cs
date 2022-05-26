@@ -12,6 +12,9 @@ using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.RepoInterfaces;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.Enums;
+using System.Collections.Generic;
+using Microsoft.Xrm.Sdk.Messages;
+using System.Linq;
 
 namespace Dataverse.XrmTools.Deployer.Repositories
 {
@@ -39,6 +42,37 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         #endregion Constructors
 
         #region Interface Methods
+        public IEnumerable<Entity> GetManagedSolutions(string[] columns)
+        {
+            try
+            {
+                var filter = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("ismanaged", ConditionOperator.Equal, true)
+                    }
+                };
+
+                var query = new QueryExpression("solution")
+                {
+                    ColumnSet = new ColumnSet((from c in columns select c.ToLower()).ToArray()),
+                    Criteria = filter,
+                    PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
+                };
+
+                var publisher = query.AddLink("publisher", "publisherid", "publisherid");
+                publisher.EntityAlias = "publisher";
+                publisher.Columns.AddColumns("uniquename", "friendlyname");
+
+                return GetRecords(query);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public void ImportSolution(Solution solution)
         {
             try
@@ -53,6 +87,8 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 };
 
                 var response = _service.Execute(request) as ImportSolutionAsyncResponse;
+
+                _logger.Log(LogLevel.INFO, $"Waiting for import operation...");
                 var result = CheckProgress(response.AsyncOperationId);
                 if(!result.Success)
                 {
@@ -74,6 +110,8 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             {
                 _logger.Log(LogLevel.INFO, $"Upgrading solution {solution.DisplayName}...");
                 var operationId = _client.DeleteAndPromoteSolutionAsync(solution.LogicalName);
+
+                _logger.Log(LogLevel.INFO, $"Waiting for upgrade operation...");
                 var result = CheckProgress(operationId);
                 if (!result.Success)
                 {
@@ -87,21 +125,99 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 throw;
             }
         }
+
+        public void DeleteSolution(Solution solution)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Deleting solution {solution.DisplayName}...");
+
+                var filter = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("solutionid", ConditionOperator.Equal, solution.SolutionId)
+                    }
+                };
+
+                var query = new QueryExpression("solution")
+                {
+                    ColumnSet = new ColumnSet("solutionid"),
+                    Criteria = filter
+                };
+
+                var request = new BulkDeleteRequest
+                {
+                    JobName = $"Solution {solution.DisplayName} Delete",
+                    QuerySet = new QueryExpression[]
+                    {
+                        query
+                    },
+                    ToRecipients = new Guid[] { },
+                    CCRecipients = new Guid[] { },
+                    RecurrencePattern = string.Empty
+                };
+
+                var response = _service.Execute(request) as BulkDeleteResponse;
+
+                _logger.Log(LogLevel.INFO, $"Waiting for delete operation...");
+                var result = CheckProgress(response.JobId);
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Delete operation:\n{result.Message}");
+                }
+
+                _logger.Log(LogLevel.INFO, $"Solution {solution.DisplayName} successfully deleted");
+            }
+            catch
+            {
+                throw;
+            }
+        }
         #endregion Interface Methods
 
         #region Private Methods
-        private ImportAndUpgradeResponse CheckProgress(Guid operationId)
+        public IEnumerable<Entity> GetRecords(QueryExpression query, int batchSize = 250)
+        {
+            try
+            {
+                // page info settings
+                query.PageInfo.PageNumber = 1;
+                query.PageInfo.Count = batchSize;
+
+                RetrieveMultipleResponse response;
+
+                var records = new List<Entity>();
+                do
+                {
+                    response = _service.Execute(new RetrieveMultipleRequest() { Query = query }) as RetrieveMultipleResponse;
+                    if (response == null || response.EntityCollection == null) { break; }
+
+                    records.AddRange(response.EntityCollection.Entities);
+                    query.PageInfo.PageNumber++;
+                    query.PageInfo.PagingCookie = response.EntityCollection.PagingCookie;
+                }
+                while (response.EntityCollection.MoreRecords);
+
+                return records.AsEnumerable();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private OperationResponse CheckProgress(Guid operationId)
         {
             var success = false;
+            var opStatus = Enums.OperationStatus.IN_PROGRESS;
             var message = string.Empty;
 
             var completed = false;
             var startTime = DateTime.UtcNow;
             while (!completed)
             {
-                _logger.Log(LogLevel.DEBUG, $"Checking progress...");
-
-                var async = _service.Retrieve("asyncoperation", operationId, new ColumnSet(new string[] { "statecode", "statuscode", "message" }));
+                var async = _service.Retrieve("asyncoperation", operationId, new ColumnSet(new string[] { "statecode", "statuscode", "friendlymessage", "message" }));
 
                 var state = async.GetAttributeValue<OptionSetValue>("statecode").Value;
                 var status = async.GetAttributeValue<OptionSetValue>("statuscode").Value;
@@ -111,27 +227,33 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 if (state.Equals(3))
                 {
                     completed = true;
+                    opStatus = (Enums.OperationStatus)status;
 
-                    if (status.Equals(31))
+                    if (status > 30)
                     {
-                        var raw = async.GetAttributeValue<string>("message");
+                        message = async.GetAttributeValue<string>("friendlymessage");
+                        if(string.IsNullOrEmpty(message))
+                        {
+                            var raw = async.GetAttributeValue<string>("message");
 
-                        var delimiters = new string[] { "Message: ", "Detail: " };
-                        var splitArr = raw.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+                            var delimiters = new string[] { "Message: ", "Detail: " };
+                            var splitArr = raw.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
-                        message = splitArr[1];
+                            message = splitArr[1];
+                        }
                     }
                 }
 
                 success = completed && status.Equals(30) ? true : false;
                 message = completed && status.Equals(30) ? "Solution successfully imported and upgraded" : message;
 
-                Sleep(DateTime.UtcNow - startTime);
+                if (!state.Equals(3)) { Sleep(DateTime.UtcNow - startTime); }
             }
 
-            return new ImportAndUpgradeResponse
+            return new OperationResponse
             {
                 Success = success,
+                Status = opStatus,
                 Message = message
             };
         }

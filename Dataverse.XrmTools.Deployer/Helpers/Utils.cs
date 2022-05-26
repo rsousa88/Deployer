@@ -19,6 +19,7 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
                 var item = new ListViewItem(new string[] {
                     operation.Type.ToString(),
+                    operation.Solution.LogicalName,
                     operation.Solution.DisplayName,
                     operation.Solution.Version,
                     operation.Solution.IsManaged ? "Yes" : "No",
@@ -27,7 +28,23 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
                 });
 
-                item.Tag = operation.Solution.LogicalName;
+                item.Tag = operation.Solution.SolutionId;
+                return item;
+            }
+            if (value is Solution)
+            {
+                var solution = value as Solution;
+
+                var item = new ListViewItem(new string[] {
+                    solution.LogicalName,
+                    solution.DisplayName,
+                    solution.Version,
+                    solution.IsManaged ? "Yes" : "No",
+                    solution.Publisher.DisplayName,
+                    solution.Publisher.LogicalName
+                });
+
+                item.Tag = solution.SolutionId;
                 return item;
             }
 
@@ -45,12 +62,25 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                     Type = type,
                     Solution = new Solution
                     {
-                        LogicalName = (string)lvItem.Tag,
-                        DisplayName = lvItem.SubItems[1].Text,
-                        Version = lvItem.SubItems[2].Text,
-                        IsManaged = lvItem.SubItems[3].Text.Equals("Yes") ? true : false,
-                        Publisher = new Publisher { DisplayName = lvItem.SubItems[4].Text, LogicalName = lvItem.SubItems[5].Text }
+                        SolutionId = Guid.Parse(lvItem.Tag.ToString()),
+                        LogicalName = lvItem.SubItems[1].Text,
+                        DisplayName = lvItem.SubItems[2].Text,
+                        Version = lvItem.SubItems[3].Text,
+                        IsManaged = lvItem.SubItems[4].Text.Equals("Yes") ? true : false,
+                        Publisher = new Publisher { DisplayName = lvItem.SubItems[5].Text, LogicalName = lvItem.SubItems[6].Text }
                     }
+                };
+            }
+            if (output is Solution)
+            {
+                return new Solution
+                {
+                    SolutionId = Guid.Parse(lvItem.Tag.ToString()),
+                    LogicalName = lvItem.SubItems[0].Text,
+                    DisplayName = lvItem.SubItems[1].Text,
+                    Version = lvItem.SubItems[2].Text,
+                    IsManaged = lvItem.SubItems[3].Text.Equals("Yes") ? true : false,
+                    Publisher = new Publisher { DisplayName = lvItem.SubItems[4].Text, LogicalName = lvItem.SubItems[5].Text }
                 };
             }
 
@@ -77,6 +107,16 @@ namespace Dataverse.XrmTools.Deployer.Helpers
             }
 
             listview.ListViewItemSorter = new ListViewComparer(column, listview.Sorting);
+        }
+
+        public static bool MatchFilter(this Solution solution, string filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter)) { return true; }
+
+            filter = filter.ToLower();
+
+            if (solution.DisplayName.ToLower().Contains(filter) || solution.LogicalName.ToLower().Contains(filter)) { return true; }
+            return false;
         }
     }
 }

@@ -38,6 +38,7 @@
             this.btnAddOperation = new System.Windows.Forms.Button();
             this.lvOperations = new System.Windows.Forms.ListView();
             this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -47,6 +48,7 @@
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.txtLogs = new System.Windows.Forms.TextBox();
+            this.btnClearQueue = new System.Windows.Forms.Button();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -198,6 +200,7 @@
             // gbQueue
             // 
             this.pnlBody.SetColumnSpan(this.gbQueue, 6);
+            this.gbQueue.Controls.Add(this.btnClearQueue);
             this.gbQueue.Controls.Add(this.btnAddOperation);
             this.gbQueue.Controls.Add(this.lvOperations);
             this.gbQueue.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -213,17 +216,15 @@
             // 
             // btnAddOperation
             // 
-            this.btnAddOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.btnAddOperation.Location = new System.Drawing.Point(7, 21);
             this.btnAddOperation.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddOperation.Name = "btnAddOperation";
-            this.btnAddOperation.Size = new System.Drawing.Size(1066, 29);
+            this.btnAddOperation.Size = new System.Drawing.Size(793, 29);
             this.btnAddOperation.TabIndex = 7;
             this.btnAddOperation.Text = "Add Operation to Queue";
             this.btnAddOperation.UseVisualStyleBackColor = true;
-            this.btnAddOperation.Click += new System.EventHandler(this.btnAddSolution_Click);
+            this.btnAddOperation.Click += new System.EventHandler(this.btnAddOperation_Click);
             // 
             // lvOperations
             // 
@@ -232,6 +233,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvOperations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chOpType,
+            this.chOpLogicalName,
             this.chOpDisplayName,
             this.chOpVersion,
             this.chOpManaged,
@@ -255,6 +257,11 @@
             // 
             this.chOpType.Text = "Type";
             this.chOpType.Width = 100;
+            // 
+            // chOpLogicalName
+            // 
+            this.chOpLogicalName.Text = "Solution ID";
+            this.chOpLogicalName.Width = 0;
             // 
             // chOpDisplayName
             // 
@@ -324,6 +331,20 @@
             this.txtLogs.Size = new System.Drawing.Size(715, 907);
             this.txtLogs.TabIndex = 2;
             // 
+            // btnClearQueue
+            // 
+            this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnClearQueue.Location = new System.Drawing.Point(808, 21);
+            this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
+            this.btnClearQueue.Name = "btnClearQueue";
+            this.btnClearQueue.Size = new System.Drawing.Size(265, 29);
+            this.btnClearQueue.TabIndex = 8;
+            this.btnClearQueue.Text = "Clear Queue";
+            this.btnClearQueue.UseVisualStyleBackColor = true;
+            this.btnClearQueue.Click += new System.EventHandler(this.btnClearQueue_Click);
+            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -374,6 +395,7 @@
         private System.Windows.Forms.Button btnAddOperation;
         private System.Windows.Forms.ListView lvOperations;
         private System.Windows.Forms.ColumnHeader chOpType;
+        private System.Windows.Forms.ColumnHeader chOpLogicalName;
         private System.Windows.Forms.ColumnHeader chOpDisplayName;
         private System.Windows.Forms.ColumnHeader chOpVersion;
         private System.Windows.Forms.ColumnHeader chOpManaged;
@@ -385,5 +407,6 @@
         // Layers Group
         private System.Windows.Forms.GroupBox gbLogs;
         private System.Windows.Forms.TextBox txtLogs;
+        private System.Windows.Forms.Button btnClearQueue;
     }
 }

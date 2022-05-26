@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.Controls;
 using Dataverse.XrmTools.Deployer.HandlerArgs;
+using System.Collections.Generic;
+using Dataverse.XrmTools.Deployer.Models;
 
 namespace Dataverse.XrmTools.Deployer.Forms
 {
@@ -15,6 +17,8 @@ namespace Dataverse.XrmTools.Deployer.Forms
         public event EventHandler<ExportEventArgs> OnExport;
         public event EventHandler<ImportEventArgs> OnImport;
         public event EventHandler<DeleteEventArgs> OnDelete;
+
+        public event SolutionsRetrieve OnSolutionsRetrieve;
 
         public AddOperation(Logger logger)
         {
@@ -31,7 +35,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             if(radio.Checked)
             {
                 pnlOperationDetails.Controls.Clear();
-                var export = new ExportOptions();
+                var export = new ExportOptions(_logger);
                 pnlOperationDetails.Controls.Add(export);
             }
         }
@@ -55,8 +59,11 @@ namespace Dataverse.XrmTools.Deployer.Forms
             if (radio.Checked)
             {
                 pnlOperationDetails.Controls.Clear();
-                var delete = new DeleteOptions();
+                var delete = new DeleteOptions(_logger);
                 pnlOperationDetails.Controls.Add(delete);
+
+                delete.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
+                delete.OnOperationSelected += HandleSelectedOperationEvent;
             }
         }
 
@@ -111,6 +118,11 @@ namespace Dataverse.XrmTools.Deployer.Forms
         {
             _opArgs = opArgs;
             btnClose.Enabled = true;
+        }
+
+        private IEnumerable<Solution> HandleRetrieveSolutionsEvent()
+        {
+            return OnSolutionsRetrieve?.Invoke();
         }
     }
 }

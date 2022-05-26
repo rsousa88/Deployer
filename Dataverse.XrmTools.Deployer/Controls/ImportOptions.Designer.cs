@@ -69,9 +69,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbImportSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbImportSettings.Location = new System.Drawing.Point(515, 58);
+            this.gbImportSettings.Location = new System.Drawing.Point(7, 58);
             this.gbImportSettings.Name = "gbImportSettings";
-            this.gbImportSettings.Size = new System.Drawing.Size(678, 236);
+            this.gbImportSettings.Size = new System.Drawing.Size(590, 236);
             this.gbImportSettings.TabIndex = 10;
             this.gbImportSettings.TabStop = false;
             this.gbImportSettings.Text = "Import Settings";
@@ -90,9 +90,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutionInfo.Controls.Add(this.lblLogicalNameValue);
             this.gbSolutionInfo.Controls.Add(this.lblLogicalName);
             this.gbSolutionInfo.Controls.Add(this.lblDisplayName);
-            this.gbSolutionInfo.Location = new System.Drawing.Point(9, 58);
+            this.gbSolutionInfo.Location = new System.Drawing.Point(603, 58);
             this.gbSolutionInfo.Name = "gbSolutionInfo";
-            this.gbSolutionInfo.Size = new System.Drawing.Size(500, 236);
+            this.gbSolutionInfo.Size = new System.Drawing.Size(590, 236);
             this.gbSolutionInfo.TabIndex = 9;
             this.gbSolutionInfo.TabStop = false;
             this.gbSolutionInfo.Text = "Solution Details";

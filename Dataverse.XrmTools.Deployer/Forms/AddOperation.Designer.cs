@@ -105,10 +105,11 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // 
             // pnlOperationDetails
             // 
+            this.pnlOperationDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlOperationDetails.BackColor = System.Drawing.SystemColors.Window;
             this.pnlOperationDetails.ColumnCount = 1;
             this.pnlOperationDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1217F));
-            this.pnlOperationDetails.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlOperationDetails.Location = new System.Drawing.Point(3, 69);
             this.pnlOperationDetails.Name = "pnlOperationDetails";
             this.pnlOperationDetails.RowCount = 1;
