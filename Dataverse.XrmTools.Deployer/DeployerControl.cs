@@ -1,12 +1,9 @@
 ﻿// System
 using System;
-using System.IO;
 using System.Data;
 using System.Linq;
 using System.Drawing;
-using System.Xml.Linq;
 using System.Windows.Forms;
-using System.IO.Compression;
 using System.Collections.Generic;
 
 // Microsoft
@@ -19,27 +16,30 @@ using McTools.Xrm.Connection;
 using XrmToolBox.Extensibility;
 
 // Deployer
-using Dataverse.XrmTools.Deployer.Models;
-using Dataverse.XrmTools.Deployer.Helpers;
-using Dataverse.XrmTools.Deployer.AppSettings;
-using Dataverse.XrmTools.Deployer.Repositories;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Forms;
+using Dataverse.XrmTools.Deployer.Models;
+using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.HandlerArgs;
+using Dataverse.XrmTools.Deployer.AppSettings;
+using Dataverse.XrmTools.Deployer.Repositories;
+using System.Collections.Specialized;
 
 namespace Dataverse.XrmTools.Deployer
 {
-    public partial class DeployerControl : PluginControlBase
+    public partial class DeployerControl : MultipleConnectionsPluginControlBase
     {
         #region Variables
         // settings
         private Settings _settings;
 
         // service
-        private CrmServiceClient _client;
+        private CrmServiceClient _primary;
+        private CrmServiceClient _secondary;
 
         // models
-        private Instance _instance;
+        private Instance _targetInstance;
+        private Instance _sourceInstance;
         private readonly List<Operation> _operations = new List<Operation>();
 
         // flags
@@ -81,41 +81,99 @@ namespace Dataverse.XrmTools.Deployer
                 base.UpdateConnection(newService, detail, actionName, parameter);
                 _logger.Log(LogLevel.DEBUG, $"Connection successfully updated...");
 
-                _client = detail.ServiceClient;
+                _primary = detail.ServiceClient;
+
+                var connType = actionName.Equals("AdditionalOrganization") ? "Secondary" : "Primary";
+                _logger.Log(LogLevel.DEBUG, $"Connection type: {connType}");
 
                 if (!actionName.Equals("AdditionalOrganization"))
                 {
                     _logger.Log(LogLevel.DEBUG, $"Checking settings for known instances...");
-                    _instance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_client.ConnectedOrgUniqueName));
-                    if (_instance is null)
+                    _targetInstance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_primary.ConnectedOrgUniqueName));
+                    if (_targetInstance is null)
                     {
-                        _logger.Log(LogLevel.DEBUG, $"New instance '{_client.ConnectedOrgUniqueName}': Adding to settings...");
-                        _instance = new Instance
+                        _logger.Log(LogLevel.DEBUG, $"New instance '{_primary.ConnectedOrgUniqueName}': Adding to settings...");
+                        _targetInstance = new Instance
                         {
-                            Id = _client.ConnectedOrgId,
-                            UniqueName = _client.ConnectedOrgUniqueName,
-                            FriendlyName = _client.ConnectedOrgFriendlyName
+                            Id = _primary.ConnectedOrgId,
+                            UniqueName = _primary.ConnectedOrgUniqueName,
+                            FriendlyName = _primary.ConnectedOrgFriendlyName
                         };
 
-                        _settings.Instances.Add(_instance);
+                        _settings.Instances.Add(_targetInstance);
                     }
                     else
                     {
-                        _logger.Log(LogLevel.DEBUG, $"Found known instance '{_instance.UniqueName}'");
+                        _logger.Log(LogLevel.DEBUG, $"Found known instance '{_targetInstance.UniqueName}'");
                     }
 
                     // save settings file
-                    SettingsHelper.SetSettings(_settings);
+                    _settings.SaveSettings();
 
                     // render UI components
                     _logger.Log(LogLevel.DEBUG, $"Rendering UI components...");
-                    RenderInitialComponents(_instance.FriendlyName);
+                    RenderInitialComponents(_targetInstance.FriendlyName);
+                    RenderConnectionLabel(ConnectionType.TARGET, _targetInstance.FriendlyName);
                 }
             }
             catch (Exception ex)
             {
                 ManageWorkingState(false);
                 _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(this, $"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        protected override void ConnectionDetailsUpdated(NotifyCollectionChangedEventArgs args)
+        {
+            try
+            {
+                if (args.Action.Equals(NotifyCollectionChangedAction.Add))
+                {
+                    var detail = (ConnectionDetail)args.NewItems[0];
+                    _secondary = detail.ServiceClient;
+
+                    if (_primary == null) { throw new Exception("Primary connection is invalid"); }
+                    LogInfo($"Source OrgId: {_primary.ConnectedOrgId}");
+                    LogInfo($"Source OrgUniqueName: {_primary.ConnectedOrgUniqueName}");
+                    LogInfo($"Source OrgFriendlyName: {_primary.ConnectedOrgFriendlyName}");
+                    LogInfo($"Source EnvId: {_primary.EnvironmentId}");
+
+                    if (_secondary == null) { throw new Exception("Secondary connection is invalid"); }
+                    LogInfo($"Target OrgId: {_secondary.ConnectedOrgId}");
+                    LogInfo($"Target OrgUniqueName: {_secondary.ConnectedOrgUniqueName}");
+                    LogInfo($"Target OrgFriendlyName: {_secondary.ConnectedOrgFriendlyName}");
+                    LogInfo($"Target EnvId: {_secondary.EnvironmentId}");
+
+                    if (_primary.ConnectedOrgUniqueName.Equals(_secondary.ConnectedOrgUniqueName))
+                    {
+                        throw new Exception("Source and Target connections must refer to different Dataverse instances");
+                    }
+
+                    var instance = _settings.Instances.FirstOrDefault(inst => !string.IsNullOrEmpty(inst.UniqueName) && inst.UniqueName.Equals(_secondary.ConnectedOrgUniqueName));
+                    if (instance == null)
+                    {
+                        instance = new Instance
+                        {
+                            Id = _secondary.ConnectedOrgId,
+                            UniqueName = _secondary.ConnectedOrgUniqueName,
+                            FriendlyName = _secondary.ConnectedOrgFriendlyName
+                        };
+
+                        _settings.Instances.Add(instance);
+                    }
+
+                    _sourceInstance = instance;
+
+                    _settings.SaveSettings();
+
+                    RenderConnectionLabel(ConnectionType.SOURCE, _sourceInstance.FriendlyName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
                 MessageBox.Show(this, $"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -127,12 +185,17 @@ namespace Dataverse.XrmTools.Deployer
             Service.Execute(new WhoAmIRequest());
         }
 
-        private IEnumerable<Solution> RetrieveSolutions()
+        private IEnumerable<Solution> RetrieveSolutions(PackageType queryType, ConnectionType connType)
         {
+            if(connType.Equals(ConnectionType.SOURCE) && _secondary is null)
+            {
+                throw new Exception("Source connection is required for export operation");
+            }
+
             LogInfo($"Loading solutions...");
 
-            var repo = new CrmRepo(Service, _client, _logger);
-            var solutions = repo.GetManagedSolutions(new string[] { "uniquename", "friendlyname", "version", "ismanaged" });
+            var repo = new CrmRepo(_primary, _logger, _secondary);
+            var solutions = repo.GetSolutions(new string[] { "uniquename", "friendlyname", "version", "ismanaged" }, queryType);
 
             return solutions.Select(sol => new Solution
             {
@@ -164,7 +227,7 @@ namespace Dataverse.XrmTools.Deployer
                 IsCancelable = true,
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(Service, _client, _logger);
+                    var repo = new CrmRepo(_primary, _logger);
 
                     var index = 1;
                     foreach (var operation in _operations)
@@ -176,18 +239,19 @@ namespace Dataverse.XrmTools.Deployer
                         switch (operation.Type)
                         {
                             case OperationType.EXPORT:
-                                
+                                worker.ReportProgress(progress, $"Exporting '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.ExportSolution(operation.Solution, operation.Data as ExportEventArgs);
                                 break;
                             case OperationType.IMPORT:
                                 worker.ReportProgress(progress, $"Importing '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.ImportSolution(operation.Solution);
+                                repo.ImportSolution(operation.Solution, operation.Data as ImportEventArgs);
 
                                 worker.ReportProgress(progress, $"Upgrading '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.UpgradeSolution(operation.Solution);
+                                repo.UpgradeSolution(operation.Solution, operation.Data as ImportEventArgs);
                                 break;
                             case OperationType.DELETE:
                                 worker.ReportProgress(progress, $"Deleting '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.DeleteSolution(operation.Solution);
+                                repo.DeleteSolution(operation.Solution, operation.Data as DeleteEventArgs);
                                 break;
                             default:
                                 break;
@@ -227,6 +291,13 @@ namespace Dataverse.XrmTools.Deployer
         #endregion Private Main Methods
 
         #region Private Helper Methods
+        private void RenderConnectionLabel(ConnectionType serviceType, string name)
+        {
+            var label = serviceType.Equals(ConnectionType.SOURCE) ? lblSourceValue : lblTargetValue;
+            label.Text = name;
+            label.ForeColor = Color.MediumSeaGreen;
+        }
+
         private void Log(object sender, LoggerEventArgs args)
         {
             switch (args.Level)
@@ -276,7 +347,79 @@ namespace Dataverse.XrmTools.Deployer
         }
         #endregion Private Helper Methods
 
+        #region Custom Handler Events
+        private void HandleExportOperationEvent(object sender, ExportEventArgs args)
+        {
+            var operation = new Operation { Type = OperationType.EXPORT, Solution = args.Solution, Data = args };
+            if (_operations.Any(op => op.Type.Equals(OperationType.EXPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
+            {
+                throw new Exception($"{args.Solution.DisplayName} export operation is already added to queue");
+            }
+
+            _operations.Add(operation);
+            var lvItem = operation.ToListViewItem();
+            lvOperations.Items.Add(lvItem);
+
+            _logger.Log(LogLevel.INFO, $"Added 'Export' operation to queue ({args.Solution.DisplayName})");
+
+            tsbExecute.Enabled = true;
+        }
+
+        private void HandleImportOperationEvent(object sender, ImportEventArgs args)
+        {
+            var operation = new Operation { Type = OperationType.IMPORT, Solution = args.Solution, Data = args };
+            if(_operations.Any(op => op.Type.Equals(OperationType.IMPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
+            {
+                throw new Exception($"{args.Solution.DisplayName} import operation is already added to queue");
+            }
+
+            _operations.Add(operation);
+            var lvItem = operation.ToListViewItem();
+            lvOperations.Items.Add(lvItem);
+
+            _logger.Log(LogLevel.INFO, $"Added 'Import' operation to queue ({args.Solution.DisplayName})");
+
+            tsbExecute.Enabled = true;
+        }
+
+        private void HandleDeleteOperationEvent(object sender, DeleteEventArgs args)
+        {
+            var operation = new Operation { Type = OperationType.DELETE, Solution = args.Solution, Data = args };
+            if (_operations.Any(op => op.Type.Equals(OperationType.DELETE) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
+            {
+                throw new Exception($"{args.Solution.DisplayName} delete operation is already added to queue");
+            }
+
+            _operations.Add(operation);
+            var lvItem = operation.ToListViewItem();
+            lvOperations.Items.Add(lvItem);
+
+            _logger.Log(LogLevel.INFO, $"Added 'Delete' operation to queue ({args.Solution.DisplayName})");
+
+            tsbExecute.Enabled = true;
+        }
+
+        private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
+        {
+            return RetrieveSolutions(queryType, connType);
+        }
+        #endregion Custom Handler Events
+
         #region Form Events
+        private void btnConnectSource_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AddAdditionalOrganization();
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void lvSolutions_Resize(object sender, EventArgs e)
         {
             var maxWidth = lvOperations.Width >= 713 ? lvOperations.Width : 713;
@@ -305,15 +448,30 @@ namespace Dataverse.XrmTools.Deployer
 
         private void btnAddOperation_Click(object sender, EventArgs e)
         {
-            using (var form = new AddOperation(_logger))
+            try
             {
-                form.OnExport += HandleExportOperationEvent;
-                form.OnImport += HandleImportOperationEvent;
-                form.OnDelete += HandleDeleteOperationEvent;
-                form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
+                using (var form = new AddOperation(_logger, _settings))
+                {
+                    form.OnExport += HandleExportOperationEvent;
+                    form.OnImport += HandleImportOperationEvent;
+                    form.OnDelete += HandleDeleteOperationEvent;
+                    form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
 
-                form.ShowDialog();
+                    form.ShowDialog();
+                }
             }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnClearQueue_Click(object sender, EventArgs e)
+        {
+            lvOperations.Items.Clear();
+            _operations.Clear();
         }
 
         private void tsbDeploy_Click(object sender, EventArgs e)
@@ -363,68 +521,5 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
         #endregion Form Events
-
-        #region Custom Handler Events
-        private void HandleExportOperationEvent(object sender, ExportEventArgs args)
-        {
-            var operation = new Operation { Type = OperationType.EXPORT, Solution = args.Solution };
-            if (_operations.Any(op => op.Type.Equals(OperationType.EXPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
-            {
-                throw new Exception($"{args.Solution.DisplayName} export operation is already added to queue");
-            }
-
-            _operations.Add(operation);
-            var lvItem = operation.ToListViewItem();
-            lvOperations.Items.Add(lvItem);
-
-            _logger.Log(LogLevel.INFO, $"Added 'Export' operation to queue ({args.Solution.DisplayName})");
-
-            tsbExecute.Enabled = true;
-        }
-
-        private void HandleImportOperationEvent(object sender, ImportEventArgs args)
-        {
-            var operation = new Operation { Type = OperationType.IMPORT, Solution = args.Solution };
-            if(_operations.Any(op => op.Type.Equals(OperationType.IMPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
-            {
-                throw new Exception($"{args.Solution.DisplayName} import operation is already added to queue");
-            }
-
-            _operations.Add(operation);
-            var lvItem = operation.ToListViewItem();
-            lvOperations.Items.Add(lvItem);
-
-            _logger.Log(LogLevel.INFO, $"Added 'Import' operation to queue ({args.Solution.DisplayName})");
-
-            tsbExecute.Enabled = true;
-        }
-
-        private void HandleDeleteOperationEvent(object sender, DeleteEventArgs args)
-        {
-            var operation = new Operation { Type = OperationType.DELETE, Solution = args.Solution };
-            if (_operations.Any(op => op.Type.Equals(OperationType.DELETE) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
-            {
-                throw new Exception($"{args.Solution.DisplayName} delete operation is already added to queue");
-            }
-
-            _operations.Add(operation);
-            var lvItem = operation.ToListViewItem();
-            lvOperations.Items.Add(lvItem);
-
-            _logger.Log(LogLevel.INFO, $"Added 'Delete' operation to queue ({args.Solution.DisplayName})");
-
-            tsbExecute.Enabled = true;
-        }
-
-        private IEnumerable<Solution> HandleRetrieveSolutionsEvent()
-        {
-            return RetrieveSolutions();
-        }
-        #endregion Custom Handler Events
-
-        private void btnClearQueue_Click(object sender, EventArgs e)
-        {
-            lvOperations.Items.Clear();
-        }
     }
 }

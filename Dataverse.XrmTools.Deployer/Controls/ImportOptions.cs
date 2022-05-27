@@ -27,7 +27,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             InitializeComponent();
 
             gbSolutionInfo.Enabled = false;
-            gbImportSettings.Enabled = false;
+            gbImportFromQueue.Enabled = false;
         }
 
         private void btnAddSolution_Click(object sender, EventArgs e)
@@ -43,7 +43,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     lblManagedValue.Text = solution.IsManaged.ToString();
                     lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                    var args = new OperationEventArgs
+                    var args = new ImportEventArgs
                     {
                         Type = OperationType.IMPORT,
                         Solution = solution
@@ -52,7 +52,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     OnOperationSelected?.Invoke(this, args);
 
                     gbSolutionInfo.Enabled = true;
-                    gbImportSettings.Enabled = true;
                 }
             }
             catch (Exception ex)
@@ -76,6 +75,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             var path = GetFileDialogPath(dialog);
             if (string.IsNullOrEmpty(path)) { return null; }
+
+            txtImportPathValue.Text = path;
 
             // read solution data
             XDocument doc;
@@ -125,6 +126,28 @@ namespace Dataverse.XrmTools.Deployer.Controls
             }
 
             return path;
+        }
+
+        private void rbImportFromFile_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                gbImportFromFile.Enabled = true;
+                gbImportFromQueue.Enabled = false;
+            }
+        }
+
+        private void rbImportFromQueue_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                gbImportFromFile.Enabled = false;
+                gbImportFromQueue.Enabled = true;
+
+                // TODO: load operations to list view
+            }
         }
     }
 }

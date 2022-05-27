@@ -1,28 +1,30 @@
 ﻿// System
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 // Microsoft
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Tooling.Connector;
 
 // Deployer
-using Dataverse.XrmTools.Deployer.Models;
-using Dataverse.XrmTools.Deployer.RepoInterfaces;
-using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.Enums;
-using System.Collections.Generic;
-using Microsoft.Xrm.Sdk.Messages;
-using System.Linq;
+using Dataverse.XrmTools.Deployer.Models;
+using Dataverse.XrmTools.Deployer.Helpers;
+using Dataverse.XrmTools.Deployer.RepoInterfaces;
+using Dataverse.XrmTools.Deployer.HandlerArgs;
+using System.IO;
 
 namespace Dataverse.XrmTools.Deployer.Repositories
 {
     public class CrmRepo : ICrmRepo
     {
         #region Private Fields
-        private readonly IOrganizationService _service;
-        private readonly CrmServiceClient _client;
+        private readonly CrmServiceClient _target;
+        private readonly CrmServiceClient _source;
         private readonly Logger _logger;
         #endregion Private Fields
 
@@ -30,36 +32,37 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         /// <summary>
         /// Creates an instance of the CRM Repository using the specified CRM client.
         /// </summary>
-        /// <param name="service">Instantiated IOrganizationService object</param>
-        /// <param name="client">Instantiated CrmServiceClient object</param>
+        /// <param name="target">Instantiated CrmServiceClient object</param>
         /// <param name="logger">Instantiated Logger object</param>
-        public CrmRepo(IOrganizationService service, CrmServiceClient client, Logger logger)
+        public CrmRepo(CrmServiceClient target, Logger logger, CrmServiceClient source = null)
         {
-            _service = service;
-            _client = client;
+            _target = target;
             _logger = logger;
+            _source = source;
         }
         #endregion Constructors
 
         #region Interface Methods
-        public IEnumerable<Entity> GetManagedSolutions(string[] columns)
+        public IEnumerable<Entity> GetSolutions(string[] columns, PackageType queryType = PackageType.ALL)
         {
             try
             {
-                var filter = new FilterExpression(LogicalOperator.And)
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression("ismanaged", ConditionOperator.Equal, true)
-                    }
-                };
-
                 var query = new QueryExpression("solution")
                 {
                     ColumnSet = new ColumnSet((from c in columns select c.ToLower()).ToArray()),
-                    Criteria = filter,
                     PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
                 };
+
+                if(!queryType.Equals(PackageType.ALL))
+                {
+                    query.Criteria = new FilterExpression(LogicalOperator.And)
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression("ismanaged", ConditionOperator.Equal, queryType.Equals(PackageType.MANAGED) ? true : false)
+                        }
+                    };
+                }
 
                 var publisher = query.AddLink("publisher", "publisherid", "publisherid");
                 publisher.EntityAlias = "publisher";
@@ -73,7 +76,67 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void ImportSolution(Solution solution)
+        public void ExportSolution(Solution solution, ExportEventArgs data)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Exporting solution {solution.DisplayName}...");
+                var exportReq = new OrganizationRequest("ExportSolutionAsync")
+                {
+                    Parameters =
+                    {
+                        { "SolutionName", solution.LogicalName },
+                        { "Managed", data.PackageType.Equals(PackageType.MANAGED) }
+                    }
+                };
+
+                var exportResp = _target.Execute(exportReq);
+
+                _logger.Log(LogLevel.INFO, $"Waiting for export operation...");
+                var result = CheckProgress(Guid.Parse(exportResp["AsyncOperationId"].ToString()));
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Export operation:\n{result.Message}");
+                }
+
+                _logger.Log(LogLevel.INFO, $"Downloading solution {solution.DisplayName}...");
+                var downloadReq = new OrganizationRequest("DownloadSolutionExportData")
+                {
+                    Parameters =
+                    {
+                        { "ExportJobId", Guid.Parse(exportResp["ExportJobId"].ToString()) }
+                    }
+                };
+
+                var downloadResp = _target.Execute(downloadReq);
+
+                var exported = new Solution
+                {
+                    SolutionId = solution.SolutionId,
+                    LogicalName = solution.LogicalName,
+                    DisplayName = solution.DisplayName,
+                    Version = solution.Version,
+                    IsManaged = solution.IsManaged,
+                    Publisher = solution.Publisher,
+                    SolutionBytes = downloadResp["ExportSolutionFile"] as byte[]
+                };
+
+                var ending = data.PackageType.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
+                var filename = $"{data.ExportPath}\\{solution.LogicalName}_{solution.Version}{ending}";
+                using (var writer = new BinaryWriter(File.OpenWrite(filename)))
+                {
+                    writer.Write(exported.SolutionBytes);
+                }
+
+                _logger.Log(LogLevel.INFO, $"Solution {solution.DisplayName} successfully exported");
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void ImportSolution(Solution solution, ImportEventArgs data)
         {
             try
             {
@@ -86,7 +149,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                     HoldingSolution = true
                 };
 
-                var response = _service.Execute(request) as ImportSolutionAsyncResponse;
+                var response = _target.Execute(request) as ImportSolutionAsyncResponse;
 
                 _logger.Log(LogLevel.INFO, $"Waiting for import operation...");
                 var result = CheckProgress(response.AsyncOperationId);
@@ -94,7 +157,6 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 {
                     throw new Exception($"Error on Import operation:\n{result.Message}");
                 }
-
 
                 _logger.Log(LogLevel.INFO, $"Solution {solution.DisplayName} successfully imported");
             }
@@ -104,12 +166,12 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void UpgradeSolution(Solution solution)
+        public void UpgradeSolution(Solution solution, ImportEventArgs data)
         {
             try
             {
                 _logger.Log(LogLevel.INFO, $"Upgrading solution {solution.DisplayName}...");
-                var operationId = _client.DeleteAndPromoteSolutionAsync(solution.LogicalName);
+                var operationId = _target.DeleteAndPromoteSolutionAsync(solution.LogicalName);
 
                 _logger.Log(LogLevel.INFO, $"Waiting for upgrade operation...");
                 var result = CheckProgress(operationId);
@@ -126,7 +188,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void DeleteSolution(Solution solution)
+        public void DeleteSolution(Solution solution, DeleteEventArgs data)
         {
             try
             {
@@ -158,7 +220,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                     RecurrencePattern = string.Empty
                 };
 
-                var response = _service.Execute(request) as BulkDeleteResponse;
+                var response = _target.Execute(request) as BulkDeleteResponse;
 
                 _logger.Log(LogLevel.INFO, $"Waiting for delete operation...");
                 var result = CheckProgress(response.JobId);
@@ -190,7 +252,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 var records = new List<Entity>();
                 do
                 {
-                    response = _service.Execute(new RetrieveMultipleRequest() { Query = query }) as RetrieveMultipleResponse;
+                    response = _target.Execute(new RetrieveMultipleRequest() { Query = query }) as RetrieveMultipleResponse;
                     if (response == null || response.EntityCollection == null) { break; }
 
                     records.AddRange(response.EntityCollection.Entities);
@@ -217,7 +279,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             var startTime = DateTime.UtcNow;
             while (!completed)
             {
-                var async = _service.Retrieve("asyncoperation", operationId, new ColumnSet(new string[] { "statecode", "statuscode", "friendlymessage", "message" }));
+                var async = _target.Retrieve("asyncoperation", operationId, new ColumnSet(new string[] { "statecode", "statuscode", "friendlymessage", "message" }));
 
                 var state = async.GetAttributeValue<OptionSetValue>("statecode").Value;
                 var status = async.GetAttributeValue<OptionSetValue>("statuscode").Value;

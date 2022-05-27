@@ -1,10 +1,10 @@
-﻿using System;
-using Dataverse.XrmTools.Deployer.Models;
+﻿using Dataverse.XrmTools.Deployer.Enums;
 
 namespace Dataverse.XrmTools.Deployer.HandlerArgs
 {
-    public class ExportEventArgs : EventArgs
+    public class ExportEventArgs : OperationEventArgs
     {
-        public Solution Solution { get; set; }
+        public PackageType PackageType { get; set; }
+        public string ExportPath { get; set; }
     }
 }

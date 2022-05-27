@@ -227,6 +227,9 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\ImportType.cs" />
+    <Compile Include="Enums\PackageType.cs" />
+    <Compile Include="Enums\ConnectionType.cs" />
     <Compile Include="Enums\OperationStatus.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\LogLevel.cs" />

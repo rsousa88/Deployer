@@ -1,11 +1,15 @@
-﻿using System;
+﻿// System
+using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
+// Dataverse
+using Dataverse.XrmTools.Deployer.Enums;
+using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.Controls;
 using Dataverse.XrmTools.Deployer.HandlerArgs;
-using System.Collections.Generic;
-using Dataverse.XrmTools.Deployer.Models;
+using Dataverse.XrmTools.Deployer.AppSettings;
 
 namespace Dataverse.XrmTools.Deployer.Forms
 {
@@ -20,13 +24,17 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
         public event SolutionsRetrieve OnSolutionsRetrieve;
 
-        public AddOperation(Logger logger)
+        private Settings _settings;
+
+        public AddOperation(Logger logger, Settings settings)
         {
             _logger = logger;
+            _settings = settings;
 
             InitializeComponent();
 
             btnClose.Enabled = false;
+            rbExport.Checked = true;
         }
 
         private void rbExport_CheckedChanged(object sender, EventArgs e)
@@ -35,8 +43,12 @@ namespace Dataverse.XrmTools.Deployer.Forms
             if(radio.Checked)
             {
                 pnlOperationDetails.Controls.Clear();
-                var export = new ExportOptions(_logger);
+                var export = new ExportOptions(_logger, _settings);
                 pnlOperationDetails.Controls.Add(export);
+
+                export.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
+                export.OnOperationSelected += HandleSelectedOperationEvent;
+                export.OnOperationUpdated += HandleUpdateOperationEvent;
             }
         }
 
@@ -78,29 +90,14 @@ namespace Dataverse.XrmTools.Deployer.Forms
             {
                 switch (_opArgs.Type)
                 {
-                    case Enums.OperationType.EXPORT:
-                        var exportArgs = new ExportEventArgs
-                        {
-                            Solution = _opArgs.Solution
-                        };
-
-                        OnExport?.Invoke(this, exportArgs);
+                    case OperationType.EXPORT:
+                        OnExport?.Invoke(this, _opArgs as ExportEventArgs);
                         break;
-                    case Enums.OperationType.IMPORT:
-                        var importArgs = new ImportEventArgs
-                        {
-                            Solution = _opArgs.Solution
-                        };
-
-                        OnImport?.Invoke(this, importArgs);
+                    case OperationType.IMPORT:
+                        OnImport?.Invoke(this, _opArgs as ImportEventArgs);
                         break;
-                    case Enums.OperationType.DELETE:
-                        var deleteArgs = new DeleteEventArgs
-                        {
-                            Solution = _opArgs.Solution
-                        };
-
-                        OnDelete?.Invoke(this, deleteArgs);
+                    case OperationType.DELETE:
+                        OnDelete?.Invoke(this, _opArgs as DeleteEventArgs);
                         break;
                     default:
                         break;
@@ -120,9 +117,14 @@ namespace Dataverse.XrmTools.Deployer.Forms
             btnClose.Enabled = true;
         }
 
-        private IEnumerable<Solution> HandleRetrieveSolutionsEvent()
+        private void HandleUpdateOperationEvent(object sender, OperationEventArgs opArgs)
         {
-            return OnSolutionsRetrieve?.Invoke();
+            _opArgs = opArgs;
+        }
+
+        private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
+        {
+            return OnSolutionsRetrieve?.Invoke(queryType, connType);
         }
     }
 }

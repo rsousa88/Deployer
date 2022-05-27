@@ -30,11 +30,15 @@
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbEnvironments = new System.Windows.Forms.GroupBox();
+            this.btnConnectSource = new System.Windows.Forms.Button();
+            this.lblSource = new System.Windows.Forms.Label();
+            this.lblSourceValue = new System.Windows.Forms.Label();
             this.lblTarget = new System.Windows.Forms.Label();
             this.lblTargetValue = new System.Windows.Forms.Label();
             this.gbSettings = new System.Windows.Forms.GroupBox();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbQueue = new System.Windows.Forms.GroupBox();
+            this.btnClearQueue = new System.Windows.Forms.Button();
             this.btnAddOperation = new System.Windows.Forms.Button();
             this.lvOperations = new System.Windows.Forms.ListView();
             this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -48,7 +52,6 @@
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.txtLogs = new System.Windows.Forms.TextBox();
-            this.btnClearQueue = new System.Windows.Forms.Button();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -120,13 +123,16 @@
             this.pnlSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlSettings.Name = "pnlSettings";
             this.pnlSettings.RowCount = 2;
-            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18F));
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 82F));
             this.pnlSettings.Size = new System.Drawing.Size(316, 936);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbEnvironments
             // 
+            this.gbEnvironments.Controls.Add(this.btnConnectSource);
+            this.gbEnvironments.Controls.Add(this.lblSource);
+            this.gbEnvironments.Controls.Add(this.lblSourceValue);
             this.gbEnvironments.Controls.Add(this.lblTarget);
             this.gbEnvironments.Controls.Add(this.lblTargetValue);
             this.gbEnvironments.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -134,10 +140,44 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(310, 89);
+            this.gbEnvironments.Size = new System.Drawing.Size(310, 136);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
+            // 
+            // btnConnectSource
+            // 
+            this.btnConnectSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConnectSource.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnConnectSource.Location = new System.Drawing.Point(7, 101);
+            this.btnConnectSource.Margin = new System.Windows.Forms.Padding(4);
+            this.btnConnectSource.Name = "btnConnectSource";
+            this.btnConnectSource.Size = new System.Drawing.Size(296, 29);
+            this.btnConnectSource.TabIndex = 9;
+            this.btnConnectSource.Text = "Add Source";
+            this.btnConnectSource.UseVisualStyleBackColor = true;
+            this.btnConnectSource.Click += new System.EventHandler(this.btnConnectSource_Click);
+            // 
+            // lblSource
+            // 
+            this.lblSource.AutoSize = true;
+            this.lblSource.Location = new System.Drawing.Point(6, 61);
+            this.lblSource.Name = "lblSource";
+            this.lblSource.Size = new System.Drawing.Size(53, 17);
+            this.lblSource.TabIndex = 2;
+            this.lblSource.Text = "Source";
+            // 
+            // lblSourceValue
+            // 
+            this.lblSourceValue.AutoSize = true;
+            this.lblSourceValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.lblSourceValue.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblSourceValue.Location = new System.Drawing.Point(65, 61);
+            this.lblSourceValue.Name = "lblSourceValue";
+            this.lblSourceValue.Size = new System.Drawing.Size(91, 19);
+            this.lblSourceValue.TabIndex = 3;
+            this.lblSourceValue.Text = "Disconnected";
             // 
             // lblTarget
             // 
@@ -153,7 +193,7 @@
             this.lblTargetValue.AutoSize = true;
             this.lblTargetValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.lblTargetValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblTargetValue.Location = new System.Drawing.Point(65, 31);
+            this.lblTargetValue.Location = new System.Drawing.Point(65, 30);
             this.lblTargetValue.Name = "lblTargetValue";
             this.lblTargetValue.Size = new System.Drawing.Size(91, 19);
             this.lblTargetValue.TabIndex = 1;
@@ -162,11 +202,11 @@
             // gbSettings
             // 
             this.gbSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSettings.Location = new System.Drawing.Point(3, 95);
+            this.gbSettings.Location = new System.Drawing.Point(3, 142);
             this.gbSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSettings.Name = "gbSettings";
             this.gbSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSettings.Size = new System.Drawing.Size(310, 839);
+            this.gbSettings.Size = new System.Drawing.Size(310, 792);
             this.gbSettings.TabIndex = 0;
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
@@ -214,6 +254,20 @@
             this.gbQueue.TabStop = false;
             this.gbQueue.Text = "Queue";
             // 
+            // btnClearQueue
+            // 
+            this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnClearQueue.Location = new System.Drawing.Point(808, 21);
+            this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
+            this.btnClearQueue.Name = "btnClearQueue";
+            this.btnClearQueue.Size = new System.Drawing.Size(265, 29);
+            this.btnClearQueue.TabIndex = 8;
+            this.btnClearQueue.Text = "Clear Queue";
+            this.btnClearQueue.UseVisualStyleBackColor = true;
+            this.btnClearQueue.Click += new System.EventHandler(this.btnClearQueue_Click);
+            // 
             // btnAddOperation
             // 
             this.btnAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
@@ -260,7 +314,7 @@
             // 
             // chOpLogicalName
             // 
-            this.chOpLogicalName.Text = "Solution ID";
+            this.chOpLogicalName.Text = "[Hidden] Logical Name";
             this.chOpLogicalName.Width = 0;
             // 
             // chOpDisplayName
@@ -331,20 +385,6 @@
             this.txtLogs.Size = new System.Drawing.Size(715, 907);
             this.txtLogs.TabIndex = 2;
             // 
-            // btnClearQueue
-            // 
-            this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnClearQueue.Location = new System.Drawing.Point(808, 21);
-            this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
-            this.btnClearQueue.Name = "btnClearQueue";
-            this.btnClearQueue.Size = new System.Drawing.Size(265, 29);
-            this.btnClearQueue.TabIndex = 8;
-            this.btnClearQueue.Text = "Clear Queue";
-            this.btnClearQueue.UseVisualStyleBackColor = true;
-            this.btnClearQueue.Click += new System.EventHandler(this.btnClearQueue_Click);
-            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -408,5 +448,8 @@
         private System.Windows.Forms.GroupBox gbLogs;
         private System.Windows.Forms.TextBox txtLogs;
         private System.Windows.Forms.Button btnClearQueue;
+        private System.Windows.Forms.Label lblSource;
+        private System.Windows.Forms.Label lblSourceValue;
+        private System.Windows.Forms.Button btnConnectSource;
     }
 }

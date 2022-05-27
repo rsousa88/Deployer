@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 
 namespace Dataverse.XrmTools.Deployer.Helpers
 {
-    public delegate IEnumerable<Solution> SolutionsRetrieve();
+    public delegate IEnumerable<Solution> SolutionsRetrieve(PackageType queryType, ConnectionType connType);
 }

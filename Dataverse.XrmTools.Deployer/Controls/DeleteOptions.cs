@@ -1,19 +1,16 @@
 ﻿// System
 using System;
-using System.IO;
 using System.Data;
 using System.Linq;
-using System.Xml.Linq;
 using System.Windows.Forms;
-using System.IO.Compression;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 // Dataverse
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.HandlerArgs;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
@@ -37,7 +34,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            _solutions = OnSolutionsRetrieveRequested?.Invoke();
+            _solutions = OnSolutionsRetrieveRequested?.Invoke(PackageType.ALL, ConnectionType.TARGET);
             LoadSolutionsList();
         }
 
@@ -107,7 +104,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblManagedValue.Text = solution.IsManaged.ToString();
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                var args = new OperationEventArgs
+                var args = new DeleteEventArgs
                 {
                     Type = OperationType.DELETE,
                     Solution = solution

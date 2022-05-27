@@ -91,7 +91,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlBody.BackColor = System.Drawing.SystemColors.Window;
             this.pnlBody.ColumnCount = 1;
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1206F));
             this.pnlBody.Controls.Add(this.pnlOperationDetails, 0, 1);
             this.pnlBody.Controls.Add(this.gbOperationType, 0, 0);
             this.pnlBody.Location = new System.Drawing.Point(0, 78);
@@ -100,7 +100,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 85F));
-            this.pnlBody.Size = new System.Drawing.Size(1206, 440);
+            this.pnlBody.Size = new System.Drawing.Size(1206, 476);
             this.pnlBody.TabIndex = 4;
             // 
             // pnlOperationDetails
@@ -110,11 +110,11 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.pnlOperationDetails.BackColor = System.Drawing.SystemColors.Window;
             this.pnlOperationDetails.ColumnCount = 1;
             this.pnlOperationDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1217F));
-            this.pnlOperationDetails.Location = new System.Drawing.Point(3, 69);
+            this.pnlOperationDetails.Location = new System.Drawing.Point(3, 74);
             this.pnlOperationDetails.Name = "pnlOperationDetails";
             this.pnlOperationDetails.RowCount = 1;
             this.pnlOperationDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 440F));
-            this.pnlOperationDetails.Size = new System.Drawing.Size(1200, 368);
+            this.pnlOperationDetails.Size = new System.Drawing.Size(1200, 399);
             this.pnlOperationDetails.TabIndex = 5;
             // 
             // gbOperationType
@@ -136,7 +136,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.rbExport.Name = "rbExport";
             this.rbExport.Size = new System.Drawing.Size(69, 21);
             this.rbExport.TabIndex = 6;
-            this.rbExport.TabStop = true;
             this.rbExport.Text = "Export";
             this.rbExport.UseVisualStyleBackColor = true;
             this.rbExport.CheckedChanged += new System.EventHandler(this.rbExport_CheckedChanged);
@@ -148,7 +147,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.rbImport.Name = "rbImport";
             this.rbImport.Size = new System.Drawing.Size(68, 21);
             this.rbImport.TabIndex = 7;
-            this.rbImport.TabStop = true;
             this.rbImport.Text = "Import";
             this.rbImport.UseVisualStyleBackColor = true;
             this.rbImport.CheckedChanged += new System.EventHandler(this.rbImport_CheckedChanged);
@@ -160,7 +158,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.rbDelete.Name = "rbDelete";
             this.rbDelete.Size = new System.Drawing.Size(70, 21);
             this.rbDelete.TabIndex = 8;
-            this.rbDelete.TabStop = true;
             this.rbDelete.Text = "Delete";
             this.rbDelete.UseVisualStyleBackColor = true;
             this.rbDelete.CheckedChanged += new System.EventHandler(this.rbDelete_CheckedChanged);
@@ -172,7 +169,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.pnlFooter.BackColor = System.Drawing.Color.White;
             this.pnlFooter.Controls.Add(this.btnCancel);
             this.pnlFooter.Controls.Add(this.btnClose);
-            this.pnlFooter.Location = new System.Drawing.Point(0, 522);
+            this.pnlFooter.Location = new System.Drawing.Point(0, 558);
             this.pnlFooter.Margin = new System.Windows.Forms.Padding(4);
             this.pnlFooter.Name = "pnlFooter";
             this.pnlFooter.Size = new System.Drawing.Size(1203, 64);
@@ -206,7 +203,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1203, 585);
+            this.ClientSize = new System.Drawing.Size(1203, 621);
             this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlBody);
             this.Controls.Add(this.pnlHeader);

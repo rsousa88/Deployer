@@ -9,7 +9,7 @@ using XrmToolBox.Extensibility;
 
 namespace Dataverse.XrmTools.Deployer.Helpers
 {
-    public class SettingsHelper
+    public static class SettingsHelper
     {
         public static void GetSettings(out Settings settings)
         {
@@ -18,13 +18,13 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                 if (!SettingsManager.Instance.TryLoad(typeof(DeployerControl), out settings))
                 {
                     settings = new Settings { Instances = new List<Instance>(), Sorts = new List<Sort>() };
-                    SetSettings(settings);
+                    settings.SaveSettings();
                 }
             }
             catch { throw; }
         }
 
-        public static bool SetSettings(Settings settings)
+        public static bool SaveSettings(this Settings settings)
         {
             try
             {
