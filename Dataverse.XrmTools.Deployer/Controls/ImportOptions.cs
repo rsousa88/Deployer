@@ -11,14 +11,17 @@ using System.IO.Compression;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
-using Dataverse.XrmTools.Deployer.HandlerArgs;
+using System.Collections.Generic;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
     public partial class ImportOptions : UserControl
     {
         private readonly Logger _logger;
-        public event EventHandler<OperationEventArgs> OnOperationSelected;
+        public event OperationsRetrieve OnOperationsRetrieveRequested;
+        public event EventHandler<Operation> OnOperationSelected;
+
+        private IEnumerable<Operation> _operations;
 
         public ImportOptions(Logger logger)
         {
@@ -26,7 +29,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             InitializeComponent();
 
-            gbSolutionInfo.Enabled = false;
             gbImportFromQueue.Enabled = false;
         }
 
@@ -37,21 +39,20 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 var solution = GetSolutionData();
                 if (solution != null)
                 {
+                    lblSolutionIdValue.Text = solution.SolutionId.ToString();
                     lblLogicalNameValue.Text = solution.LogicalName;
                     lblDisplayNameValue.Text = solution.DisplayName;
                     lblVersionValue.Text = solution.Version;
                     lblManagedValue.Text = solution.IsManaged.ToString();
                     lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                    var args = new ImportEventArgs
+                    var import = new Operation
                     {
-                        Type = OperationType.IMPORT,
+                        OperationType = OperationType.IMPORT,
                         Solution = solution
                     };
 
-                    OnOperationSelected?.Invoke(this, args);
-
-                    gbSolutionInfo.Enabled = true;
+                    OnOperationSelected?.Invoke(this, import);
                 }
             }
             catch (Exception ex)
@@ -98,18 +99,25 @@ namespace Dataverse.XrmTools.Deployer.Controls
             var publisherNodes = solManifestNodes.Select(node => node.Element("Publisher")).FirstOrDefault().Descendants();
             var pubDisplayNames = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("LocalizedNames")).Descendants();
 
+            var package = new Package
+            {
+                PackageType = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? PackageType.MANAGED : PackageType.UNMANAGED,
+                SolutionBytes = File.ReadAllBytes(path),
+                ExportPath = path
+            };
+
             return new Solution
             {
                 LogicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value,
                 DisplayName = solDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value,
                 Version = solManifestNodes.Select(node => node.Element("Version")).FirstOrDefault().Value,
-                IsManaged = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? true : false,
+                IsManaged = package.PackageType.Equals(PackageType.MANAGED) ? true : false,
                 Publisher = new Publisher
                 {
                     LogicalName = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("UniqueName")).Value,
                     DisplayName = pubDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value
                 },
-                SolutionBytes = File.ReadAllBytes(path)
+                Package = package
             };
         }
 
@@ -146,7 +154,42 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 gbImportFromFile.Enabled = false;
                 gbImportFromQueue.Enabled = true;
 
-                // TODO: load operations to list view
+                _operations = OnOperationsRetrieveRequested?.Invoke(OperationType.EXPORT);
+                LoadOperationsList();
+            }
+        }
+
+        private void LoadOperationsList()
+        {
+            lvOperations.Items.Clear();
+
+            var items = _operations
+                .Select(op => op.ToListViewItem())
+                .ToArray();
+
+            lvOperations.Items.AddRange(items);
+        }
+
+        private void lvOperations_Resize(object sender, EventArgs e)
+        {
+            var maxWidth = lvOperations.Width >= 433 ? lvOperations.Width : 433;
+            chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.59);
+            chOpLogicalName.Width = (int)Math.Floor(maxWidth * 0.39);
+        }
+
+        private void lvOperations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lvOperations.SelectedItems.Count > 0)
+            {
+                var operation = lvOperations.SelectedItems[0].ToObject(new Operation()) as Operation;
+
+                var import = new Operation
+                {
+                    OperationType = OperationType.IMPORT,
+                    Solution = operation.Solution
+                };
+
+                OnOperationSelected?.Invoke(this, import);
             }
         }
     }

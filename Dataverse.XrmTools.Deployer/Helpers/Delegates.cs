@@ -5,4 +5,5 @@ using Dataverse.XrmTools.Deployer.Models;
 namespace Dataverse.XrmTools.Deployer.Helpers
 {
     public delegate IEnumerable<Solution> SolutionsRetrieve(PackageType queryType, ConnectionType connType);
+    public delegate IEnumerable<Operation> OperationsRetrieve(OperationType opType);
 }

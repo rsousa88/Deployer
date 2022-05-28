@@ -8,7 +8,6 @@ using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.Controls;
-using Dataverse.XrmTools.Deployer.HandlerArgs;
 using Dataverse.XrmTools.Deployer.AppSettings;
 
 namespace Dataverse.XrmTools.Deployer.Forms
@@ -16,13 +15,12 @@ namespace Dataverse.XrmTools.Deployer.Forms
     public partial class AddOperation : Form
     {
         private readonly Logger _logger;
-        private OperationEventArgs _opArgs;
+        private Operation _operation;
 
-        public event EventHandler<ExportEventArgs> OnExport;
-        public event EventHandler<ImportEventArgs> OnImport;
-        public event EventHandler<DeleteEventArgs> OnDelete;
+        public event EventHandler<Operation> OnOperation;
 
         public event SolutionsRetrieve OnSolutionsRetrieve;
+        public event OperationsRetrieve OnOperationsRetrieve;
 
         private Settings _settings;
 
@@ -34,7 +32,22 @@ namespace Dataverse.XrmTools.Deployer.Forms
             InitializeComponent();
 
             btnClose.Enabled = false;
-            rbExport.Checked = true;
+            rbUpdate.Checked = true;
+        }
+
+        private void rbUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                pnlOperationDetails.Controls.Clear();
+                var update = new UpdateOptions(_logger);
+                pnlOperationDetails.Controls.Add(update);
+
+                update.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
+                update.OnOperationSelected += HandleSelectedOperationEvent;
+                update.OnOperationUpdated += HandleUpdateOperationEvent;
+            }
         }
 
         private void rbExport_CheckedChanged(object sender, EventArgs e)
@@ -61,6 +74,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
                 var import = new ImportOptions(_logger);
                 pnlOperationDetails.Controls.Add(import);
 
+                import.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
                 import.OnOperationSelected += HandleSelectedOperationEvent;
             }
         }
@@ -88,21 +102,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
         {
             try
             {
-                switch (_opArgs.Type)
-                {
-                    case OperationType.EXPORT:
-                        OnExport?.Invoke(this, _opArgs as ExportEventArgs);
-                        break;
-                    case OperationType.IMPORT:
-                        OnImport?.Invoke(this, _opArgs as ImportEventArgs);
-                        break;
-                    case OperationType.DELETE:
-                        OnDelete?.Invoke(this, _opArgs as DeleteEventArgs);
-                        break;
-                    default:
-                        break;
-                }
-
+                OnOperation?.Invoke(this, _operation);
                 Close();
             }
             catch (Exception ex)
@@ -111,20 +111,25 @@ namespace Dataverse.XrmTools.Deployer.Forms
             }
         }
 
-        private void HandleSelectedOperationEvent(object sender, OperationEventArgs opArgs)
+        private void HandleSelectedOperationEvent(object sender, Operation operation)
         {
-            _opArgs = opArgs;
+            _operation = operation;
             btnClose.Enabled = true;
         }
 
-        private void HandleUpdateOperationEvent(object sender, OperationEventArgs opArgs)
+        private void HandleUpdateOperationEvent(object sender, Operation operation)
         {
-            _opArgs = opArgs;
+            _operation = operation;
         }
 
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
         {
             return OnSolutionsRetrieve?.Invoke(queryType, connType);
+        }
+
+        private IEnumerable<Operation> HandleRetrieveOperationsEvent(OperationType opType)
+        {
+            return OnOperationsRetrieve?.Invoke(opType);
         }
     }
 }

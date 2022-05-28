@@ -50,12 +50,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblSolutionFilter = new System.Windows.Forms.Label();
             this.txtSolutionFilter = new System.Windows.Forms.TextBox();
             this.lvSolutions = new System.Windows.Forms.ListView();
-            this.chSolLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnLoadSolutions = new System.Windows.Forms.Button();
             this.gbDelete = new System.Windows.Forms.GroupBox();
             this.gbSolutionInfo.SuspendLayout();
@@ -256,12 +254,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvSolutions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chSolLogicalName,
             this.chSolDisplayName,
             this.chSolVersion,
             this.chSolManaged,
-            this.chSolPublisher,
-            this.chSolPublisherLogicalNameHidden});
+            this.chSolPublisher});
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
             this.lvSolutions.Location = new System.Drawing.Point(7, 53);
@@ -274,11 +270,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lvSolutions.View = System.Windows.Forms.View.Details;
             this.lvSolutions.SelectedIndexChanged += new System.EventHandler(this.lvSolutions_SelectedIndexChanged);
             this.lvSolutions.Resize += new System.EventHandler(this.lvSolutions_Resize);
-            // 
-            // chSolLogicalName
-            // 
-            this.chSolLogicalName.Text = "[Hidden] Logical Name";
-            this.chSolLogicalName.Width = 0;
             // 
             // chSolDisplayName
             // 
@@ -299,11 +290,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // 
             this.chSolPublisher.Text = "Publisher";
             this.chSolPublisher.Width = 150;
-            // 
-            // chSolPublisherLogicalNameHidden
-            // 
-            this.chSolPublisherLogicalNameHidden.Text = "[Hidden] Publisher Logical Name";
-            this.chSolPublisherLogicalNameHidden.Width = 0;
             // 
             // btnLoadSolutions
             // 
@@ -366,12 +352,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.GroupBox gbDeleteSettings;
         private System.Windows.Forms.ListView lvSolutions;
-        private System.Windows.Forms.ColumnHeader chSolLogicalName;
         private System.Windows.Forms.ColumnHeader chSolDisplayName;
         private System.Windows.Forms.ColumnHeader chSolVersion;
         private System.Windows.Forms.ColumnHeader chSolManaged;
         private System.Windows.Forms.ColumnHeader chSolPublisher;
-        private System.Windows.Forms.ColumnHeader chSolPublisherLogicalNameHidden;
         private System.Windows.Forms.Label lblSolutionFilter;
         private System.Windows.Forms.TextBox txtSolutionFilter;
         private System.Windows.Forms.Button btnLoadSolutions;

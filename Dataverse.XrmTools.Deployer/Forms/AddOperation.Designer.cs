@@ -43,6 +43,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
+            this.rbUpdate = new System.Windows.Forms.RadioButton();
             this.pnlHeader.SuspendLayout();
             this.pnlBody.SuspendLayout();
             this.gbOperationType.SuspendLayout();
@@ -119,6 +120,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // 
             // gbOperationType
             // 
+            this.gbOperationType.Controls.Add(this.rbUpdate);
             this.gbOperationType.Controls.Add(this.rbExport);
             this.gbOperationType.Controls.Add(this.rbImport);
             this.gbOperationType.Controls.Add(this.rbDelete);
@@ -132,33 +134,33 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // rbExport
             // 
             this.rbExport.AutoSize = true;
-            this.rbExport.Location = new System.Drawing.Point(168, 24);
+            this.rbExport.Location = new System.Drawing.Point(396, 24);
             this.rbExport.Name = "rbExport";
-            this.rbExport.Size = new System.Drawing.Size(69, 21);
+            this.rbExport.Size = new System.Drawing.Size(124, 21);
             this.rbExport.TabIndex = 6;
-            this.rbExport.Text = "Export";
+            this.rbExport.Text = "Export Solution";
             this.rbExport.UseVisualStyleBackColor = true;
             this.rbExport.CheckedChanged += new System.EventHandler(this.rbExport_CheckedChanged);
             // 
             // rbImport
             // 
             this.rbImport.AutoSize = true;
-            this.rbImport.Location = new System.Drawing.Point(573, 24);
+            this.rbImport.Location = new System.Drawing.Point(730, 24);
             this.rbImport.Name = "rbImport";
-            this.rbImport.Size = new System.Drawing.Size(68, 21);
+            this.rbImport.Size = new System.Drawing.Size(123, 21);
             this.rbImport.TabIndex = 7;
-            this.rbImport.Text = "Import";
+            this.rbImport.Text = "Import Solution";
             this.rbImport.UseVisualStyleBackColor = true;
             this.rbImport.CheckedChanged += new System.EventHandler(this.rbImport_CheckedChanged);
             // 
             // rbDelete
             // 
             this.rbDelete.AutoSize = true;
-            this.rbDelete.Location = new System.Drawing.Point(978, 24);
+            this.rbDelete.Location = new System.Drawing.Point(1063, 24);
             this.rbDelete.Name = "rbDelete";
-            this.rbDelete.Size = new System.Drawing.Size(70, 21);
+            this.rbDelete.Size = new System.Drawing.Size(125, 21);
             this.rbDelete.TabIndex = 8;
-            this.rbDelete.Text = "Delete";
+            this.rbDelete.Text = "Delete Solution";
             this.rbDelete.UseVisualStyleBackColor = true;
             this.rbDelete.CheckedChanged += new System.EventHandler(this.rbDelete_CheckedChanged);
             // 
@@ -197,6 +199,17 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.btnClose.Text = "OK";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // rbUpdate
+            // 
+            this.rbUpdate.AutoSize = true;
+            this.rbUpdate.Location = new System.Drawing.Point(9, 24);
+            this.rbUpdate.Name = "rbUpdate";
+            this.rbUpdate.Size = new System.Drawing.Size(177, 21);
+            this.rbUpdate.TabIndex = 9;
+            this.rbUpdate.Text = "Update Solution Details";
+            this.rbUpdate.UseVisualStyleBackColor = true;
+            this.rbUpdate.CheckedChanged += new System.EventHandler(this.rbUpdate_CheckedChanged);
             // 
             // AddOperation
             // 
@@ -242,5 +255,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
         private System.Windows.Forms.Panel pnlFooter;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.RadioButton rbUpdate;
     }
 }

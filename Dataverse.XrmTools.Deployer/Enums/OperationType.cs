@@ -2,8 +2,9 @@
 {
     public enum OperationType
     {
-        EXPORT = 1,
-        IMPORT = 2,
-        DELETE = 4
+        UPDATE = 1,
+        EXPORT = 2,
+        IMPORT = 4,
+        DELETE = 8
     }
 }

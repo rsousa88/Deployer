@@ -18,17 +18,14 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                 var operation = value as Operation;
 
                 var item = new ListViewItem(new string[] {
-                    operation.Type.ToString(),
-                    operation.Solution.LogicalName,
+                    operation.OperationType.ToString(),
                     operation.Solution.DisplayName,
                     operation.Solution.Version,
                     operation.Solution.IsManaged ? "Yes" : "No",
-                    operation.Solution.Publisher.DisplayName,
-                    operation.Solution.Publisher.LogicalName
-
+                    operation.Solution.Publisher.DisplayName
                 });
 
-                item.Tag = operation.Solution.SolutionId;
+                item.Tag = operation;
                 return item;
             }
             if (value is Solution)
@@ -36,15 +33,13 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                 var solution = value as Solution;
 
                 var item = new ListViewItem(new string[] {
-                    solution.LogicalName,
                     solution.DisplayName,
                     solution.Version,
                     solution.IsManaged ? "Yes" : "No",
-                    solution.Publisher.DisplayName,
-                    solution.Publisher.LogicalName
+                    solution.Publisher.DisplayName
                 });
 
-                item.Tag = solution.SolutionId;
+                item.Tag = solution;
                 return item;
             }
 
@@ -55,33 +50,13 @@ namespace Dataverse.XrmTools.Deployer.Helpers
         {
             if (output is Operation)
             {
-                Enum.TryParse(lvItem.SubItems[0].Text, out OperationType type);
-
-                return new Operation
-                {
-                    Type = type,
-                    Solution = new Solution
-                    {
-                        SolutionId = Guid.Parse(lvItem.Tag.ToString()),
-                        LogicalName = lvItem.SubItems[1].Text,
-                        DisplayName = lvItem.SubItems[2].Text,
-                        Version = lvItem.SubItems[3].Text,
-                        IsManaged = lvItem.SubItems[4].Text.Equals("Yes") ? true : false,
-                        Publisher = new Publisher { DisplayName = lvItem.SubItems[5].Text, LogicalName = lvItem.SubItems[6].Text }
-                    }
-                };
+                var operation = lvItem.Tag as Operation;
+                return operation;
             }
             if (output is Solution)
             {
-                return new Solution
-                {
-                    SolutionId = Guid.Parse(lvItem.Tag.ToString()),
-                    LogicalName = lvItem.SubItems[0].Text,
-                    DisplayName = lvItem.SubItems[1].Text,
-                    Version = lvItem.SubItems[2].Text,
-                    IsManaged = lvItem.SubItems[3].Text.Equals("Yes") ? true : false,
-                    Publisher = new Publisher { DisplayName = lvItem.SubItems[4].Text, LogicalName = lvItem.SubItems[5].Text }
-                };
+                var solution = lvItem.Tag as Solution;
+                return solution;
             }
 
             return null;
@@ -117,6 +92,11 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
             if (solution.DisplayName.ToLower().Contains(filter) || solution.LogicalName.ToLower().Contains(filter)) { return true; }
             return false;
+        }
+
+        public static string GetProgressMessage(this string baseMessage, string replace, double progress)
+        {
+            return baseMessage.Replace(replace, progress.ToString());
         }
     }
 }

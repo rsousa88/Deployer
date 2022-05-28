@@ -10,30 +10,33 @@ using System.Collections.Generic;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
+using Dataverse.XrmTools.Deployer.AppSettings;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
-    public partial class DeleteOptions : UserControl
+    public partial class UpdateOptions : UserControl
     {
         private readonly Logger _logger;
         public event SolutionsRetrieve OnSolutionsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
+        public event EventHandler<Operation> OnOperationUpdated;
 
         private IEnumerable<Solution> _solutions;
+        private Operation _update;
 
-        public DeleteOptions(Logger logger)
+        public UpdateOptions(Logger logger)
         {
             _logger = logger;
 
             InitializeComponent();
 
-            gbDeleteSettings.Enabled = false;
+            gbSolutions.Enabled = false;
             gbSolutionInfo.Enabled = false;
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            _solutions = OnSolutionsRetrieveRequested?.Invoke(PackageType.ALL, ConnectionType.TARGET);
+            _solutions = OnSolutionsRetrieveRequested?.Invoke(PackageType.UNMANAGED, ConnectionType.SOURCE);
             LoadSolutionsList();
         }
 
@@ -48,7 +51,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             lvSolutions.Items.AddRange(items);
 
-            gbDeleteSettings.Enabled = true;
+            gbSolutions.Enabled = true;
         }
 
         private async void txtSolutionFilter_TextChanged(object sender, EventArgs e)
@@ -96,21 +99,44 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
                 lblSolutionIdValue.Text = solution.SolutionId.ToString();
                 lblLogicalNameValue.Text = solution.LogicalName;
-                lblDisplayNameValue.Text = solution.DisplayName;
-                lblVersionValue.Text = solution.Version;
+                txtUpdateName.Text = solution.DisplayName;
+                txtUpdateVersion.Text = solution.Version;
                 lblManagedValue.Text = solution.IsManaged.ToString();
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
+                txtUpdateDescription.Text = solution.Description;
 
-                var delete = new Operation
+                _update = new Operation
                 {
-                    OperationType = OperationType.DELETE,
+                    OperationType = OperationType.UPDATE,
                     Solution = solution
                 };
 
-                OnOperationSelected?.Invoke(this, delete);
+                OnOperationSelected?.Invoke(this, _update);
 
                 gbSolutionInfo.Enabled = true;
             }
+        }
+
+        private async void SolutionDetails_TextChanged(object sender, EventArgs e)
+        {
+            var box = sender as TextBox;
+            async Task<bool> UserKeepsTyping()
+            {
+                var txt = box.Text;
+                await Task.Delay(500);
+
+                return txt != box.Text;
+            }
+
+            if (await UserKeepsTyping()) return;
+
+            // user is done typing -> execute logic
+            _update.Solution.DisplayName = txtUpdateName.Text;
+            _update.Solution.Version = txtUpdateVersion.Text;
+            _update.Solution.Description = txtUpdateDescription.Text;
+
+            OnOperationUpdated?.Invoke(this, _update);
+            box.Focus();
         }
     }
 }

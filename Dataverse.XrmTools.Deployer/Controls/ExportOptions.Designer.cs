@@ -50,17 +50,15 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblSolutionFilter = new System.Windows.Forms.Label();
             this.txtSolutionFilter = new System.Windows.Forms.TextBox();
             this.lvSolutions = new System.Windows.Forms.ListView();
-            this.chSolLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnLoadSolutions = new System.Windows.Forms.Button();
             this.gbExport = new System.Windows.Forms.GroupBox();
             this.gbExportSettings = new System.Windows.Forms.GroupBox();
-            this.lblExportPath = new System.Windows.Forms.Label();
             this.btnSetExportLocation = new System.Windows.Forms.Button();
+            this.lblExportPath = new System.Windows.Forms.Label();
             this.txtExportPathValue = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.rbManaged = new System.Windows.Forms.RadioButton();
@@ -266,12 +264,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvSolutions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chSolLogicalName,
             this.chSolDisplayName,
             this.chSolVersion,
             this.chSolManaged,
-            this.chSolPublisher,
-            this.chSolPublisherLogicalNameHidden});
+            this.chSolPublisher});
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
             this.lvSolutions.Location = new System.Drawing.Point(7, 53);
@@ -284,11 +280,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lvSolutions.View = System.Windows.Forms.View.Details;
             this.lvSolutions.SelectedIndexChanged += new System.EventHandler(this.lvSolutions_SelectedIndexChanged);
             this.lvSolutions.Resize += new System.EventHandler(this.lvSolutions_Resize);
-            // 
-            // chSolLogicalName
-            // 
-            this.chSolLogicalName.Text = "[Hidden] Logical Name";
-            this.chSolLogicalName.Width = 0;
             // 
             // chSolDisplayName
             // 
@@ -309,11 +300,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // 
             this.chSolPublisher.Text = "Publisher";
             this.chSolPublisher.Width = 150;
-            // 
-            // chSolPublisherLogicalNameHidden
-            // 
-            this.chSolPublisherLogicalNameHidden.Text = "[Hidden] Publisher Logical Name";
-            this.chSolPublisherLogicalNameHidden.Width = 0;
             // 
             // btnLoadSolutions
             // 
@@ -362,16 +348,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbExportSettings.TabStop = false;
             this.gbExportSettings.Text = "Export Settings";
             // 
-            // lblExportPath
-            // 
-            this.lblExportPath.AutoSize = true;
-            this.lblExportPath.Location = new System.Drawing.Point(6, 53);
-            this.lblExportPath.Name = "lblExportPath";
-            this.lblExportPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblExportPath.Size = new System.Drawing.Size(41, 27);
-            this.lblExportPath.TabIndex = 15;
-            this.lblExportPath.Text = "Path:";
-            // 
             // btnSetExportLocation
             // 
             this.btnSetExportLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -385,6 +361,16 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnSetExportLocation.Text = "Select Location...";
             this.btnSetExportLocation.UseVisualStyleBackColor = true;
             this.btnSetExportLocation.Click += new System.EventHandler(this.btnSetExportLocation_Click);
+            // 
+            // lblExportPath
+            // 
+            this.lblExportPath.AutoSize = true;
+            this.lblExportPath.Location = new System.Drawing.Point(6, 53);
+            this.lblExportPath.Name = "lblExportPath";
+            this.lblExportPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.lblExportPath.Size = new System.Drawing.Size(41, 27);
+            this.lblExportPath.TabIndex = 15;
+            this.lblExportPath.Text = "Path:";
             // 
             // txtExportPathValue
             // 
@@ -417,6 +403,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbManaged.TabStop = true;
             this.rbManaged.Text = "Managed";
             this.rbManaged.UseVisualStyleBackColor = true;
+            this.rbManaged.CheckedChanged += new System.EventHandler(this.rbManaged_CheckedChanged);
             // 
             // rbUnmanaged
             // 
@@ -427,6 +414,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbUnmanaged.TabIndex = 12;
             this.rbUnmanaged.Text = "Unmanaged";
             this.rbUnmanaged.UseVisualStyleBackColor = true;
+            this.rbUnmanaged.CheckedChanged += new System.EventHandler(this.rbUnmanaged_CheckedChanged);
             // 
             // lblType
             // 
@@ -474,12 +462,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.GroupBox gbSolutions;
         private System.Windows.Forms.ListView lvSolutions;
-        private System.Windows.Forms.ColumnHeader chSolLogicalName;
         private System.Windows.Forms.ColumnHeader chSolDisplayName;
         private System.Windows.Forms.ColumnHeader chSolVersion;
         private System.Windows.Forms.ColumnHeader chSolManaged;
         private System.Windows.Forms.ColumnHeader chSolPublisher;
-        private System.Windows.Forms.ColumnHeader chSolPublisherLogicalNameHidden;
         private System.Windows.Forms.Label lblSolutionFilter;
         private System.Windows.Forms.TextBox txtSolutionFilter;
         private System.Windows.Forms.Button btnLoadSolutions;

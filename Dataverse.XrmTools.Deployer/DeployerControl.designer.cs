@@ -42,12 +42,10 @@
             this.btnAddOperation = new System.Windows.Forms.Button();
             this.lvOperations = new System.Windows.Forms.ListView();
             this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpPublisherLogicalNameHidden = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLogs = new System.Windows.Forms.GroupBox();
@@ -287,12 +285,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvOperations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chOpType,
-            this.chOpLogicalName,
             this.chOpDisplayName,
             this.chOpVersion,
             this.chOpManaged,
-            this.chOpPublisher,
-            this.chOpPublisherLogicalNameHidden});
+            this.chOpPublisher});
             this.lvOperations.ContextMenuStrip = this.cmsContextMenu;
             this.lvOperations.FullRowSelect = true;
             this.lvOperations.HideSelection = false;
@@ -311,11 +307,6 @@
             // 
             this.chOpType.Text = "Type";
             this.chOpType.Width = 100;
-            // 
-            // chOpLogicalName
-            // 
-            this.chOpLogicalName.Text = "[Hidden] Logical Name";
-            this.chOpLogicalName.Width = 0;
             // 
             // chOpDisplayName
             // 
@@ -336,11 +327,6 @@
             // 
             this.chOpPublisher.Text = "Publisher";
             this.chOpPublisher.Width = 300;
-            // 
-            // chOpPublisherLogicalNameHidden
-            // 
-            this.chOpPublisherLogicalNameHidden.Text = "[Hidden] Publisher Logical Name";
-            this.chOpPublisherLogicalNameHidden.Width = 0;
             // 
             // cmsContextMenu
             // 
@@ -435,12 +421,10 @@
         private System.Windows.Forms.Button btnAddOperation;
         private System.Windows.Forms.ListView lvOperations;
         private System.Windows.Forms.ColumnHeader chOpType;
-        private System.Windows.Forms.ColumnHeader chOpLogicalName;
         private System.Windows.Forms.ColumnHeader chOpDisplayName;
         private System.Windows.Forms.ColumnHeader chOpVersion;
         private System.Windows.Forms.ColumnHeader chOpManaged;
         private System.Windows.Forms.ColumnHeader chOpPublisher;
-        private System.Windows.Forms.ColumnHeader chOpPublisherLogicalNameHidden;
         private System.Windows.Forms.ContextMenuStrip cmsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem cmsiRemove;
 

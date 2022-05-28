@@ -20,7 +20,6 @@ using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Forms;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
-using Dataverse.XrmTools.Deployer.HandlerArgs;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
 using System.Collections.Specialized;
@@ -77,17 +76,18 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
-                _logger.Log(LogLevel.DEBUG, $"Updating connection...");
+                _logger.Log(LogLevel.DEBUG, $"Updating connections...");
                 base.UpdateConnection(newService, detail, actionName, parameter);
-                _logger.Log(LogLevel.DEBUG, $"Connection successfully updated...");
 
-                _primary = detail.ServiceClient;
+                
 
                 var connType = actionName.Equals("AdditionalOrganization") ? "Secondary" : "Primary";
                 _logger.Log(LogLevel.DEBUG, $"Connection type: {connType}");
 
                 if (!actionName.Equals("AdditionalOrganization"))
                 {
+                    _primary = detail.ServiceClient;
+
                     _logger.Log(LogLevel.DEBUG, $"Checking settings for known instances...");
                     _targetInstance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_primary.ConnectedOrgUniqueName));
                     if (_targetInstance is null)
@@ -134,16 +134,16 @@ namespace Dataverse.XrmTools.Deployer
                     _secondary = detail.ServiceClient;
 
                     if (_primary == null) { throw new Exception("Primary connection is invalid"); }
-                    LogInfo($"Source OrgId: {_primary.ConnectedOrgId}");
-                    LogInfo($"Source OrgUniqueName: {_primary.ConnectedOrgUniqueName}");
-                    LogInfo($"Source OrgFriendlyName: {_primary.ConnectedOrgFriendlyName}");
-                    LogInfo($"Source EnvId: {_primary.EnvironmentId}");
+                    LogInfo($"Target OrgId: {_primary.ConnectedOrgId}");
+                    LogInfo($"Target OrgUniqueName: {_primary.ConnectedOrgUniqueName}");
+                    LogInfo($"Target OrgFriendlyName: {_primary.ConnectedOrgFriendlyName}");
+                    LogInfo($"Target EnvId: {_primary.EnvironmentId}");
 
                     if (_secondary == null) { throw new Exception("Secondary connection is invalid"); }
-                    LogInfo($"Target OrgId: {_secondary.ConnectedOrgId}");
-                    LogInfo($"Target OrgUniqueName: {_secondary.ConnectedOrgUniqueName}");
-                    LogInfo($"Target OrgFriendlyName: {_secondary.ConnectedOrgFriendlyName}");
-                    LogInfo($"Target EnvId: {_secondary.EnvironmentId}");
+                    LogInfo($"Source OrgId: {_secondary.ConnectedOrgId}");
+                    LogInfo($"Source OrgUniqueName: {_secondary.ConnectedOrgUniqueName}");
+                    LogInfo($"Source OrgFriendlyName: {_secondary.ConnectedOrgFriendlyName}");
+                    LogInfo($"Source EnvId: {_secondary.EnvironmentId}");
 
                     if (_primary.ConnectedOrgUniqueName.Equals(_secondary.ConnectedOrgUniqueName))
                     {
@@ -195,20 +195,36 @@ namespace Dataverse.XrmTools.Deployer
             LogInfo($"Loading solutions...");
 
             var repo = new CrmRepo(_primary, _logger, _secondary);
-            var solutions = repo.GetSolutions(new string[] { "uniquename", "friendlyname", "version", "ismanaged" }, queryType);
+            var solutions = repo.GetSolutions(new string[] { "uniquename", "friendlyname", "version", "ismanaged", "description" }, queryType, connType);
 
-            return solutions.Select(sol => new Solution
+
+            return solutions.Select(sol =>
             {
-                SolutionId = sol.GetAttributeValue<Guid>("solutionid"),
-                LogicalName = sol.GetAttributeValue<string>("uniquename"),
-                DisplayName = sol.GetAttributeValue<string>("friendlyname"),
-                Version = sol.GetAttributeValue<string>("version"),
-                IsManaged = sol.GetAttributeValue<bool>("ismanaged"),
-                Publisher = new Publisher
+                var solution = new Solution
                 {
-                    LogicalName = sol.GetAttributeValue<AliasedValue>("publisher.uniquename").Value.ToString(),
-                    DisplayName = sol.GetAttributeValue<AliasedValue>("publisher.friendlyname").Value.ToString()
+                    SolutionId = sol.GetAttributeValue<Guid>("solutionid"),
+                    LogicalName = sol.GetAttributeValue<string>("uniquename"),
+                    DisplayName = sol.GetAttributeValue<string>("friendlyname"),
+                    Version = sol.GetAttributeValue<string>("version"),
+                    Description = sol.GetAttributeValue<string>("description"),
+                    IsManaged = sol.GetAttributeValue<bool>("ismanaged"),
+                    Publisher = new Publisher
+                    {
+                        LogicalName = sol.GetAttributeValue<AliasedValue>("publisher.uniquename").Value.ToString(),
+                        DisplayName = sol.GetAttributeValue<AliasedValue>("publisher.friendlyname").Value.ToString()
+                    }
+                };
+
+                var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) && op.Solution.LogicalName.Equals(solution.LogicalName));
+                if (updated != null)
+                {
+                    // found an update operation -> also update queued operations
+                    solution.DisplayName = updated.Solution.DisplayName;
+                    solution.Version = updated.Solution.Version;
+                    solution.Description = updated.Solution.Description;
                 }
+
+                return solution;
             }).OrderBy(sol => sol.DisplayName);
         }
 
@@ -227,7 +243,7 @@ namespace Dataverse.XrmTools.Deployer
                 IsCancelable = true,
                 Work = (worker, args) =>
                 {
-                    var repo = new CrmRepo(_primary, _logger);
+                    var repo = new CrmRepo(_primary, _logger, _secondary, worker);
 
                     var index = 1;
                     foreach (var operation in _operations)
@@ -236,22 +252,27 @@ namespace Dataverse.XrmTools.Deployer
 
                         var progress = 100 * index / count;
 
-                        switch (operation.Type)
+                        switch (operation.OperationType)
                         {
+                            case OperationType.UPDATE:
+                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nUpdating '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.UpdateSolution(operation);
+                                break;
                             case OperationType.EXPORT:
-                                worker.ReportProgress(progress, $"Exporting '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.ExportSolution(operation.Solution, operation.Data as ExportEventArgs);
+                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nExporting '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.ExportSolution(operation);
                                 break;
                             case OperationType.IMPORT:
-                                worker.ReportProgress(progress, $"Importing '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.ImportSolution(operation.Solution, operation.Data as ImportEventArgs);
+                                var message = $"Queue execution: {progress}%\nImporting '{operation.Solution.DisplayName}' solution ({index}/{count})";
+                                worker.ReportProgress(progress, message);
+                                repo.ImportSolution(operation.Solution, message);
 
-                                worker.ReportProgress(progress, $"Upgrading '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.UpgradeSolution(operation.Solution, operation.Data as ImportEventArgs);
+                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nUpgrading '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.UpgradeSolution(operation.Solution);
                                 break;
                             case OperationType.DELETE:
-                                worker.ReportProgress(progress, $"Deleting '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.DeleteSolution(operation.Solution, operation.Data as DeleteEventArgs);
+                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nDeleting '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                repo.DeleteSolution(operation.Solution);
                                 break;
                             default:
                                 break;
@@ -280,6 +301,10 @@ namespace Dataverse.XrmTools.Deployer
                     {
                         _logger.Log(LogLevel.INFO, $"All operations were successfully executed");
                         MessageBox.Show(this, "All operations were successfully executed", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // clear queue
+                        lvOperations.Items.Clear();
+                        _operations.Clear();
                     }
                 },
                 ProgressChanged = args =>
@@ -348,53 +373,27 @@ namespace Dataverse.XrmTools.Deployer
         #endregion Private Helper Methods
 
         #region Custom Handler Events
-        private void HandleExportOperationEvent(object sender, ExportEventArgs args)
+        private void HandleOperationEvent(object sender, Operation operation)
         {
-            var operation = new Operation { Type = OperationType.EXPORT, Solution = args.Solution, Data = args };
-            if (_operations.Any(op => op.Type.Equals(OperationType.EXPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
+            if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
             {
-                throw new Exception($"{args.Solution.DisplayName} export operation is already added to queue");
+                throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
+            }
+
+            var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
+            if (updated != null)
+            {
+                // found an update operation -> also update queued operations
+                operation.Solution.DisplayName = updated.Solution.DisplayName;
+                operation.Solution.Version = updated.Solution.Version;
+                operation.Solution.Description = updated.Solution.Description;
             }
 
             _operations.Add(operation);
             var lvItem = operation.ToListViewItem();
             lvOperations.Items.Add(lvItem);
 
-            _logger.Log(LogLevel.INFO, $"Added 'Export' operation to queue ({args.Solution.DisplayName})");
-
-            tsbExecute.Enabled = true;
-        }
-
-        private void HandleImportOperationEvent(object sender, ImportEventArgs args)
-        {
-            var operation = new Operation { Type = OperationType.IMPORT, Solution = args.Solution, Data = args };
-            if(_operations.Any(op => op.Type.Equals(OperationType.IMPORT) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
-            {
-                throw new Exception($"{args.Solution.DisplayName} import operation is already added to queue");
-            }
-
-            _operations.Add(operation);
-            var lvItem = operation.ToListViewItem();
-            lvOperations.Items.Add(lvItem);
-
-            _logger.Log(LogLevel.INFO, $"Added 'Import' operation to queue ({args.Solution.DisplayName})");
-
-            tsbExecute.Enabled = true;
-        }
-
-        private void HandleDeleteOperationEvent(object sender, DeleteEventArgs args)
-        {
-            var operation = new Operation { Type = OperationType.DELETE, Solution = args.Solution, Data = args };
-            if (_operations.Any(op => op.Type.Equals(OperationType.DELETE) && op.Solution.LogicalName.Equals(args.Solution.LogicalName)))
-            {
-                throw new Exception($"{args.Solution.DisplayName} delete operation is already added to queue");
-            }
-
-            _operations.Add(operation);
-            var lvItem = operation.ToListViewItem();
-            lvOperations.Items.Add(lvItem);
-
-            _logger.Log(LogLevel.INFO, $"Added 'Delete' operation to queue ({args.Solution.DisplayName})");
+            _logger.Log(LogLevel.INFO, $"Added '{operation.OperationType}' operation to queue ({operation.Solution.DisplayName})");
 
             tsbExecute.Enabled = true;
         }
@@ -402,6 +401,11 @@ namespace Dataverse.XrmTools.Deployer
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
         {
             return RetrieveSolutions(queryType, connType);
+        }
+
+        private IEnumerable<Operation> HandleRetrieveOperationsEvent(OperationType opType)
+        {
+            return _operations.Where(op => op.OperationType.Equals(opType));
         }
         #endregion Custom Handler Events
 
@@ -424,12 +428,10 @@ namespace Dataverse.XrmTools.Deployer
         {
             var maxWidth = lvOperations.Width >= 713 ? lvOperations.Width : 713;
             chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
-            chOpLogicalName.Width = 0;
             chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.34);
             chOpVersion.Width = (int)Math.Floor(maxWidth * 0.10);
             chOpManaged.Width = (int)Math.Floor(maxWidth * 0.15);
             chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.29);
-            chOpPublisherLogicalNameHidden.Width = 0;
         }
 
         private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -452,10 +454,9 @@ namespace Dataverse.XrmTools.Deployer
             {
                 using (var form = new AddOperation(_logger, _settings))
                 {
-                    form.OnExport += HandleExportOperationEvent;
-                    form.OnImport += HandleImportOperationEvent;
-                    form.OnDelete += HandleDeleteOperationEvent;
+                    form.OnOperation += HandleOperationEvent;
                     form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
+                    form.OnOperationsRetrieve += HandleRetrieveOperationsEvent;
 
                     form.ShowDialog();
                 }
@@ -511,12 +512,12 @@ namespace Dataverse.XrmTools.Deployer
                 lvOperations.Items.RemoveAt(selected.Index);
 
                 var operation = selected.ToObject(new Operation()) as Operation;
-                var item = _operations.FirstOrDefault(op => op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
+                var item = _operations.SingleOrDefault(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
                 if (item != null)
                 {
                     _operations.Remove(item);
 
-                    _logger.Log(LogLevel.INFO, $"Removed '{operation.Type}' operation from queue ({operation.Solution.DisplayName})");
+                    _logger.Log(LogLevel.INFO, $"Removed '{operation.OperationType}' operation from queue ({operation.Solution.DisplayName})");
                 }
             }
         }

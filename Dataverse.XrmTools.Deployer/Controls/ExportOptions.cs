@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
-using Dataverse.XrmTools.Deployer.HandlerArgs;
 using Dataverse.XrmTools.Deployer.AppSettings;
 
 namespace Dataverse.XrmTools.Deployer.Controls
@@ -19,12 +18,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
     {
         private readonly Logger _logger;
         public event SolutionsRetrieve OnSolutionsRetrieveRequested;
-        public event EventHandler<OperationEventArgs> OnOperationSelected;
-        public event EventHandler<OperationEventArgs> OnOperationUpdated;
+        public event EventHandler<Operation> OnOperationSelected;
+        public event EventHandler<Operation> OnOperationUpdated;
 
         private IEnumerable<Solution> _solutions;
         private Settings _settings;
-        private ExportEventArgs _args;
+        private Operation _export;
 
         public ExportOptions(Logger logger, Settings settings)
         {
@@ -94,12 +93,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private void lvSolutions_Resize(object sender, EventArgs e)
         {
             var maxWidth = lvSolutions.Width >= 548 ? lvSolutions.Width : 548;
-            chSolLogicalName.Width = 0;
             chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.39);
             chSolVersion.Width = (int)Math.Floor(maxWidth * 0.19);
             chSolManaged.Width = (int)Math.Floor(maxWidth * 0.19);
             chSolPublisher.Width = (int)Math.Floor(maxWidth * 0.19);
-            chSolPublisherLogicalNameHidden.Width = 0;
         }
 
         private void lvSolutions_SelectedIndexChanged(object sender, EventArgs e)
@@ -108,6 +105,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
             {
                 var solution = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
 
+                solution.Package = new Package
+                {
+                    PackageType = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED,
+                    ExportPath = txtExportPathValue.Text
+                };
+
                 lblSolutionIdValue.Text = solution.SolutionId.ToString();
                 lblLogicalNameValue.Text = solution.LogicalName;
                 lblDisplayNameValue.Text = solution.DisplayName;
@@ -115,15 +118,13 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblManagedValue.Text = solution.IsManaged.ToString();
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                _args = new ExportEventArgs
+                _export = new Operation
                 {
-                    Type = OperationType.EXPORT,
-                    PackageType = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED,
-                    ExportPath = txtExportPathValue.Text,
+                    OperationType = OperationType.EXPORT,
                     Solution = solution
                 };
 
-                OnOperationSelected?.Invoke(this, _args);
+                OnOperationSelected?.Invoke(this, _export);
 
                 gbExportSettings.Enabled = true;
                 gbSolutionInfo.Enabled = true;
@@ -155,13 +156,33 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 _settings.ExportPath = dirPath;
                 _settings.SaveSettings();
 
-                _args.ExportPath = txtExportPathValue.Text;
-                OnOperationUpdated?.Invoke(this, _args);
+                _export.Solution.Package.ExportPath = txtExportPathValue.Text;
+                OnOperationUpdated?.Invoke(this, _export);
             }
             catch (Exception ex)
             {
                 _logger.Log(LogLevel.ERROR, ex.Message);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void rbManaged_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                _export.Solution.Package.PackageType = PackageType.MANAGED;
+                OnOperationUpdated?.Invoke(this, _export);
+            }
+        }
+
+        private void rbUnmanaged_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                _export.Solution.Package.PackageType = PackageType.UNMANAGED;
+                OnOperationUpdated?.Invoke(this, _export);
             }
         }
     }

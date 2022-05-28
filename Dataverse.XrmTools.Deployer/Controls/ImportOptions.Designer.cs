@@ -40,10 +40,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblImportFrom = new System.Windows.Forms.Label();
             this.gbImportFromFile = new System.Windows.Forms.GroupBox();
             this.lblImportPath = new System.Windows.Forms.Label();
-            this.txtImportPathValue = new System.Windows.Forms.TextBox();
             this.btnAddSolutionFile = new System.Windows.Forms.Button();
-            this.gbSolutionInfo = new System.Windows.Forms.GroupBox();
             this.lblPublisherValue = new System.Windows.Forms.Label();
+            this.txtImportPathValue = new System.Windows.Forms.TextBox();
             this.lblPublisher = new System.Windows.Forms.Label();
             this.lblManagedValue = new System.Windows.Forms.Label();
             this.lblManaged = new System.Windows.Forms.Label();
@@ -55,11 +54,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblDisplayName = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
+            this.lblSolutionIdValue = new System.Windows.Forms.Label();
+            this.lblSolutionId = new System.Windows.Forms.Label();
             this.gbImport.SuspendLayout();
             this.gbImportFromQueue.SuspendLayout();
             this.pnlImportFrom.SuspendLayout();
             this.gbImportFromFile.SuspendLayout();
-            this.gbSolutionInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbImport
@@ -70,7 +70,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbImport.Controls.Add(this.gbImportFromQueue);
             this.gbImport.Controls.Add(this.pnlImportFrom);
             this.gbImport.Controls.Add(this.gbImportFromFile);
-            this.gbImport.Controls.Add(this.gbSolutionInfo);
             this.gbImport.Location = new System.Drawing.Point(0, 0);
             this.gbImport.Name = "gbImport";
             this.gbImport.Size = new System.Drawing.Size(1200, 400);
@@ -84,9 +83,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbImportFromQueue.Controls.Add(this.lvOperations);
-            this.gbImportFromQueue.Location = new System.Drawing.Point(7, 145);
+            this.gbImportFromQueue.Location = new System.Drawing.Point(603, 53);
             this.gbImportFromQueue.Name = "gbImportFromQueue";
-            this.gbImportFromQueue.Size = new System.Drawing.Size(744, 249);
+            this.gbImportFromQueue.Size = new System.Drawing.Size(590, 341);
             this.gbImportFromQueue.TabIndex = 12;
             this.gbImportFromQueue.TabStop = false;
             this.gbImportFromQueue.Text = "Import From Queue";
@@ -105,20 +104,22 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lvOperations.Margin = new System.Windows.Forms.Padding(4);
             this.lvOperations.MultiSelect = false;
             this.lvOperations.Name = "lvOperations";
-            this.lvOperations.Size = new System.Drawing.Size(730, 220);
+            this.lvOperations.Size = new System.Drawing.Size(576, 312);
             this.lvOperations.TabIndex = 3;
             this.lvOperations.UseCompatibleStateImageBehavior = false;
             this.lvOperations.View = System.Windows.Forms.View.Details;
+            this.lvOperations.SelectedIndexChanged += new System.EventHandler(this.lvOperations_SelectedIndexChanged);
+            this.lvOperations.Resize += new System.EventHandler(this.lvOperations_Resize);
             // 
             // chOpDisplayName
             // 
             this.chOpDisplayName.Text = "Display Name";
-            this.chOpDisplayName.Width = 350;
+            this.chOpDisplayName.Width = 275;
             // 
             // chOpLogicalName
             // 
             this.chOpLogicalName.Text = "Logical Name";
-            this.chOpLogicalName.Width = 350;
+            this.chOpLogicalName.Width = 275;
             // 
             // pnlImportFrom
             // 
@@ -170,12 +171,24 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbImportFromFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbImportFromFile.Controls.Add(this.lblSolutionIdValue);
+            this.gbImportFromFile.Controls.Add(this.lblSolutionId);
+            this.gbImportFromFile.Controls.Add(this.lblPublisherValue);
             this.gbImportFromFile.Controls.Add(this.lblImportPath);
+            this.gbImportFromFile.Controls.Add(this.lblPublisher);
             this.gbImportFromFile.Controls.Add(this.txtImportPathValue);
+            this.gbImportFromFile.Controls.Add(this.lblManagedValue);
             this.gbImportFromFile.Controls.Add(this.btnAddSolutionFile);
+            this.gbImportFromFile.Controls.Add(this.lblManaged);
+            this.gbImportFromFile.Controls.Add(this.lblLogicalName);
+            this.gbImportFromFile.Controls.Add(this.lblVersionValue);
+            this.gbImportFromFile.Controls.Add(this.lblDisplayName);
+            this.gbImportFromFile.Controls.Add(this.lblVersion);
+            this.gbImportFromFile.Controls.Add(this.lblLogicalNameValue);
+            this.gbImportFromFile.Controls.Add(this.lblDisplayNameValue);
             this.gbImportFromFile.Location = new System.Drawing.Point(7, 53);
             this.gbImportFromFile.Name = "gbImportFromFile";
-            this.gbImportFromFile.Size = new System.Drawing.Size(744, 86);
+            this.gbImportFromFile.Size = new System.Drawing.Size(590, 341);
             this.gbImportFromFile.TabIndex = 10;
             this.gbImportFromFile.TabStop = false;
             this.gbImportFromFile.Text = "Import From File";
@@ -183,72 +196,51 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblImportPath
             // 
             this.lblImportPath.AutoSize = true;
-            this.lblImportPath.Location = new System.Drawing.Point(6, 18);
+            this.lblImportPath.Location = new System.Drawing.Point(6, 97);
             this.lblImportPath.Name = "lblImportPath";
             this.lblImportPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblImportPath.Size = new System.Drawing.Size(41, 27);
             this.lblImportPath.TabIndex = 17;
             this.lblImportPath.Text = "Path:";
             // 
-            // txtImportPathValue
-            // 
-            this.txtImportPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtImportPathValue.Location = new System.Drawing.Point(54, 25);
-            this.txtImportPathValue.Margin = new System.Windows.Forms.Padding(4);
-            this.txtImportPathValue.Name = "txtImportPathValue";
-            this.txtImportPathValue.ReadOnly = true;
-            this.txtImportPathValue.Size = new System.Drawing.Size(683, 22);
-            this.txtImportPathValue.TabIndex = 16;
-            // 
             // btnAddSolutionFile
             // 
             this.btnAddSolutionFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddSolutionFile.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnAddSolutionFile.Location = new System.Drawing.Point(7, 50);
+            this.btnAddSolutionFile.Location = new System.Drawing.Point(7, 22);
             this.btnAddSolutionFile.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddSolutionFile.Name = "btnAddSolutionFile";
-            this.btnAddSolutionFile.Size = new System.Drawing.Size(730, 29);
+            this.btnAddSolutionFile.Size = new System.Drawing.Size(576, 65);
             this.btnAddSolutionFile.TabIndex = 8;
             this.btnAddSolutionFile.Text = "Add Solution File...";
             this.btnAddSolutionFile.UseVisualStyleBackColor = true;
             this.btnAddSolutionFile.Click += new System.EventHandler(this.btnAddSolution_Click);
             // 
-            // gbSolutionInfo
-            // 
-            this.gbSolutionInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.gbSolutionInfo.Controls.Add(this.lblPublisherValue);
-            this.gbSolutionInfo.Controls.Add(this.lblPublisher);
-            this.gbSolutionInfo.Controls.Add(this.lblManagedValue);
-            this.gbSolutionInfo.Controls.Add(this.lblManaged);
-            this.gbSolutionInfo.Controls.Add(this.lblVersionValue);
-            this.gbSolutionInfo.Controls.Add(this.lblVersion);
-            this.gbSolutionInfo.Controls.Add(this.lblDisplayNameValue);
-            this.gbSolutionInfo.Controls.Add(this.lblLogicalNameValue);
-            this.gbSolutionInfo.Controls.Add(this.lblLogicalName);
-            this.gbSolutionInfo.Controls.Add(this.lblDisplayName);
-            this.gbSolutionInfo.Location = new System.Drawing.Point(757, 53);
-            this.gbSolutionInfo.Name = "gbSolutionInfo";
-            this.gbSolutionInfo.Size = new System.Drawing.Size(436, 341);
-            this.gbSolutionInfo.TabIndex = 9;
-            this.gbSolutionInfo.TabStop = false;
-            this.gbSolutionInfo.Text = "Solution Details";
-            // 
             // lblPublisherValue
             // 
             this.lblPublisherValue.AutoSize = true;
-            this.lblPublisherValue.Location = new System.Drawing.Point(111, 131);
+            this.lblPublisherValue.Location = new System.Drawing.Point(111, 308);
             this.lblPublisherValue.Name = "lblPublisherValue";
             this.lblPublisherValue.Size = new System.Drawing.Size(13, 17);
             this.lblPublisherValue.TabIndex = 9;
             this.lblPublisherValue.Text = "-";
             // 
+            // txtImportPathValue
+            // 
+            this.txtImportPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtImportPathValue.Location = new System.Drawing.Point(54, 102);
+            this.txtImportPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtImportPathValue.Name = "txtImportPathValue";
+            this.txtImportPathValue.ReadOnly = true;
+            this.txtImportPathValue.Size = new System.Drawing.Size(529, 22);
+            this.txtImportPathValue.TabIndex = 16;
+            // 
             // lblPublisher
             // 
             this.lblPublisher.AutoSize = true;
-            this.lblPublisher.Location = new System.Drawing.Point(6, 121);
+            this.lblPublisher.Location = new System.Drawing.Point(6, 298);
             this.lblPublisher.Name = "lblPublisher";
             this.lblPublisher.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblPublisher.Size = new System.Drawing.Size(71, 27);
@@ -258,7 +250,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblManagedValue
             // 
             this.lblManagedValue.AutoSize = true;
-            this.lblManagedValue.Location = new System.Drawing.Point(111, 104);
+            this.lblManagedValue.Location = new System.Drawing.Point(111, 281);
             this.lblManagedValue.Name = "lblManagedValue";
             this.lblManagedValue.Size = new System.Drawing.Size(13, 17);
             this.lblManagedValue.TabIndex = 7;
@@ -267,7 +259,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblManaged
             // 
             this.lblManaged.AutoSize = true;
-            this.lblManaged.Location = new System.Drawing.Point(6, 94);
+            this.lblManaged.Location = new System.Drawing.Point(6, 271);
             this.lblManaged.Name = "lblManaged";
             this.lblManaged.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblManaged.Size = new System.Drawing.Size(85, 27);
@@ -277,7 +269,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblVersionValue
             // 
             this.lblVersionValue.AutoSize = true;
-            this.lblVersionValue.Location = new System.Drawing.Point(111, 77);
+            this.lblVersionValue.Location = new System.Drawing.Point(111, 254);
             this.lblVersionValue.Name = "lblVersionValue";
             this.lblVersionValue.Size = new System.Drawing.Size(13, 17);
             this.lblVersionValue.TabIndex = 5;
@@ -286,7 +278,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblVersion
             // 
             this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(6, 67);
+            this.lblVersion.Location = new System.Drawing.Point(6, 244);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblVersion.Size = new System.Drawing.Size(60, 27);
@@ -296,7 +288,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblDisplayNameValue
             // 
             this.lblDisplayNameValue.AutoSize = true;
-            this.lblDisplayNameValue.Location = new System.Drawing.Point(111, 50);
+            this.lblDisplayNameValue.Location = new System.Drawing.Point(111, 227);
             this.lblDisplayNameValue.Name = "lblDisplayNameValue";
             this.lblDisplayNameValue.Size = new System.Drawing.Size(13, 17);
             this.lblDisplayNameValue.TabIndex = 3;
@@ -305,7 +297,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblLogicalNameValue
             // 
             this.lblLogicalNameValue.AutoSize = true;
-            this.lblLogicalNameValue.Location = new System.Drawing.Point(111, 23);
+            this.lblLogicalNameValue.Location = new System.Drawing.Point(111, 200);
             this.lblLogicalNameValue.Name = "lblLogicalNameValue";
             this.lblLogicalNameValue.Size = new System.Drawing.Size(13, 17);
             this.lblLogicalNameValue.TabIndex = 2;
@@ -314,17 +306,17 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // lblLogicalName
             // 
             this.lblLogicalName.AutoSize = true;
-            this.lblLogicalName.Location = new System.Drawing.Point(6, 18);
+            this.lblLogicalName.Location = new System.Drawing.Point(6, 190);
             this.lblLogicalName.Name = "lblLogicalName";
-            this.lblLogicalName.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-            this.lblLogicalName.Size = new System.Drawing.Size(98, 22);
+            this.lblLogicalName.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.lblLogicalName.Size = new System.Drawing.Size(98, 27);
             this.lblLogicalName.TabIndex = 1;
             this.lblLogicalName.Text = "Logical Name:";
             // 
             // lblDisplayName
             // 
             this.lblDisplayName.AutoSize = true;
-            this.lblDisplayName.Location = new System.Drawing.Point(6, 40);
+            this.lblDisplayName.Location = new System.Drawing.Point(6, 217);
             this.lblDisplayName.Name = "lblDisplayName";
             this.lblDisplayName.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblDisplayName.Size = new System.Drawing.Size(99, 27);
@@ -345,6 +337,25 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 0;
             // 
+            // lblSolutionIdValue
+            // 
+            this.lblSolutionIdValue.AutoSize = true;
+            this.lblSolutionIdValue.Location = new System.Drawing.Point(111, 173);
+            this.lblSolutionIdValue.Name = "lblSolutionIdValue";
+            this.lblSolutionIdValue.Size = new System.Drawing.Size(13, 17);
+            this.lblSolutionIdValue.TabIndex = 19;
+            this.lblSolutionIdValue.Text = "-";
+            // 
+            // lblSolutionId
+            // 
+            this.lblSolutionId.AutoSize = true;
+            this.lblSolutionId.Location = new System.Drawing.Point(6, 163);
+            this.lblSolutionId.Name = "lblSolutionId";
+            this.lblSolutionId.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.lblSolutionId.Size = new System.Drawing.Size(80, 27);
+            this.lblSolutionId.TabIndex = 18;
+            this.lblSolutionId.Text = "Solution ID:";
+            // 
             // ImportOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -358,8 +369,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.pnlImportFrom.PerformLayout();
             this.gbImportFromFile.ResumeLayout(false);
             this.gbImportFromFile.PerformLayout();
-            this.gbSolutionInfo.ResumeLayout(false);
-            this.gbSolutionInfo.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -367,7 +376,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private System.Windows.Forms.GroupBox gbImport;
         private System.Windows.Forms.Button btnAddSolutionFile;
-        private System.Windows.Forms.GroupBox gbSolutionInfo;
         private System.Windows.Forms.Label lblDisplayName;
         private System.Windows.Forms.Label lblLogicalName;
         private System.Windows.Forms.Label lblLogicalNameValue;
@@ -391,5 +399,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private System.Windows.Forms.ListView lvOperations;
         private System.Windows.Forms.ColumnHeader chOpDisplayName;
         private System.Windows.Forms.ColumnHeader chOpLogicalName;
+        private System.Windows.Forms.Label lblSolutionIdValue;
+        private System.Windows.Forms.Label lblSolutionId;
     }
 }
