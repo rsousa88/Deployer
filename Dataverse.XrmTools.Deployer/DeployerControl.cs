@@ -228,6 +228,21 @@ namespace Dataverse.XrmTools.Deployer
             }).OrderBy(sol => sol.DisplayName);
         }
 
+        private Solution RetrieveSolutionByLogicalName(string logicalName, ConnectionType connType)
+        {
+            if (connType.Equals(ConnectionType.SOURCE) && _secondary is null)
+            {
+                throw new Exception("Source connection is required for export operation");
+            }
+
+            LogInfo($"Loading solutions...");
+
+            var repo = new CrmRepo(_primary, _logger, _secondary);
+            var record = repo.GetSolution(logicalName);
+
+            return record is null ? null : new Solution { SolutionId = record.GetAttributeValue<Guid>("solutionid") };
+        }
+
         private void DeployQueue()
         {
             var count = _operations.Count;
@@ -243,6 +258,8 @@ namespace Dataverse.XrmTools.Deployer
                 IsCancelable = true,
                 Work = (worker, args) =>
                 {
+                    var startTotalTime = DateTime.UtcNow;
+
                     var repo = new CrmRepo(_primary, _logger, _secondary, worker);
 
                     var index = 1;
@@ -250,29 +267,59 @@ namespace Dataverse.XrmTools.Deployer
                     {
                         if (worker.CancellationPending) { return; }
 
-                        var progress = 100 * index / count;
+                        var startPartialTime = DateTime.UtcNow;
+
+                        var progress = 100 * (index -1) / count;
 
                         switch (operation.OperationType)
                         {
                             case OperationType.UPDATE:
                                 worker.ReportProgress(progress, $"Queue execution: {progress}%\nUpdating '{operation.Solution.DisplayName}' solution ({index}/{count})");
                                 repo.UpdateSolution(operation);
+
+                                var updateTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully updated in {updateTime}");
                                 break;
                             case OperationType.EXPORT:
                                 worker.ReportProgress(progress, $"Queue execution: {progress}%\nExporting '{operation.Solution.DisplayName}' solution ({index}/{count})");
                                 repo.ExportSolution(operation);
+
+                                var exportTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully exported in {exportTime}");
                                 break;
                             case OperationType.IMPORT:
-                                var message = $"Queue execution: {progress}%\nImporting '{operation.Solution.DisplayName}' solution ({index}/{count})";
+                                var import = operation as ImportOperation;
+                                var message = $"Queue execution: {progress}%\nImporting '{import.Solution.DisplayName}' solution ({index}/{count})";
                                 worker.ReportProgress(progress, message);
-                                repo.ImportSolution(operation.Solution, message);
+                                repo.ImportSolution(import, message);
 
-                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nUpgrading '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.UpgradeSolution(operation.Solution);
+                                var importTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully imported in {importTime}");
+
+                                if (import.HoldingSolution)
+                                {
+                                    startPartialTime = DateTime.UtcNow;
+
+                                    worker.ReportProgress(progress, $"Queue execution: {progress}%\nUpgrading '{import.Solution.DisplayName}' solution ({index}/{count})");
+                                    repo.UpgradeSolution(import.Solution);
+
+                                    var upgradeTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully upgraded in {upgradeTime}");
+                                }
                                 break;
                             case OperationType.DELETE:
                                 worker.ReportProgress(progress, $"Queue execution: {progress}%\nDeleting '{operation.Solution.DisplayName}' solution ({index}/{count})");
                                 repo.DeleteSolution(operation.Solution);
+
+                                var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
+                                break;
+                            case OperationType.PUBLISH:
+                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nPublishing all customizations ({index}/{count})");
+                                repo.PublishCustomizations();
+
+                                var publishTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"All customizations were successfully published in {publishTime}");
                                 break;
                             default:
                                 break;
@@ -280,6 +327,9 @@ namespace Dataverse.XrmTools.Deployer
 
                         index++;
                     }
+
+                    var totalTime = (DateTime.UtcNow - startTotalTime).ToString(@"hh\:mm\:ss");
+                    _logger.Log(LogLevel.INFO, $"Total execution time: {totalTime}");
                 },
                 PostWorkCallBack = args =>
                 {
@@ -375,25 +425,30 @@ namespace Dataverse.XrmTools.Deployer
         #region Custom Handler Events
         private void HandleOperationEvent(object sender, Operation operation)
         {
-            if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
+            if(!operation.OperationType.Equals(OperationType.PUBLISH))
             {
-                throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
-            }
+                if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
+                {
+                    throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
+                }
 
-            var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
-            if (updated != null)
-            {
-                // found an update operation -> also update queued operations
-                operation.Solution.DisplayName = updated.Solution.DisplayName;
-                operation.Solution.Version = updated.Solution.Version;
-                operation.Solution.Description = updated.Solution.Description;
+                var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
+                if (updated != null)
+                {
+                    // found an update operation -> also update queued operations
+                    operation.Solution.DisplayName = updated.Solution.DisplayName;
+                    operation.Solution.Version = updated.Solution.Version;
+                    operation.Solution.Description = updated.Solution.Description;
+                }
             }
 
             _operations.Add(operation);
             var lvItem = operation.ToListViewItem();
             lvOperations.Items.Add(lvItem);
 
-            _logger.Log(LogLevel.INFO, $"Added '{operation.OperationType}' operation to queue ({operation.Solution.DisplayName})");
+            var message = $"Added '{operation.OperationType}' operation to queue";
+            if(!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
+            _logger.Log(LogLevel.INFO, message);
 
             tsbExecute.Enabled = true;
         }
@@ -401,6 +456,11 @@ namespace Dataverse.XrmTools.Deployer
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
         {
             return RetrieveSolutions(queryType, connType);
+        }
+
+        private Solution HandleRetrieveSingleSolutionEvent(string logicalName, ConnectionType connType)
+        {
+            return RetrieveSolutionByLogicalName(logicalName, connType);
         }
 
         private IEnumerable<Operation> HandleRetrieveOperationsEvent(OperationType opType)
@@ -456,6 +516,7 @@ namespace Dataverse.XrmTools.Deployer
                 {
                     form.OnOperation += HandleOperationEvent;
                     form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
+                    form.OnSingleSolutionRetrieve += HandleRetrieveSingleSolutionEvent;
                     form.OnOperationsRetrieve += HandleRetrieveOperationsEvent;
 
                     form.ShowDialog();
@@ -512,15 +573,22 @@ namespace Dataverse.XrmTools.Deployer
                 lvOperations.Items.RemoveAt(selected.Index);
 
                 var operation = selected.ToObject(new Operation()) as Operation;
-                var item = _operations.SingleOrDefault(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
+                var item = _operations.SingleOrDefault(op => op.OperationType.Equals(operation.OperationType) && (op.OperationType.Equals(OperationType.PUBLISH) || op.Solution.LogicalName.Equals(operation.Solution.LogicalName)));
                 if (item != null)
                 {
                     _operations.Remove(item);
 
-                    _logger.Log(LogLevel.INFO, $"Removed '{operation.OperationType}' operation from queue ({operation.Solution.DisplayName})");
+                    var message = $"Removed '{operation.OperationType}' operation from queue";
+                    if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
+                    _logger.Log(LogLevel.INFO, message);
                 }
             }
         }
         #endregion Form Events
+
+        private void btnClearLogs_Click(object sender, EventArgs e)
+        {
+            txtLogs.Text = string.Empty;
+        }
     }
 }

@@ -247,6 +247,7 @@
     </Compile>
     <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />

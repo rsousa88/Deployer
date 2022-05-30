@@ -50,6 +50,7 @@
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.txtLogs = new System.Windows.Forms.TextBox();
+            this.btnClearLogs = new System.Windows.Forms.Button();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -138,7 +139,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(310, 136);
+            this.gbEnvironments.Size = new System.Drawing.Size(310, 164);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -148,7 +149,7 @@
             this.btnConnectSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnectSource.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnConnectSource.Location = new System.Drawing.Point(7, 101);
+            this.btnConnectSource.Location = new System.Drawing.Point(7, 129);
             this.btnConnectSource.Margin = new System.Windows.Forms.Padding(4);
             this.btnConnectSource.Name = "btnConnectSource";
             this.btnConnectSource.Size = new System.Drawing.Size(296, 29);
@@ -200,11 +201,11 @@
             // gbSettings
             // 
             this.gbSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSettings.Location = new System.Drawing.Point(3, 142);
+            this.gbSettings.Location = new System.Drawing.Point(3, 170);
             this.gbSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSettings.Name = "gbSettings";
             this.gbSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSettings.Size = new System.Drawing.Size(310, 792);
+            this.gbSettings.Size = new System.Drawing.Size(310, 764);
             this.gbSettings.TabIndex = 0;
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
@@ -320,7 +321,7 @@
             // 
             // chOpManaged
             // 
-            this.chOpManaged.Text = "Is Managed";
+            this.chOpManaged.Text = "Managed";
             this.chOpManaged.Width = 150;
             // 
             // chOpPublisher
@@ -346,6 +347,7 @@
             // gbLogs
             // 
             this.pnlBody.SetColumnSpan(this.gbLogs, 4);
+            this.gbLogs.Controls.Add(this.btnClearLogs);
             this.gbLogs.Controls.Add(this.txtLogs);
             this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbLogs.Location = new System.Drawing.Point(1089, 2);
@@ -363,13 +365,27 @@
             this.txtLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLogs.Location = new System.Drawing.Point(6, 20);
+            this.txtLogs.Location = new System.Drawing.Point(6, 58);
             this.txtLogs.Multiline = true;
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(715, 907);
+            this.txtLogs.Size = new System.Drawing.Size(715, 869);
             this.txtLogs.TabIndex = 2;
+            // 
+            // btnClearLogs
+            // 
+            this.btnClearLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearLogs.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
+            this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
+            this.btnClearLogs.Name = "btnClearLogs";
+            this.btnClearLogs.Size = new System.Drawing.Size(714, 29);
+            this.btnClearLogs.TabIndex = 9;
+            this.btnClearLogs.Text = "Clear Logs";
+            this.btnClearLogs.UseVisualStyleBackColor = true;
+            this.btnClearLogs.Click += new System.EventHandler(this.btnClearLogs_Click);
             // 
             // DeployerControl
             // 
@@ -435,5 +451,6 @@
         private System.Windows.Forms.Label lblSource;
         private System.Windows.Forms.Label lblSourceValue;
         private System.Windows.Forms.Button btnConnectSource;
+        private System.Windows.Forms.Button btnClearLogs;
     }
 }

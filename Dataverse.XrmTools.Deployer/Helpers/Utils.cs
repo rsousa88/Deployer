@@ -19,10 +19,10 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
                 var item = new ListViewItem(new string[] {
                     operation.OperationType.ToString(),
-                    operation.Solution.DisplayName,
-                    operation.Solution.Version,
-                    operation.Solution.IsManaged ? "Yes" : "No",
-                    operation.Solution.Publisher.DisplayName
+                    operation.Solution != null ? operation.Solution.DisplayName : "-",
+                    operation.Solution != null ? operation.Solution.Version : "-",
+                    operation.Solution != null ? (operation.Solution.IsManaged ? "Yes" : "No") : "-",
+                    operation.Solution != null && operation.Solution.Publisher != null ? operation.Solution.Publisher.DisplayName : "-"
                 });
 
                 item.Tag = operation;
@@ -92,11 +92,6 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
             if (solution.DisplayName.ToLower().Contains(filter) || solution.LogicalName.ToLower().Contains(filter)) { return true; }
             return false;
-        }
-
-        public static string GetProgressMessage(this string baseMessage, string replace, double progress)
-        {
-            return baseMessage.Replace(replace, progress.ToString());
         }
     }
 }

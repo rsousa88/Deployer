@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.ComponentModel;
 using System.Collections.Generic;
 
@@ -47,17 +48,18 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         #endregion Constructors
 
         #region Interface Methods
-        public IEnumerable<Entity> GetSolutions(string[] columns, PackageType queryType = PackageType.ALL, ConnectionType connType = ConnectionType.TARGET)
+        public IEnumerable<Entity> GetSolutions(string[] columns = null, PackageType queryType = PackageType.ALL, ConnectionType connType = ConnectionType.TARGET)
         {
             try
             {
+                if(columns is null) { columns = new string[] { "solutionid" }; }
                 var query = new QueryExpression("solution")
                 {
                     ColumnSet = new ColumnSet((from c in columns select c.ToLower()).ToArray()),
                     PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
                 };
 
-                if(!queryType.Equals(PackageType.ALL))
+                if (!queryType.Equals(PackageType.ALL))
                 {
                     query.Criteria = new FilterExpression(LogicalOperator.And)
                     {
@@ -73,6 +75,34 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 publisher.Columns.AddColumns("uniquename", "friendlyname");
 
                 return GetRecords(query, connType);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public Entity GetSolution(string logicalName, string[] columns = null, ConnectionType connType = ConnectionType.TARGET)
+        {
+            try
+            {
+                if (columns is null) { columns = new string[] { "solutionid" }; }
+                var filter = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                        {
+                            new ConditionExpression("uniquename", ConditionOperator.Equal, logicalName)
+                        }
+                };
+
+                var query = new QueryExpression("solution")
+                {
+                    ColumnSet = new ColumnSet((from c in columns select c.ToLower()).ToArray()),
+                    Criteria = filter,
+                    PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
+                };
+
+                return GetRecords(query, connType).FirstOrDefault();
             }
             catch
             {
@@ -99,9 +129,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                     }
                 };
 
-                var response = _source.Execute(request) as UpdateResponse;
-
-                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully updated");
+                _source.Execute(request);
             }
             catch
             {
@@ -152,8 +180,6 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 {
                     writer.Write(package.SolutionBytes);
                 }
-
-                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully exported");
             }
             catch
             {
@@ -161,17 +187,17 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void ImportSolution(Solution solution, string progressMessage)
+        public void ImportSolution(ImportOperation operation, string progressMessage)
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Importing solution {solution.DisplayName}...");
+                _logger.Log(LogLevel.INFO, $"Importing solution {operation.Solution.DisplayName}...");
                 var request = new ImportSolutionAsyncRequest
                 {
-                    CustomizationFile = solution.Package.SolutionBytes,
-                    OverwriteUnmanagedCustomizations = true,
-                    PublishWorkflows = true,
-                    HoldingSolution = true
+                    CustomizationFile = operation.Solution.Package.SolutionBytes,
+                    HoldingSolution = operation.HoldingSolution,
+                    OverwriteUnmanagedCustomizations = operation.OverwriteUnmanaged,
+                    PublishWorkflows = operation.PublishWorkflows
                 };
 
                 var response = _target.Execute(request) as ImportSolutionAsyncResponse;
@@ -182,8 +208,6 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 {
                     throw new Exception($"Error on Import operation:\n{result.Message}");
                 }
-
-                _logger.Log(LogLevel.INFO, $"Solution {solution.DisplayName} successfully imported");
             }
             catch
             {
@@ -204,8 +228,6 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 {
                     throw new Exception($"Error on Upgrade operation:\n{result.Message}");
                 }
-
-                _logger.Log(LogLevel.INFO, $"Solution {solution.DisplayName} successfully upgraded");
             }
             catch
             {
@@ -253,8 +275,27 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 {
                     throw new Exception($"Error on Delete operation:\n{result.Message}");
                 }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-                _logger.Log(LogLevel.INFO, $"Solution {solution.DisplayName} successfully deleted");
+        public void PublishCustomizations()
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Publishing all customizations...");
+
+                var response = _target.Execute(new OrganizationRequest("PublishAllXmlAsync"));
+
+                _logger.Log(LogLevel.INFO, $"Waiting for publish operation...");
+                var result = CheckProgress(ConnectionType.TARGET, Guid.Parse(response["AsyncOperationId"].ToString()));
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Publish operation:\n{result.Message}");
+                }
             }
             catch
             {
@@ -295,10 +336,8 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        private OperationResponse CheckProgress(ConnectionType connType, Guid operationId, Guid? importJobId = null, string progressMsg = null)
+        private OperationResponse CheckProgress(ConnectionType connType, Guid operationId, Guid? importJobId = null, string baseMsg = null)
         {
-            if(progressMsg != null) { progressMsg = $"{progressMsg}\n__PROGRESS__%"; }
-
             var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
 
             var success = false;
@@ -319,9 +358,9 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 {
                     var importJob = connection.Retrieve("importjob", importJobId.Value, new ColumnSet(new string[] { "progress" }));
                     var progress = Math.Round(importJob.GetAttributeValue<double>("progress"), 2);
-                    _logger.Log(LogLevel.INFO, $"Import progress: {progress}%");
+                    _logger.Log(LogLevel.DEBUG, $"Import progress: {progress}%");
 
-                    progressMsg.GetProgressMessage("__PROGRESS__", progress);
+                    var progressMsg = $"{baseMsg}\n{progress}%";
                     _worker.ReportProgress(Convert.ToInt32(progress), progressMsg);
                 }
 
@@ -383,7 +422,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 _logger.Log(LogLevel.DEBUG, $"Sleeping for {sleepTimeInSeconds} seconds");
             }
 
-            System.Threading.Thread.Sleep(sleepTimeInSeconds * 1000);
+            Thread.Sleep(sleepTimeInSeconds * 1000);
         }
         #endregion Private Methods
     }

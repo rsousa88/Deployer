@@ -44,6 +44,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.rbUpdate = new System.Windows.Forms.RadioButton();
+            this.rbPublish = new System.Windows.Forms.RadioButton();
             this.pnlHeader.SuspendLayout();
             this.pnlBody.SuspendLayout();
             this.gbOperationType.SuspendLayout();
@@ -120,6 +121,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // 
             // gbOperationType
             // 
+            this.gbOperationType.Controls.Add(this.rbPublish);
             this.gbOperationType.Controls.Add(this.rbUpdate);
             this.gbOperationType.Controls.Add(this.rbExport);
             this.gbOperationType.Controls.Add(this.rbImport);
@@ -134,7 +136,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // rbExport
             // 
             this.rbExport.AutoSize = true;
-            this.rbExport.Location = new System.Drawing.Point(396, 24);
+            this.rbExport.Location = new System.Drawing.Point(301, 24);
             this.rbExport.Name = "rbExport";
             this.rbExport.Size = new System.Drawing.Size(124, 21);
             this.rbExport.TabIndex = 6;
@@ -145,7 +147,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // rbImport
             // 
             this.rbImport.AutoSize = true;
-            this.rbImport.Location = new System.Drawing.Point(730, 24);
+            this.rbImport.Location = new System.Drawing.Point(540, 24);
             this.rbImport.Name = "rbImport";
             this.rbImport.Size = new System.Drawing.Size(123, 21);
             this.rbImport.TabIndex = 7;
@@ -156,7 +158,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // rbDelete
             // 
             this.rbDelete.AutoSize = true;
-            this.rbDelete.Location = new System.Drawing.Point(1063, 24);
+            this.rbDelete.Location = new System.Drawing.Point(778, 24);
             this.rbDelete.Name = "rbDelete";
             this.rbDelete.Size = new System.Drawing.Size(125, 21);
             this.rbDelete.TabIndex = 8;
@@ -211,6 +213,17 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.rbUpdate.UseVisualStyleBackColor = true;
             this.rbUpdate.CheckedChanged += new System.EventHandler(this.rbUpdate_CheckedChanged);
             // 
+            // rbPublish
+            // 
+            this.rbPublish.AutoSize = true;
+            this.rbPublish.Location = new System.Drawing.Point(1018, 24);
+            this.rbPublish.Name = "rbPublish";
+            this.rbPublish.Size = new System.Drawing.Size(174, 21);
+            this.rbPublish.TabIndex = 10;
+            this.rbPublish.Text = "Publish Customizations";
+            this.rbPublish.UseVisualStyleBackColor = true;
+            this.rbPublish.CheckedChanged += new System.EventHandler(this.rbPublish_CheckedChanged);
+            // 
             // AddOperation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -256,5 +269,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.RadioButton rbUpdate;
+        private System.Windows.Forms.RadioButton rbPublish;
     }
 }

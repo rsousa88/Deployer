@@ -6,22 +6,25 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Windows.Forms;
 using System.IO.Compression;
+using System.Collections.Generic;
 
 // Dataverse
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
-using System.Collections.Generic;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
     public partial class ImportOptions : UserControl
     {
         private readonly Logger _logger;
+        public event SingleSolutionRetrieve OnSingleSolutionRetrieveRequested;
         public event OperationsRetrieve OnOperationsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
+        public event EventHandler<Operation> OnOperationUpdated;
 
         private IEnumerable<Operation> _operations;
+        private ImportOperation _import;
 
         public ImportOptions(Logger logger)
         {
@@ -30,6 +33,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
             InitializeComponent();
 
             gbImportFromQueue.Enabled = false;
+            gbSolutionInfo.Enabled = false;
+            gbImportSettings.Enabled = false;
         }
 
         private void btnAddSolution_Click(object sender, EventArgs e)
@@ -46,13 +51,34 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     lblManagedValue.Text = solution.IsManaged.ToString();
                     lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                    var import = new Operation
+                    var existing = OnSingleSolutionRetrieveRequested?.Invoke(solution.LogicalName, ConnectionType.TARGET);
+
+                    _import = new ImportOperation
                     {
                         OperationType = OperationType.IMPORT,
-                        Solution = solution
+                        Solution = solution,
+                        HoldingSolution = existing != null ? true : false,
+                        OverwriteUnmanaged = true,
+                        PublishWorkflows = true
                     };
 
-                    OnOperationSelected?.Invoke(this, import);
+                    if (existing != null)
+                    {
+                        lblExistingValue.Text = "Yes";
+                        chbHoldingSolution.Checked = true;
+                        chbHoldingSolution.Enabled = true;
+                    }
+                    else
+                    {
+                        lblExistingValue.Text = "No";
+                        chbHoldingSolution.Checked = false;
+                        chbHoldingSolution.Enabled = false;
+                    }
+
+                    gbSolutionInfo.Enabled = true;
+                    gbImportSettings.Enabled = true;
+
+                    OnOperationSelected?.Invoke(this, _import);
                 }
             }
             catch (Exception ex)
@@ -96,6 +122,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             var solManifestNodes = doc.Descendants("SolutionManifest");
             var solDisplayNames = solManifestNodes.Select(node => node.Element("LocalizedNames")).FirstOrDefault().Descendants();
+            var displayNameNode = solDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033"));
             var publisherNodes = solManifestNodes.Select(node => node.Element("Publisher")).FirstOrDefault().Descendants();
             var pubDisplayNames = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("LocalizedNames")).Descendants();
 
@@ -109,7 +136,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             return new Solution
             {
                 LogicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value,
-                DisplayName = solDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value,
+                DisplayName = displayNameNode is null ? "N/A" : displayNameNode.Attribute("description").Value,
                 Version = solManifestNodes.Select(node => node.Element("Version")).FirstOrDefault().Value,
                 IsManaged = package.PackageType.Equals(PackageType.MANAGED) ? true : false,
                 Publisher = new Publisher
@@ -183,14 +210,53 @@ namespace Dataverse.XrmTools.Deployer.Controls
             {
                 var operation = lvOperations.SelectedItems[0].ToObject(new Operation()) as Operation;
 
-                var import = new Operation
+                lblSolutionIdValue.Text = operation.Solution.SolutionId.ToString();
+                lblLogicalNameValue.Text = operation.Solution.LogicalName;
+                lblDisplayNameValue.Text = operation.Solution.DisplayName;
+                lblVersionValue.Text = operation.Solution.Version;
+                lblManagedValue.Text = operation.Solution.IsManaged.ToString();
+                lblPublisherValue.Text = operation.Solution.Publisher.DisplayName;
+
+                var existing = OnSingleSolutionRetrieveRequested?.Invoke(operation.Solution.LogicalName, ConnectionType.TARGET);
+
+                _import = new ImportOperation
                 {
                     OperationType = OperationType.IMPORT,
-                    Solution = operation.Solution
+                    Solution = operation.Solution,
+                    HoldingSolution = existing != null ? true : false,
+                    OverwriteUnmanaged = true,
+                    PublishWorkflows = true
                 };
 
-                OnOperationSelected?.Invoke(this, import);
+                if (existing != null)
+                {
+                    lblExistingValue.Text = "Yes";
+                    chbHoldingSolution.Checked = true;
+                    chbHoldingSolution.Enabled = true;
+                }
+                else
+                {
+                    lblExistingValue.Text = "No";
+                    chbHoldingSolution.Checked = false;
+                    chbHoldingSolution.Enabled = false;
+                }
+
+                gbSolutionInfo.Enabled = true;
+                gbImportSettings.Enabled = true;
+
+                OnOperationSelected?.Invoke(this, _import);
             }
+        }
+
+        private void OptionsUpdated_CheckedChanged(object sender, EventArgs e)
+        {
+            var checkbox = sender as CheckBox;
+
+            _import.HoldingSolution = chbHoldingSolution.Checked;
+            _import.OverwriteUnmanaged = chbOverwriteUnmanaged.Checked;
+            _import.PublishWorkflows = chbPublishWorkflows.Checked;
+
+            OnOperationUpdated?.Invoke(this, _import);
         }
     }
 }
