@@ -290,12 +290,16 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
+    <None Include="Resources\arrow-down-35px.png" />
+    <Resource Include="Resources\arrow-up-35px.png" />
+    <Content Include="Resources\arrow-down-disabled-35px.png" />
+    <Content Include="Resources\arrow-up-disabled-35px.png" />
     <Content Include="Resources\icon.png" />
     <Content Include="Resources\icon32.png" />
     <Content Include="Resources\icon80.png" />

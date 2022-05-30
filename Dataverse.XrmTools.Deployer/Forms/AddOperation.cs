@@ -127,6 +127,8 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
         private void HandleSelectedOperationEvent(object sender, Operation operation)
         {
+            operation.OperationId = Guid.NewGuid();
+
             _operation = operation;
             btnClose.Enabled = true;
         }

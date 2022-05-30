@@ -39,7 +39,7 @@ namespace Dataverse.XrmTools.Deployer
         // models
         private Instance _targetInstance;
         private Instance _sourceInstance;
-        private readonly List<Operation> _operations = new List<Operation>();
+        private List<Operation> _operations = new List<Operation>();
 
         // flags
         private bool _working;
@@ -355,6 +355,14 @@ namespace Dataverse.XrmTools.Deployer
                         // clear queue
                         lvOperations.Items.Clear();
                         _operations.Clear();
+
+                        tsbExecute.Enabled = false;
+
+                        btnUp.Enabled = false;
+                        btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+
+                        btnDown.Enabled = false;
+                        btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
                     }
                 },
                 ProgressChanged = args =>
@@ -420,6 +428,16 @@ namespace Dataverse.XrmTools.Deployer
 
             tsbExecute.Enabled = false;
         }
+
+        private void RenderOperationsList(int selectedIndex)
+        {
+            _operations = _operations.OrderBy(op => op.Index).ToList();
+
+            lvOperations.Items.Clear();
+            lvOperations.Items.AddRange(_operations.Select(op => op.ToListViewItem()).ToArray());
+
+            lvOperations.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).Index.Equals(selectedIndex)).Selected = true;
+        }
         #endregion Private Helper Methods
 
         #region Custom Handler Events
@@ -441,6 +459,8 @@ namespace Dataverse.XrmTools.Deployer
                     operation.Solution.Description = updated.Solution.Description;
                 }
             }
+
+            operation.Index = lvOperations.Items.Count + 1;
 
             _operations.Add(operation);
             var lvItem = operation.ToListViewItem();
@@ -487,25 +507,12 @@ namespace Dataverse.XrmTools.Deployer
         private void lvSolutions_Resize(object sender, EventArgs e)
         {
             var maxWidth = lvOperations.Width >= 713 ? lvOperations.Width : 713;
+            chOpIndex.Width = (int)Math.Floor(maxWidth * 0.03);
             chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
             chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.34);
             chOpVersion.Width = (int)Math.Floor(maxWidth * 0.10);
-            chOpManaged.Width = (int)Math.Floor(maxWidth * 0.15);
-            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.29);
-        }
-
-        private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            try
-            {
-                (sender as ListView).Sort(_settings, e.Column);
-            }
-            catch (Exception ex)
-            {
-                ManageWorkingState(false);
-                _logger.Log(LogLevel.ERROR, ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            chOpManaged.Width = (int)Math.Floor(maxWidth * 0.12);
+            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.24);
         }
 
         private void btnAddOperation_Click(object sender, EventArgs e)
@@ -534,6 +541,14 @@ namespace Dataverse.XrmTools.Deployer
         {
             lvOperations.Items.Clear();
             _operations.Clear();
+
+            tsbExecute.Enabled = false;
+
+            btnUp.Enabled = false;
+            btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+
+            btnDown.Enabled = false;
+            btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
         }
 
         private void tsbDeploy_Click(object sender, EventArgs e)
@@ -578,17 +593,87 @@ namespace Dataverse.XrmTools.Deployer
                 {
                     _operations.Remove(item);
 
+                    if(_operations.Count.Equals(0))
+                    {
+                        tsbExecute.Enabled = false;
+
+                        btnUp.Enabled = false;
+                        btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+
+                        btnDown.Enabled = false;
+                        btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+                    }
+
                     var message = $"Removed '{operation.OperationType}' operation from queue";
                     if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
                     _logger.Log(LogLevel.INFO, message);
                 }
             }
         }
-        #endregion Form Events
 
         private void btnClearLogs_Click(object sender, EventArgs e)
         {
             txtLogs.Text = string.Empty;
         }
+
+        private void lvOperations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selected = lvOperations.SelectedItems.Count;
+            if (selected > 0)
+            {
+                btnUp.Enabled = true;
+                btnUp.BackgroundImage = Properties.Resources.arrow_up_35px;
+
+                btnDown.Enabled = true;
+                btnDown.BackgroundImage = Properties.Resources.arrow_down_35px;
+            }
+            else
+            {
+                btnUp.Enabled = false;
+                btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+
+                btnDown.Enabled = false;
+                btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+            }
+        }
+
+        private void btnUp_Click(object sender, EventArgs e)
+        {
+            var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+            if (selected != null)
+            {
+                var oldIndex = (selected.Tag as Operation).Index;
+                if (oldIndex > 1)
+                {
+                    var oldOperation = _operations.SingleOrDefault(op => op.Index.Equals(_operations.FindIndex(op2 => op2.Index.Equals(oldIndex))));
+                    var newOperation = _operations.SingleOrDefault(op => op.OperationId.Equals((selected.Tag as Operation).OperationId));
+
+                    oldOperation.Index++;
+                    newOperation.Index--;
+
+                    RenderOperationsList(oldIndex -1);
+                }
+            }
+        }
+
+        private void btnDown_Click(object sender, EventArgs e)
+        {
+            var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+            if (selected != null)
+            {
+                var oldIndex = (selected.Tag as Operation).Index;
+                if (oldIndex < _operations.Count)
+                {
+                    var oldOperation = _operations.SingleOrDefault(op => op.Index.Equals(oldIndex +1));
+                    var newOperation = _operations.SingleOrDefault(op => op.OperationId.Equals((selected.Tag as Operation).OperationId));
+
+                    oldOperation.Index--;
+                    newOperation.Index++;
+
+                    RenderOperationsList(oldIndex + 1);
+                }
+            }
+        }
+        #endregion Form Events
     }
 }

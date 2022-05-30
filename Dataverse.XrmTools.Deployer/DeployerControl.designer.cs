@@ -38,9 +38,11 @@
             this.gbSettings = new System.Windows.Forms.GroupBox();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbQueue = new System.Windows.Forms.GroupBox();
+            this.pnlOperationButtons = new System.Windows.Forms.Panel();
             this.btnClearQueue = new System.Windows.Forms.Button();
             this.btnAddOperation = new System.Windows.Forms.Button();
             this.lvOperations = new System.Windows.Forms.ListView();
+            this.chOpIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -49,14 +51,17 @@
             this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLogs = new System.Windows.Forms.GroupBox();
-            this.txtLogs = new System.Windows.Forms.TextBox();
             this.btnClearLogs = new System.Windows.Forms.Button();
+            this.txtLogs = new System.Windows.Forms.TextBox();
+            this.btnUp = new System.Windows.Forms.Button();
+            this.btnDown = new System.Windows.Forms.Button();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
             this.gbEnvironments.SuspendLayout();
             this.pnlBody.SuspendLayout();
             this.gbQueue.SuspendLayout();
+            this.pnlOperationButtons.SuspendLayout();
             this.cmsContextMenu.SuspendLayout();
             this.gbLogs.SuspendLayout();
             this.SuspendLayout();
@@ -70,7 +75,7 @@
             this.tsbAbort});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(2147, 30);
+            this.tsMain.Size = new System.Drawing.Size(1735, 30);
             this.tsMain.TabIndex = 9;
             this.tsMain.Text = "Queue Toolstrip";
             // 
@@ -108,7 +113,7 @@
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.RowCount = 1;
             this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlMain.Size = new System.Drawing.Size(2147, 940);
+            this.pnlMain.Size = new System.Drawing.Size(1735, 940);
             this.pnlMain.TabIndex = 91;
             // 
             // pnlSettings
@@ -124,7 +129,7 @@
             this.pnlSettings.RowCount = 2;
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 82F));
-            this.pnlSettings.Size = new System.Drawing.Size(316, 936);
+            this.pnlSettings.Size = new System.Drawing.Size(254, 936);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbEnvironments
@@ -139,7 +144,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(310, 164);
+            this.gbEnvironments.Size = new System.Drawing.Size(248, 164);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -152,7 +157,7 @@
             this.btnConnectSource.Location = new System.Drawing.Point(7, 129);
             this.btnConnectSource.Margin = new System.Windows.Forms.Padding(4);
             this.btnConnectSource.Name = "btnConnectSource";
-            this.btnConnectSource.Size = new System.Drawing.Size(296, 29);
+            this.btnConnectSource.Size = new System.Drawing.Size(234, 29);
             this.btnConnectSource.TabIndex = 9;
             this.btnConnectSource.Text = "Add Source";
             this.btnConnectSource.UseVisualStyleBackColor = true;
@@ -205,40 +210,32 @@
             this.gbSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSettings.Name = "gbSettings";
             this.gbSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSettings.Size = new System.Drawing.Size(310, 764);
+            this.gbSettings.Size = new System.Drawing.Size(248, 764);
             this.gbSettings.TabIndex = 0;
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
             // 
             // pnlBody
             // 
-            this.pnlBody.ColumnCount = 10;
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.pnlBody.ColumnCount = 2;
+            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
-            this.pnlBody.Controls.Add(this.gbLogs, 4, 0);
+            this.pnlBody.Controls.Add(this.gbLogs, 7, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlBody.Location = new System.Drawing.Point(325, 2);
+            this.pnlBody.Location = new System.Drawing.Point(263, 2);
             this.pnlBody.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.Name = "pnlBody";
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlBody.Size = new System.Drawing.Size(1819, 936);
+            this.pnlBody.Size = new System.Drawing.Size(1469, 936);
             this.pnlBody.TabIndex = 1;
             // 
             // gbQueue
             // 
-            this.pnlBody.SetColumnSpan(this.gbQueue, 6);
+            this.gbQueue.Controls.Add(this.pnlOperationButtons);
             this.gbQueue.Controls.Add(this.btnClearQueue);
             this.gbQueue.Controls.Add(this.btnAddOperation);
             this.gbQueue.Controls.Add(this.lvOperations);
@@ -248,10 +245,20 @@
             this.gbQueue.Name = "gbQueue";
             this.gbQueue.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbQueue, 2);
-            this.gbQueue.Size = new System.Drawing.Size(1080, 932);
+            this.gbQueue.Size = new System.Drawing.Size(1022, 932);
             this.gbQueue.TabIndex = 1;
             this.gbQueue.TabStop = false;
             this.gbQueue.Text = "Queue";
+            // 
+            // pnlOperationButtons
+            // 
+            this.pnlOperationButtons.BackColor = System.Drawing.SystemColors.Window;
+            this.pnlOperationButtons.Controls.Add(this.btnDown);
+            this.pnlOperationButtons.Controls.Add(this.btnUp);
+            this.pnlOperationButtons.Location = new System.Drawing.Point(6, 58);
+            this.pnlOperationButtons.Name = "pnlOperationButtons";
+            this.pnlOperationButtons.Size = new System.Drawing.Size(46, 869);
+            this.pnlOperationButtons.TabIndex = 9;
             // 
             // btnClearQueue
             // 
@@ -261,7 +268,7 @@
             this.btnClearQueue.Location = new System.Drawing.Point(808, 21);
             this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearQueue.Name = "btnClearQueue";
-            this.btnClearQueue.Size = new System.Drawing.Size(265, 29);
+            this.btnClearQueue.Size = new System.Drawing.Size(207, 29);
             this.btnClearQueue.TabIndex = 8;
             this.btnClearQueue.Text = "Clear Queue";
             this.btnClearQueue.UseVisualStyleBackColor = true;
@@ -285,6 +292,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvOperations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chOpIndex,
             this.chOpType,
             this.chOpDisplayName,
             this.chOpVersion,
@@ -293,16 +301,21 @@
             this.lvOperations.ContextMenuStrip = this.cmsContextMenu;
             this.lvOperations.FullRowSelect = true;
             this.lvOperations.HideSelection = false;
-            this.lvOperations.Location = new System.Drawing.Point(7, 58);
+            this.lvOperations.Location = new System.Drawing.Point(59, 58);
             this.lvOperations.Margin = new System.Windows.Forms.Padding(4);
             this.lvOperations.MultiSelect = false;
             this.lvOperations.Name = "lvOperations";
-            this.lvOperations.Size = new System.Drawing.Size(1066, 868);
+            this.lvOperations.Size = new System.Drawing.Size(956, 868);
             this.lvOperations.TabIndex = 2;
             this.lvOperations.UseCompatibleStateImageBehavior = false;
             this.lvOperations.View = System.Windows.Forms.View.Details;
-            this.lvOperations.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView_ColumnClick);
+            this.lvOperations.SelectedIndexChanged += new System.EventHandler(this.lvOperations_SelectedIndexChanged);
             this.lvOperations.Resize += new System.EventHandler(this.lvSolutions_Resize);
+            // 
+            // chOpIndex
+            // 
+            this.chOpIndex.Text = "#";
+            this.chOpIndex.Width = 30;
             // 
             // chOpType
             // 
@@ -322,12 +335,12 @@
             // chOpManaged
             // 
             this.chOpManaged.Text = "Managed";
-            this.chOpManaged.Width = 150;
+            this.chOpManaged.Width = 120;
             // 
             // chOpPublisher
             // 
             this.chOpPublisher.Text = "Publisher";
-            this.chOpPublisher.Width = 300;
+            this.chOpPublisher.Width = 250;
             // 
             // cmsContextMenu
             // 
@@ -346,19 +359,32 @@
             // 
             // gbLogs
             // 
-            this.pnlBody.SetColumnSpan(this.gbLogs, 4);
             this.gbLogs.Controls.Add(this.btnClearLogs);
             this.gbLogs.Controls.Add(this.txtLogs);
             this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLogs.Location = new System.Drawing.Point(1089, 2);
+            this.gbLogs.Location = new System.Drawing.Point(1031, 2);
             this.gbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbLogs.Name = "gbLogs";
             this.gbLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbLogs, 2);
-            this.gbLogs.Size = new System.Drawing.Size(727, 932);
+            this.gbLogs.Size = new System.Drawing.Size(435, 932);
             this.gbLogs.TabIndex = 2;
             this.gbLogs.TabStop = false;
             this.gbLogs.Text = "Logs";
+            // 
+            // btnClearLogs
+            // 
+            this.btnClearLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearLogs.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
+            this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
+            this.btnClearLogs.Name = "btnClearLogs";
+            this.btnClearLogs.Size = new System.Drawing.Size(422, 29);
+            this.btnClearLogs.TabIndex = 9;
+            this.btnClearLogs.Text = "Clear Logs";
+            this.btnClearLogs.UseVisualStyleBackColor = true;
+            this.btnClearLogs.Click += new System.EventHandler(this.btnClearLogs_Click);
             // 
             // txtLogs
             // 
@@ -370,22 +396,36 @@
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(715, 869);
+            this.txtLogs.Size = new System.Drawing.Size(423, 869);
             this.txtLogs.TabIndex = 2;
             // 
-            // btnClearLogs
+            // btnUp
             // 
-            this.btnClearLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearLogs.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
-            this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
-            this.btnClearLogs.Name = "btnClearLogs";
-            this.btnClearLogs.Size = new System.Drawing.Size(714, 29);
-            this.btnClearLogs.TabIndex = 9;
-            this.btnClearLogs.Text = "Clear Logs";
-            this.btnClearLogs.UseVisualStyleBackColor = true;
-            this.btnClearLogs.Click += new System.EventHandler(this.btnClearLogs_Click);
+            this.btnUp.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_up_disabled_35px;
+            this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnUp.Enabled = false;
+            this.btnUp.FlatAppearance.BorderSize = 0;
+            this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUp.Location = new System.Drawing.Point(3, 3);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(40, 40);
+            this.btnUp.TabIndex = 0;
+            this.btnUp.UseVisualStyleBackColor = false;
+            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            // 
+            // btnDown
+            // 
+            this.btnDown.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_down_disabled_35px;
+            this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDown.Enabled = false;
+            this.btnDown.FlatAppearance.BorderSize = 0;
+            this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDown.Location = new System.Drawing.Point(3, 49);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(40, 40);
+            this.btnDown.TabIndex = 1;
+            this.btnDown.UseVisualStyleBackColor = false;
+            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
             // 
             // DeployerControl
             // 
@@ -396,7 +436,7 @@
             this.Controls.Add(this.tsMain);
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "DeployerControl";
-            this.Size = new System.Drawing.Size(2147, 970);
+            this.Size = new System.Drawing.Size(1735, 670);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
             this.tsMain.ResumeLayout(false);
             this.tsMain.PerformLayout();
@@ -406,6 +446,7 @@
             this.gbEnvironments.PerformLayout();
             this.pnlBody.ResumeLayout(false);
             this.gbQueue.ResumeLayout(false);
+            this.pnlOperationButtons.ResumeLayout(false);
             this.cmsContextMenu.ResumeLayout(false);
             this.gbLogs.ResumeLayout(false);
             this.gbLogs.PerformLayout();
@@ -436,6 +477,7 @@
         private System.Windows.Forms.ToolStripButton tsbAbort;
         private System.Windows.Forms.Button btnAddOperation;
         private System.Windows.Forms.ListView lvOperations;
+        private System.Windows.Forms.ColumnHeader chOpIndex;
         private System.Windows.Forms.ColumnHeader chOpType;
         private System.Windows.Forms.ColumnHeader chOpDisplayName;
         private System.Windows.Forms.ColumnHeader chOpVersion;
@@ -452,5 +494,8 @@
         private System.Windows.Forms.Label lblSourceValue;
         private System.Windows.Forms.Button btnConnectSource;
         private System.Windows.Forms.Button btnClearLogs;
+        private System.Windows.Forms.Button btnUp;
+        private System.Windows.Forms.Panel pnlOperationButtons;
+        private System.Windows.Forms.Button btnDown;
     }
 }

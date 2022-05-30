@@ -1,10 +1,8 @@
 ﻿// System
-using System;
 using System.Linq;
 using System.Windows.Forms;
 
 // Deployer
-using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.AppSettings;
 
@@ -18,6 +16,7 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                 var operation = value as Operation;
 
                 var item = new ListViewItem(new string[] {
+                    operation.Index.ToString(),
                     operation.OperationType.ToString(),
                     operation.Solution != null ? operation.Solution.DisplayName : "-",
                     operation.Solution != null ? operation.Solution.Version : "-",
