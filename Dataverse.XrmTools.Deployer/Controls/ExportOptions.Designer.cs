@@ -57,9 +57,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnLoadSolutions = new System.Windows.Forms.Button();
             this.gbExport = new System.Windows.Forms.GroupBox();
             this.gbExportSettings = new System.Windows.Forms.GroupBox();
-            this.btnSetExportLocation = new System.Windows.Forms.Button();
-            this.lblExportPath = new System.Windows.Forms.Label();
-            this.txtExportPathValue = new System.Windows.Forms.TextBox();
+            this.btnSetSolutionLocation = new System.Windows.Forms.Button();
+            this.lblSolutionPath = new System.Windows.Forms.Label();
+            this.txtSolutionPathValue = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.rbManaged = new System.Windows.Forms.RadioButton();
             this.rbUnmanaged = new System.Windows.Forms.RadioButton();
@@ -88,9 +88,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutionInfo.Controls.Add(this.lblLogicalNameValue);
             this.gbSolutionInfo.Controls.Add(this.lblLogicalName);
             this.gbSolutionInfo.Controls.Add(this.lblDisplayName);
-            this.gbSolutionInfo.Location = new System.Drawing.Point(757, 192);
+            this.gbSolutionInfo.Location = new System.Drawing.Point(757, 157);
             this.gbSolutionInfo.Name = "gbSolutionInfo";
-            this.gbSolutionInfo.Size = new System.Drawing.Size(436, 202);
+            this.gbSolutionInfo.Size = new System.Drawing.Size(611, 302);
             this.gbSolutionInfo.TabIndex = 9;
             this.gbSolutionInfo.TabStop = false;
             this.gbSolutionInfo.Text = "Solution Details";
@@ -232,7 +232,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutions.Controls.Add(this.lvSolutions);
             this.gbSolutions.Location = new System.Drawing.Point(7, 58);
             this.gbSolutions.Name = "gbSolutions";
-            this.gbSolutions.Size = new System.Drawing.Size(744, 336);
+            this.gbSolutions.Size = new System.Drawing.Size(744, 401);
             this.gbSolutions.TabIndex = 10;
             this.gbSolutions.TabStop = false;
             this.gbSolutions.Text = "Solutions";
@@ -274,7 +274,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lvSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(730, 276);
+            this.lvSolutions.Size = new System.Drawing.Size(730, 341);
             this.lvSolutions.TabIndex = 3;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -309,7 +309,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnLoadSolutions.Location = new System.Drawing.Point(7, 22);
             this.btnLoadSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.btnLoadSolutions.Name = "btnLoadSolutions";
-            this.btnLoadSolutions.Size = new System.Drawing.Size(1186, 29);
+            this.btnLoadSolutions.Size = new System.Drawing.Size(1361, 29);
             this.btnLoadSolutions.TabIndex = 9;
             this.btnLoadSolutions.Text = "Load Unmanaged Solutions from Source instance";
             this.btnLoadSolutions.UseVisualStyleBackColor = true;
@@ -326,70 +326,72 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbExport.Controls.Add(this.gbSolutionInfo);
             this.gbExport.Location = new System.Drawing.Point(0, 0);
             this.gbExport.Name = "gbExport";
-            this.gbExport.Size = new System.Drawing.Size(1200, 400);
+            this.gbExport.Size = new System.Drawing.Size(1375, 465);
             this.gbExport.TabIndex = 11;
             this.gbExport.TabStop = false;
             this.gbExport.Text = "Export Options";
             // 
             // gbExportSettings
             // 
-            this.gbExportSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.gbExportSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbExportSettings.Controls.Add(this.btnSetExportLocation);
-            this.gbExportSettings.Controls.Add(this.lblExportPath);
-            this.gbExportSettings.Controls.Add(this.txtExportPathValue);
+            this.gbExportSettings.Controls.Add(this.btnSetSolutionLocation);
+            this.gbExportSettings.Controls.Add(this.lblSolutionPath);
+            this.gbExportSettings.Controls.Add(this.txtSolutionPathValue);
             this.gbExportSettings.Controls.Add(this.panel1);
             this.gbExportSettings.Controls.Add(this.lblType);
             this.gbExportSettings.Location = new System.Drawing.Point(757, 58);
             this.gbExportSettings.Name = "gbExportSettings";
-            this.gbExportSettings.Size = new System.Drawing.Size(436, 128);
+            this.gbExportSettings.Size = new System.Drawing.Size(611, 93);
             this.gbExportSettings.TabIndex = 12;
             this.gbExportSettings.TabStop = false;
             this.gbExportSettings.Text = "Export Settings";
             // 
-            // btnSetExportLocation
+            // btnSetSolutionLocation
             // 
-            this.btnSetExportLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnSetSolutionLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSetExportLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnSetExportLocation.Location = new System.Drawing.Point(9, 92);
-            this.btnSetExportLocation.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSetExportLocation.Name = "btnSetExportLocation";
-            this.btnSetExportLocation.Size = new System.Drawing.Size(420, 29);
-            this.btnSetExportLocation.TabIndex = 13;
-            this.btnSetExportLocation.Text = "Select Location...";
-            this.btnSetExportLocation.UseVisualStyleBackColor = true;
-            this.btnSetExportLocation.Click += new System.EventHandler(this.btnSetExportLocation_Click);
+            this.btnSetSolutionLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSetSolutionLocation.Location = new System.Drawing.Point(568, 55);
+            this.btnSetSolutionLocation.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetSolutionLocation.Name = "btnSetSolutionLocation";
+            this.btnSetSolutionLocation.Size = new System.Drawing.Size(36, 29);
+            this.btnSetSolutionLocation.TabIndex = 13;
+            this.btnSetSolutionLocation.Tag = "solution";
+            this.btnSetSolutionLocation.Text = "...";
+            this.btnSetSolutionLocation.UseVisualStyleBackColor = true;
+            this.btnSetSolutionLocation.Click += new System.EventHandler(this.SetExportLocations_Click);
             // 
-            // lblExportPath
+            // lblSolutionPath
             // 
-            this.lblExportPath.AutoSize = true;
-            this.lblExportPath.Location = new System.Drawing.Point(6, 53);
-            this.lblExportPath.Name = "lblExportPath";
-            this.lblExportPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblExportPath.Size = new System.Drawing.Size(41, 27);
-            this.lblExportPath.TabIndex = 15;
-            this.lblExportPath.Text = "Path:";
+            this.lblSolutionPath.AutoSize = true;
+            this.lblSolutionPath.Location = new System.Drawing.Point(6, 55);
+            this.lblSolutionPath.Name = "lblSolutionPath";
+            this.lblSolutionPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.lblSolutionPath.Size = new System.Drawing.Size(121, 27);
+            this.lblSolutionPath.TabIndex = 15;
+            this.lblSolutionPath.Text = "Solution Location:";
             // 
-            // txtExportPathValue
+            // txtSolutionPathValue
             // 
-            this.txtExportPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtSolutionPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtExportPathValue.Location = new System.Drawing.Point(56, 59);
-            this.txtExportPathValue.Margin = new System.Windows.Forms.Padding(4);
-            this.txtExportPathValue.Name = "txtExportPathValue";
-            this.txtExportPathValue.ReadOnly = true;
-            this.txtExportPathValue.Size = new System.Drawing.Size(373, 22);
-            this.txtExportPathValue.TabIndex = 6;
+            this.txtSolutionPathValue.Location = new System.Drawing.Point(134, 59);
+            this.txtSolutionPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSolutionPathValue.Name = "txtSolutionPathValue";
+            this.txtSolutionPathValue.ReadOnly = true;
+            this.txtSolutionPathValue.Size = new System.Drawing.Size(426, 22);
+            this.txtSolutionPathValue.TabIndex = 6;
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.rbManaged);
             this.panel1.Controls.Add(this.rbUnmanaged);
-            this.panel1.Location = new System.Drawing.Point(56, 19);
+            this.panel1.Location = new System.Drawing.Point(83, 22);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(373, 26);
+            this.panel1.Size = new System.Drawing.Size(521, 26);
             this.panel1.TabIndex = 16;
             // 
             // rbManaged
@@ -403,7 +405,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbManaged.TabStop = true;
             this.rbManaged.Text = "Managed";
             this.rbManaged.UseVisualStyleBackColor = true;
-            this.rbManaged.CheckedChanged += new System.EventHandler(this.rbManaged_CheckedChanged);
+            this.rbManaged.CheckedChanged += new System.EventHandler(this.rbPackageType_CheckedChanged);
             // 
             // rbUnmanaged
             // 
@@ -414,17 +416,17 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbUnmanaged.TabIndex = 12;
             this.rbUnmanaged.Text = "Unmanaged";
             this.rbUnmanaged.UseVisualStyleBackColor = true;
-            this.rbUnmanaged.CheckedChanged += new System.EventHandler(this.rbUnmanaged_CheckedChanged);
+            this.rbUnmanaged.CheckedChanged += new System.EventHandler(this.rbPackageType_CheckedChanged);
             // 
             // lblType
             // 
             this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(6, 18);
+            this.lblType.Location = new System.Drawing.Point(6, 17);
             this.lblType.Name = "lblType";
             this.lblType.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblType.Size = new System.Drawing.Size(44, 27);
+            this.lblType.Size = new System.Drawing.Size(71, 27);
             this.lblType.TabIndex = 10;
-            this.lblType.Text = "Type:";
+            this.lblType.Text = "Export as:";
             // 
             // ExportOptions
             // 
@@ -432,7 +434,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbExport);
             this.Name = "ExportOptions";
-            this.Size = new System.Drawing.Size(1200, 400);
+            this.Size = new System.Drawing.Size(1375, 465);
             this.gbSolutionInfo.ResumeLayout(false);
             this.gbSolutionInfo.PerformLayout();
             this.gbSolutions.ResumeLayout(false);
@@ -476,9 +478,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private System.Windows.Forms.Label lblType;
         private System.Windows.Forms.RadioButton rbUnmanaged;
         private System.Windows.Forms.RadioButton rbManaged;
-        private System.Windows.Forms.Button btnSetExportLocation;
-        private System.Windows.Forms.Label lblExportPath;
-        private System.Windows.Forms.TextBox txtExportPathValue;
+        private System.Windows.Forms.Button btnSetSolutionLocation;
+        private System.Windows.Forms.Label lblSolutionPath;
+        private System.Windows.Forms.TextBox txtSolutionPathValue;
         private System.Windows.Forms.Panel panel1;
     }
 }

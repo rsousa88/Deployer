@@ -208,6 +208,12 @@
     <Compile Include="Controls\DeleteOptions.Designer.cs">
       <DependentUpon>DeleteOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UnpackOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UnpackOptions.Designer.cs">
+      <DependentUpon>UnpackOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UpdateOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -247,14 +253,17 @@
     </Compile>
     <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Models\ExportOperation.cs" />
     <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />
+    <Compile Include="Models\PackagerOptions.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Models\UnpackOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -262,7 +271,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RepoInterfaces\ICrmRepo.cs" />
+    <Compile Include="RepoInterfaces\INuGetRepo.cs" />
     <Compile Include="Repositories\CrmRepo.cs" />
+    <Compile Include="Repositories\NuGetRepo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -272,6 +283,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\DeleteOptions.resx">
       <DependentUpon>DeleteOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UnpackOptions.resx">
+      <DependentUpon>UnpackOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UpdateOptions.resx">
       <DependentUpon>UpdateOptions.cs</DependentUpon>
@@ -300,6 +314,8 @@
     <Resource Include="Resources\arrow-up-35px.png" />
     <Content Include="Resources\arrow-down-disabled-35px.png" />
     <Content Include="Resources\arrow-up-disabled-35px.png" />
+    <None Include="Resources\download.png" />
+    <None Include="Resources\download-arrow.png" />
     <Content Include="Resources\icon.png" />
     <Content Include="Resources\icon32.png" />
     <Content Include="Resources\icon80.png" />

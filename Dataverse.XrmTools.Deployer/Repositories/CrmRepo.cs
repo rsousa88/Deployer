@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 // Microsoft
@@ -18,6 +19,12 @@ using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.RepoInterfaces;
+
+// 3rd Party
+using NuGet.Protocol;
+using NuGet.Packaging;
+using NuGet.Protocol.Core.Types;
+using System.Diagnostics;
 
 namespace Dataverse.XrmTools.Deployer.Repositories
 {
@@ -48,7 +55,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         #endregion Constructors
 
         #region Interface Methods
-        public IEnumerable<Entity> GetSolutions(string[] columns = null, PackageType queryType = PackageType.ALL, ConnectionType connType = ConnectionType.TARGET)
+        public IEnumerable<Entity> GetSolutions(string[] columns = null, PackageType queryType = PackageType.BOTH, ConnectionType connType = ConnectionType.TARGET)
         {
             try
             {
@@ -59,7 +66,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                     PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
                 };
 
-                if (!queryType.Equals(PackageType.ALL))
+                if (!queryType.Equals(PackageType.BOTH))
                 {
                     query.Criteria = new FilterExpression(LogicalOperator.And)
                     {
@@ -137,17 +144,17 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void ExportSolution(Operation operation)
+        public void ExportSolution(ExportOperation export)
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Exporting solution {operation.Solution.DisplayName}...");
+                _logger.Log(LogLevel.INFO, $"Exporting solution {export.Solution.DisplayName}...");
                 var exportReq = new OrganizationRequest("ExportSolutionAsync")
                 {
                     Parameters =
                     {
-                        { "SolutionName", operation.Solution.LogicalName },
-                        { "Managed", operation.Solution.Package.PackageType.Equals(PackageType.MANAGED) }
+                        { "SolutionName", export.Solution.LogicalName },
+                        { "Managed", export.Solution.Package.Type.Equals(PackageType.MANAGED) }
                     }
                 };
 
@@ -155,12 +162,14 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
                 _logger.Log(LogLevel.INFO, $"Waiting for export operation...");
                 var result = CheckProgress(ConnectionType.SOURCE, Guid.Parse(exportResp["AsyncOperationId"].ToString()));
+                if(result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+
                 if (!result.Success)
                 {
                     throw new Exception($"Error on Export operation:\n{result.Message}");
                 }
 
-                _logger.Log(LogLevel.INFO, $"Downloading solution {operation.Solution.DisplayName}...");
+                _logger.Log(LogLevel.INFO, $"Downloading solution {export.Solution.DisplayName}...");
                 var downloadReq = new OrganizationRequest("DownloadSolutionExportData")
                 {
                     Parameters =
@@ -171,14 +180,13 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
                 var downloadResp = _source.Execute(downloadReq);
 
-                var package = operation.Solution.Package;
-                package.SolutionBytes = downloadResp["ExportSolutionFile"] as byte[];
+                var package = export.Solution.Package;
+                package.Bytes = downloadResp["ExportSolutionFile"] as byte[];
 
-                var ending = package.PackageType.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
-                var filename = $"{package.ExportPath}\\{operation.Solution.LogicalName}_{operation.Solution.Version}{ending}";
-                using (var writer = new BinaryWriter(File.OpenWrite(filename)))
+                var fullPath = $"{package.ExportPath}\\{export.Solution.Package.Name}";
+                using (var writer = new BinaryWriter(File.OpenWrite(fullPath)))
                 {
-                    writer.Write(package.SolutionBytes);
+                    writer.Write(package.Bytes);
                 }
             }
             catch
@@ -187,23 +195,25 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void ImportSolution(ImportOperation operation, string progressMessage)
+        public void ImportSolution(ImportOperation import, string progressMessage)
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Importing solution {operation.Solution.DisplayName}...");
+                _logger.Log(LogLevel.INFO, $"Importing solution {import.Solution.DisplayName}...");
                 var request = new ImportSolutionAsyncRequest
                 {
-                    CustomizationFile = operation.Solution.Package.SolutionBytes,
-                    HoldingSolution = operation.HoldingSolution,
-                    OverwriteUnmanagedCustomizations = operation.OverwriteUnmanaged,
-                    PublishWorkflows = operation.PublishWorkflows
+                    CustomizationFile = import.Solution.Package.Bytes,
+                    HoldingSolution = import.HoldingSolution,
+                    OverwriteUnmanagedCustomizations = import.OverwriteUnmanaged,
+                    PublishWorkflows = import.PublishWorkflows
                 };
 
                 var response = _target.Execute(request) as ImportSolutionAsyncResponse;
 
                 _logger.Log(LogLevel.INFO, $"Waiting for import operation...");
                 var result = CheckProgress(ConnectionType.TARGET, response.AsyncOperationId, Guid.Parse(response.ImportJobKey), progressMessage);
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+
                 if (!result.Success)
                 {
                     throw new Exception($"Error on Import operation:\n{result.Message}");
@@ -224,6 +234,8 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
                 _logger.Log(LogLevel.INFO, $"Waiting for upgrade operation...");
                 var result = CheckProgress(ConnectionType.TARGET, operationId);
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+
                 if (!result.Success)
                 {
                     throw new Exception($"Error on Upgrade operation:\n{result.Message}");
@@ -271,10 +283,73 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
                 _logger.Log(LogLevel.INFO, $"Waiting for delete operation...");
                 var result = CheckProgress(ConnectionType.TARGET, response.JobId);
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+
                 if (!result.Success)
                 {
                     throw new Exception($"Error on Delete operation:\n{result.Message}");
                 }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void UnpackSolution(UnpackOperation unpack)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Unpacking solution {unpack.Solution.DisplayName}...");
+                var process = new Process
+                {
+                    StartInfo =
+                {
+                    FileName = unpack.Packager,
+                    Arguments = $"/action:{unpack.Action} /zipfile:\"{unpack.ZipFile}\" /folder:\"{unpack.Folder}\" /packagetype:\"{unpack.PackageType}\" /allowDelete:\"No\"",
+                    WorkingDirectory = unpack.WorkingDir,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                },
+                    EnableRaisingEvents = true
+                };
+
+                _logger.Output(LogLevel.PACKAGER, "Process starting...");
+
+                process.Start();
+
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var output = process.StandardOutput.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, output);
+                }
+
+                while (!process.StandardError.EndOfStream)
+                {
+                    var errors = process.StandardError.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, errors);
+                }
+
+                process.WaitForExit(30000);
+
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception("An error occurred while executing Solution Packager");
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void PackSolution(ImportOperation import)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Packing solution {import.Solution.DisplayName}...");
             }
             catch
             {
@@ -292,6 +367,8 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
                 _logger.Log(LogLevel.INFO, $"Waiting for publish operation...");
                 var result = CheckProgress(ConnectionType.TARGET, Guid.Parse(response["AsyncOperationId"].ToString()));
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+
                 if (!result.Success)
                 {
                     throw new Exception($"Error on Publish operation:\n{result.Message}");
@@ -348,6 +425,8 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             var startTime = DateTime.UtcNow;
             while (!completed)
             {
+                if (_worker.CancellationPending) { return new OperationResponse { Status = Enums.OperationStatus.CANCELED, Success = true, Message = "Operation canceled by user" }; }
+
                 var async = connection.Retrieve("asyncoperation", operationId, new ColumnSet(new string[] { "statecode", "statuscode", "friendlymessage", "message" }));
 
                 var state = async.GetAttributeValue<OptionSetValue>("statecode").Value;

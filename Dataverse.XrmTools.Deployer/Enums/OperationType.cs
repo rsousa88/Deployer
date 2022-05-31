@@ -6,6 +6,8 @@
         EXPORT = 2,
         IMPORT = 4,
         DELETE = 8,
-        PUBLISH = 16
+        UNPACK = 16,
+        PACK = 32,
+        PUBLISH = 64
     }
 }

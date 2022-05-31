@@ -33,7 +33,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            _solutions = OnSolutionsRetrieveRequested?.Invoke(PackageType.ALL, ConnectionType.TARGET);
+            _solutions = OnSolutionsRetrieveRequested?.Invoke(PackageType.BOTH, ConnectionType.TARGET);
             LoadSolutionsList();
         }
 

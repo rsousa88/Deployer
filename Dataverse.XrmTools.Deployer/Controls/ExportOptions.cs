@@ -23,7 +23,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private IEnumerable<Solution> _solutions;
         private Settings _settings;
-        private Operation _export;
+        private ExportOperation _export;
 
         public ExportOptions(Logger logger, Settings settings)
         {
@@ -36,16 +36,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             gbExportSettings.Enabled = false;
             gbSolutionInfo.Enabled = false;
 
-            if(!string.IsNullOrEmpty(_settings.ExportPath))
-            {
-                txtExportPathValue.Text = _settings.ExportPath;
-            }
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            _solutions = OnSolutionsRetrieveRequested?.Invoke(PackageType.UNMANAGED, ConnectionType.SOURCE);
-            LoadSolutionsList();
+            if(!string.IsNullOrEmpty(_settings.ExportPath)) { txtSolutionPathValue.Text = _settings.ExportPath; }
         }
 
         private void LoadSolutionsList()
@@ -60,6 +51,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
             lvSolutions.Items.AddRange(items);
 
             gbSolutions.Enabled = true;
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            _solutions = OnSolutionsRetrieveRequested?.Invoke(PackageType.UNMANAGED, ConnectionType.SOURCE);
+            LoadSolutionsList();
         }
 
         private async void txtSolutionFilter_TextChanged(object sender, EventArgs e)
@@ -104,11 +101,15 @@ namespace Dataverse.XrmTools.Deployer.Controls
             if (lvSolutions.SelectedItems.Count > 0)
             {
                 var solution = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
+                var type = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED;
+
+                var suffix = type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
 
                 solution.Package = new Package
                 {
-                    PackageType = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED,
-                    ExportPath = txtExportPathValue.Text
+                    Type = type,
+                    Name = $"{solution.LogicalName}_{solution.Version}{suffix}",
+                    ExportPath = txtSolutionPathValue.Text
                 };
 
                 lblSolutionIdValue.Text = solution.SolutionId.ToString();
@@ -118,10 +119,11 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblManagedValue.Text = solution.IsManaged.ToString();
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                _export = new Operation
+                _export = new ExportOperation
                 {
                     OperationType = OperationType.EXPORT,
-                    Solution = solution
+                    Solution = solution,
+                    UnpackSolution = true
                 };
 
                 OnOperationSelected?.Invoke(this, _export);
@@ -131,12 +133,13 @@ namespace Dataverse.XrmTools.Deployer.Controls
             }
         }
 
-        private void btnSetExportLocation_Click(object sender, EventArgs e)
+        private void SetExportLocations_Click(object sender, EventArgs e)
         {
             try
             {
-                var dirPath = string.Empty;
+                var tag = (sender as Button).Tag as string;
 
+                var dirPath = string.Empty;
                 using (var fbd = new FolderBrowserDialog())
                 {
                     fbd.Description = "Select export directory";
@@ -152,11 +155,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     throw new Exception("Invalid directory path");
                 }
 
-                txtExportPathValue.Text = dirPath;
+                txtSolutionPathValue.Text = dirPath;
+                _export.Solution.Package.ExportPath = dirPath;
                 _settings.ExportPath = dirPath;
-                _settings.SaveSettings();
 
-                _export.Solution.Package.ExportPath = txtExportPathValue.Text;
+                _settings.SaveSettings();
+                
                 OnOperationUpdated?.Invoke(this, _export);
             }
             catch (Exception ex)
@@ -166,24 +170,17 @@ namespace Dataverse.XrmTools.Deployer.Controls
             }
         }
 
-        private void rbManaged_CheckedChanged(object sender, EventArgs e)
+        private void rbPackageType_CheckedChanged(object sender, EventArgs e)
         {
             var radio = sender as RadioButton;
-            if (radio.Checked)
-            {
-                _export.Solution.Package.PackageType = PackageType.MANAGED;
-                OnOperationUpdated?.Invoke(this, _export);
-            }
-        }
 
-        private void rbUnmanaged_CheckedChanged(object sender, EventArgs e)
-        {
-            var radio = sender as RadioButton;
-            if (radio.Checked)
-            {
-                _export.Solution.Package.PackageType = PackageType.UNMANAGED;
-                OnOperationUpdated?.Invoke(this, _export);
-            }
+            var type = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED;
+            var suffix = type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
+
+            _export.Solution.Package.Type = type;
+            _export.Solution.Package.Name = $"{_export.Solution.LogicalName}_{_export.Solution.Version}{suffix}";
+
+            OnOperationUpdated?.Invoke(this, _export);
         }
     }
 }

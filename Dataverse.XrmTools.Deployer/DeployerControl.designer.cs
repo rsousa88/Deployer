@@ -26,7 +26,7 @@
             this.components = new System.ComponentModel.Container();
             this.tsMain = new System.Windows.Forms.ToolStrip();
             this.tsbExecute = new System.Windows.Forms.ToolStripButton();
-            this.tsbAbort = new System.Windows.Forms.ToolStripButton();
+            this.tsbCancel = new System.Windows.Forms.ToolStripButton();
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbEnvironments = new System.Windows.Forms.GroupBox();
@@ -38,8 +38,6 @@
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbQueue = new System.Windows.Forms.GroupBox();
             this.pnlOperationButtons = new System.Windows.Forms.Panel();
-            this.btnDown = new System.Windows.Forms.Button();
-            this.btnUp = new System.Windows.Forms.Button();
             this.btnClearQueue = new System.Windows.Forms.Button();
             this.btnAddOperation = new System.Windows.Forms.Button();
             this.lvOperations = new System.Windows.Forms.ListView();
@@ -54,6 +52,10 @@
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.txtLogs = new System.Windows.Forms.TextBox();
+            this.gbOutput = new System.Windows.Forms.GroupBox();
+            this.txtOutput = new System.Windows.Forms.RichTextBox();
+            this.btnDown = new System.Windows.Forms.Button();
+            this.btnUp = new System.Windows.Forms.Button();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -63,6 +65,7 @@
             this.pnlOperationButtons.SuspendLayout();
             this.cmsContextMenu.SuspendLayout();
             this.gbLogs.SuspendLayout();
+            this.gbOutput.SuspendLayout();
             this.SuspendLayout();
             // 
             // tsMain
@@ -71,7 +74,7 @@
             this.tsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbExecute,
-            this.tsbAbort});
+            this.tsbCancel});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
             this.tsMain.Size = new System.Drawing.Size(1900, 30);
@@ -88,16 +91,16 @@
             this.tsbExecute.Text = "Execute";
             this.tsbExecute.Click += new System.EventHandler(this.tsbDeploy_Click);
             // 
-            // tsbAbort
+            // tsbCancel
             // 
-            this.tsbAbort.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbAbort.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbAbort.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbAbort.Name = "tsbAbort";
-            this.tsbAbort.Size = new System.Drawing.Size(48, 27);
-            this.tsbAbort.Text = "Abort";
-            this.tsbAbort.Visible = false;
-            this.tsbAbort.Click += new System.EventHandler(this.tsbAbort_Click);
+            this.tsbCancel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCancel.Name = "tsbCancel";
+            this.tsbCancel.Size = new System.Drawing.Size(53, 27);
+            this.tsbCancel.Text = "Cancel";
+            this.tsbCancel.Visible = false;
+            this.tsbCancel.Click += new System.EventHandler(this.tsbCancel_Click);
             // 
             // pnlMain
             // 
@@ -141,7 +144,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(273, 160);
+            this.gbEnvironments.Size = new System.Drawing.Size(273, 912);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -205,6 +208,7 @@
             this.pnlBody.ColumnCount = 2;
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.pnlBody.Controls.Add(this.gbOutput, 0, 1);
             this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
             this.pnlBody.Controls.Add(this.gbLogs, 7, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -214,7 +218,6 @@
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.pnlBody.Size = new System.Drawing.Size(1609, 916);
             this.pnlBody.TabIndex = 1;
             // 
@@ -245,38 +248,9 @@
             this.pnlOperationButtons.Size = new System.Drawing.Size(45, 1086);
             this.pnlOperationButtons.TabIndex = 9;
             // 
-            // btnDown
-            // 
-            this.btnDown.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_down_disabled_35px;
-            this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnDown.Enabled = false;
-            this.btnDown.FlatAppearance.BorderSize = 0;
-            this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDown.Location = new System.Drawing.Point(3, 49);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(38, 38);
-            this.btnDown.TabIndex = 1;
-            this.btnDown.UseVisualStyleBackColor = false;
-            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
-            // 
-            // btnUp
-            // 
-            this.btnUp.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_up_disabled_35px;
-            this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnUp.Enabled = false;
-            this.btnUp.FlatAppearance.BorderSize = 0;
-            this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUp.Location = new System.Drawing.Point(3, 3);
-            this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(38, 38);
-            this.btnUp.TabIndex = 0;
-            this.btnUp.UseVisualStyleBackColor = false;
-            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
-            // 
             // btnClearQueue
             // 
-            this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.btnClearQueue.Location = new System.Drawing.Point(808, 21);
             this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
@@ -289,6 +263,8 @@
             // 
             // btnAddOperation
             // 
+            this.btnAddOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.btnAddOperation.Location = new System.Drawing.Point(7, 21);
             this.btnAddOperation.Margin = new System.Windows.Forms.Padding(4);
@@ -379,8 +355,7 @@
             this.gbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbLogs.Name = "gbLogs";
             this.gbLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pnlBody.SetRowSpan(this.gbLogs, 2);
-            this.gbLogs.Size = new System.Drawing.Size(477, 912);
+            this.gbLogs.Size = new System.Drawing.Size(477, 454);
             this.gbLogs.TabIndex = 2;
             this.gbLogs.TabStop = false;
             this.gbLogs.Text = "Logs";
@@ -409,8 +384,63 @@
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(465, 849);
+            this.txtLogs.Size = new System.Drawing.Size(465, 391);
             this.txtLogs.TabIndex = 2;
+            this.txtLogs.TextChanged += new System.EventHandler(this.txtLogs_TextChanged);
+            // 
+            // gbOutput
+            // 
+            this.gbOutput.Controls.Add(this.txtOutput);
+            this.gbOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbOutput.Location = new System.Drawing.Point(1129, 460);
+            this.gbOutput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbOutput.Name = "gbOutput";
+            this.gbOutput.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbOutput.Size = new System.Drawing.Size(477, 454);
+            this.gbOutput.TabIndex = 3;
+            this.gbOutput.TabStop = false;
+            this.gbOutput.Text = "Solution Packager Output";
+            // 
+            // txtOutput
+            // 
+            this.txtOutput.BackColor = System.Drawing.Color.Black;
+            this.txtOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtOutput.ForeColor = System.Drawing.Color.White;
+            this.txtOutput.Location = new System.Drawing.Point(3, 17);
+            this.txtOutput.Name = "txtOutput";
+            this.txtOutput.ReadOnly = true;
+            this.txtOutput.Size = new System.Drawing.Size(471, 435);
+            this.txtOutput.TabIndex = 1;
+            this.txtOutput.Text = "";
+            this.txtOutput.TextChanged += new System.EventHandler(this.txtOutput_TextChanged);
+            // 
+            // btnDown
+            // 
+            this.btnDown.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_down_disabled_35px;
+            this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDown.Enabled = false;
+            this.btnDown.FlatAppearance.BorderSize = 0;
+            this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDown.Location = new System.Drawing.Point(3, 49);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(38, 38);
+            this.btnDown.TabIndex = 1;
+            this.btnDown.UseVisualStyleBackColor = false;
+            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+            // 
+            // btnUp
+            // 
+            this.btnUp.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_up_disabled_35px;
+            this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnUp.Enabled = false;
+            this.btnUp.FlatAppearance.BorderSize = 0;
+            this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUp.Location = new System.Drawing.Point(3, 3);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(38, 38);
+            this.btnUp.TabIndex = 0;
+            this.btnUp.UseVisualStyleBackColor = false;
+            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
             // 
             // DeployerControl
             // 
@@ -435,6 +465,7 @@
             this.cmsContextMenu.ResumeLayout(false);
             this.gbLogs.ResumeLayout(false);
             this.gbLogs.PerformLayout();
+            this.gbOutput.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -458,7 +489,7 @@
         // Queue Group
         private System.Windows.Forms.GroupBox gbQueue;
         private System.Windows.Forms.ToolStripButton tsbExecute;
-        private System.Windows.Forms.ToolStripButton tsbAbort;
+        private System.Windows.Forms.ToolStripButton tsbCancel;
         private System.Windows.Forms.Button btnAddOperation;
         private System.Windows.Forms.ListView lvOperations;
         private System.Windows.Forms.ColumnHeader chOpIndex;
@@ -481,5 +512,7 @@
         private System.Windows.Forms.Button btnUp;
         private System.Windows.Forms.Panel pnlOperationButtons;
         private System.Windows.Forms.Button btnDown;
+        private System.Windows.Forms.GroupBox gbOutput;
+        private System.Windows.Forms.RichTextBox txtOutput;
     }
 }

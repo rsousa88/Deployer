@@ -12,29 +12,36 @@ using System.Collections.Generic;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
+using Dataverse.XrmTools.Deployer.AppSettings;
+using Dataverse.XrmTools.Deployer.Repositories;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
-    public partial class ImportOptions : UserControl
+    public partial class UnpackOptions : UserControl
     {
         private readonly Logger _logger;
-        public event SingleSolutionRetrieve OnSingleSolutionRetrieveRequested;
         public event OperationsRetrieve OnOperationsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
         public event EventHandler<Operation> OnOperationUpdated;
+        public event WorkingStateSet OnWorkingStateSetRequested;
 
         private IEnumerable<Operation> _operations;
-        private ImportOperation _import;
+        private Settings _settings;
+        private UnpackOperation _unpack;
 
-        public ImportOptions(Logger logger)
+        public UnpackOptions(Logger logger, Settings settings)
         {
             _logger = logger;
+            _settings = settings;
 
             InitializeComponent();
 
-            gbImportFromQueue.Enabled = false;
+            gbUnpackFromQueue.Enabled = false;
             gbSolutionInfo.Enabled = false;
-            gbImportSettings.Enabled = false;
+            gbUnpackSettings.Enabled = false;
+
+            if (!string.IsNullOrEmpty(_settings.UnpackPath)) { txtOutputPathValue.Text = _settings.UnpackPath; }
+            if (!string.IsNullOrEmpty(_settings.PackagerPath)) { txtPackagerPathValue.Text = _settings.PackagerPath; }
         }
 
         private void btnAddSolution_Click(object sender, EventArgs e)
@@ -51,34 +58,23 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     lblManagedValue.Text = solution.IsManaged.ToString();
                     lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                    var existing = OnSingleSolutionRetrieveRequested?.Invoke(solution.LogicalName, ConnectionType.TARGET);
-
-                    _import = new ImportOperation
+                    _unpack = new UnpackOperation
                     {
-                        OperationType = OperationType.IMPORT,
+                        OperationType = OperationType.UNPACK,
                         Solution = solution,
-                        HoldingSolution = existing != null ? true : false,
-                        OverwriteUnmanaged = true,
-                        PublishWorkflows = true
+                        Action = "Extract",
+                        WorkingDir = _settings.WorkingDirectory,
+                        Packager = txtPackagerPathValue.Text,
+                        Folder = txtOutputPathValue.Text,
+                        PackageType = solution.IsManaged ? "Managed" : "Unmanaged",
+                        ZipFile = $"{solution.Package.ExportPath}\\{solution.Package.Name}",
+                        Map = string.Empty
                     };
 
-                    if (existing != null)
-                    {
-                        lblExistingValue.Text = "Yes";
-                        chbHoldingSolution.Checked = true;
-                        chbHoldingSolution.Enabled = true;
-                    }
-                    else
-                    {
-                        lblExistingValue.Text = "No";
-                        chbHoldingSolution.Checked = false;
-                        chbHoldingSolution.Enabled = false;
-                    }
-
                     gbSolutionInfo.Enabled = true;
-                    gbImportSettings.Enabled = true;
+                    gbUnpackSettings.Enabled = true;
 
-                    OnOperationSelected?.Invoke(this, _import);
+                    OnOperationSelected?.Invoke(this, _unpack);
                 }
             }
             catch (Exception ex)
@@ -133,10 +129,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 ExportPath = path
             };
 
+            var logicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value;
+
             return new Solution
             {
-                LogicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value,
-                DisplayName = displayNameNode is null ? "N/A" : displayNameNode.Attribute("description").Value,
+                LogicalName = logicalName,
+                DisplayName = displayNameNode is null ? logicalName : displayNameNode.Attribute("description").Value,
                 Version = solManifestNodes.Select(node => node.Element("Version")).FirstOrDefault().Value,
                 IsManaged = package.Type.Equals(PackageType.MANAGED) ? true : false,
                 Publisher = new Publisher
@@ -168,8 +166,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
-                gbImportFromFile.Enabled = true;
-                gbImportFromQueue.Enabled = false;
+                gbUnpackFromFile.Enabled = true;
+                gbUnpackFromQueue.Enabled = false;
             }
         }
 
@@ -178,8 +176,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
-                gbImportFromFile.Enabled = false;
-                gbImportFromQueue.Enabled = true;
+                gbUnpackFromFile.Enabled = false;
+                gbUnpackFromQueue.Enabled = true;
 
                 _operations = OnOperationsRetrieveRequested?.Invoke(OperationType.EXPORT);
                 LoadOperationsList();
@@ -224,46 +222,122 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblManagedValue.Text = operation.Solution.IsManaged.ToString();
                 lblPublisherValue.Text = operation.Solution.Publisher.DisplayName;
 
-                var existing = OnSingleSolutionRetrieveRequested?.Invoke(operation.Solution.LogicalName, ConnectionType.TARGET);
-
-                _import = new ImportOperation
+                _unpack = new UnpackOperation
                 {
-                    OperationType = OperationType.IMPORT,
+                    OperationType = OperationType.UNPACK,
                     Solution = operation.Solution,
-                    HoldingSolution = existing != null ? true : false,
-                    OverwriteUnmanaged = true,
-                    PublishWorkflows = true
+                    Action = "Extract",
+                    WorkingDir = _settings.WorkingDirectory,
+                    Packager = txtPackagerPathValue.Text,
+                    Folder = txtOutputPathValue.Text,
+                    PackageType = operation.Solution.Package.Type.Equals(PackageType.MANAGED) ? "Managed" : "Unmanaged",
+                    ZipFile = $"{operation.Solution.Package.ExportPath}\\{operation.Solution.Package.Name}",
+                    Map = string.Empty
                 };
 
-                if (existing != null)
-                {
-                    lblExistingValue.Text = "Yes";
-                    chbHoldingSolution.Checked = true;
-                    chbHoldingSolution.Enabled = true;
-                }
-                else
-                {
-                    lblExistingValue.Text = "No";
-                    chbHoldingSolution.Checked = false;
-                    chbHoldingSolution.Enabled = false;
-                }
-
                 gbSolutionInfo.Enabled = true;
-                gbImportSettings.Enabled = true;
+                gbUnpackSettings.Enabled = true;
 
-                OnOperationSelected?.Invoke(this, _import);
+                OnOperationSelected?.Invoke(this, _unpack);
             }
         }
 
-        private void OptionsUpdated_CheckedChanged(object sender, EventArgs e)
+        private void btnSetPackagerPath_Click(object sender, EventArgs e)
         {
-            var checkbox = sender as CheckBox;
+            var dialog = new OpenFileDialog
+            {
+                Title = "Select solution packager executable...",
+                Filter = "Exe files (*.exe)|*.exe",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
 
-            _import.HoldingSolution = chbHoldingSolution.Checked;
-            _import.OverwriteUnmanaged = chbOverwriteUnmanaged.Checked;
-            _import.PublishWorkflows = chbPublishWorkflows.Checked;
+            var packager = GetFileDialogPath(dialog);
+            if (string.IsNullOrEmpty(packager))
+            {
+                throw new Exception("Invalid file path");
+            }
 
-            OnOperationUpdated?.Invoke(this, _import);
+            var toolsDir = Path.GetDirectoryName(packager);
+            _unpack.WorkingDir = toolsDir;
+            _unpack.Packager = packager;
+
+            txtPackagerPathValue.Text = packager;
+
+            _settings.WorkingDirectory = toolsDir;
+            _settings.PackagerPath = packager;
+
+            _settings.SaveSettings();
+
+            OnOperationUpdated?.Invoke(this, _unpack);
+        }
+
+        private void btnSetOutputPath_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var tag = (sender as Button).Tag as string;
+
+                var dirPath = string.Empty;
+                using (var fbd = new FolderBrowserDialog())
+                {
+                    fbd.Description = "Select export directory";
+
+                    if (fbd.ShowDialog(this) == DialogResult.OK)
+                    {
+                        dirPath = fbd.SelectedPath;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(dirPath))
+                {
+                    throw new Exception("Invalid directory path");
+                }
+
+                txtOutputPathValue.Text = dirPath;
+                _unpack.Solution.Package.UnpackPath = dirPath;
+                _settings.UnpackPath = dirPath;
+
+                _settings.SaveSettings();
+
+                OnOperationUpdated?.Invoke(this, _unpack);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnDownloadPackager_Click(object sender, EventArgs args)
+        {
+            _logger.Log(LogLevel.INFO, $"Downloading latest version of Core Tools...");
+
+            var package = "Microsoft.CrmSdk.CoreTools";
+            var feed = "https://packages.nuget.org/api/v2";
+
+            var toolsDir = Path.GetDirectoryName(typeof(DeployerControl).Assembly.Location);
+            toolsDir = Path.Combine(toolsDir, package);
+            Directory.CreateDirectory(toolsDir);
+
+            OnWorkingStateSetRequested?.Invoke(true);
+
+            var repo = new NuGetRepo();
+            var packager = await repo.DownloadCoreToolsAsync(toolsDir, feed, package);
+
+            OnWorkingStateSetRequested?.Invoke(false);
+
+            _unpack.WorkingDir = toolsDir;
+            _unpack.Packager = packager;
+
+            txtPackagerPathValue.Text = packager;
+
+            _settings.WorkingDirectory = toolsDir;
+            _settings.PackagerPath = packager;
+
+            _settings.SaveSettings();
+
+            OnOperationUpdated?.Invoke(this, _unpack);
         }
     }
 }

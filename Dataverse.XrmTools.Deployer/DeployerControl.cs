@@ -60,6 +60,7 @@ namespace Dataverse.XrmTools.Deployer
 
             _logger = new Logger();
             _logger.OnLog += Log;
+            _logger.OnOutput += Output;
         }
 
         public void DataMigrationControl_Load(object sender, EventArgs e)
@@ -274,22 +275,23 @@ namespace Dataverse.XrmTools.Deployer
                         switch (operation.OperationType)
                         {
                             case OperationType.UPDATE:
-                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nUpdating '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpdating '{operation.Solution.DisplayName}'");
                                 repo.UpdateSolution(operation);
 
                                 var updateTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
                                 _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully updated in {updateTime}");
                                 break;
                             case OperationType.EXPORT:
-                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nExporting '{operation.Solution.DisplayName}' solution ({index}/{count})");
-                                repo.ExportSolution(operation);
+                                var export = operation as ExportOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nExporting '{export.Solution.DisplayName}'");
+                                repo.ExportSolution(export);
 
                                 var exportTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully exported in {exportTime}");
+                                _logger.Log(LogLevel.INFO, $"Solution {export.Solution.DisplayName} successfully exported in {exportTime}");
                                 break;
                             case OperationType.IMPORT:
                                 var import = operation as ImportOperation;
-                                var message = $"Queue execution: {progress}%\nImporting '{import.Solution.DisplayName}' solution ({index}/{count})";
+                                var message = $"Queue execution: {index}/{count} ({progress}%)\nImporting '{import.Solution.DisplayName}'";
                                 worker.ReportProgress(progress, message);
                                 repo.ImportSolution(import, message);
 
@@ -300,7 +302,7 @@ namespace Dataverse.XrmTools.Deployer
                                 {
                                     startPartialTime = DateTime.UtcNow;
 
-                                    worker.ReportProgress(progress, $"Queue execution: {progress}%\nUpgrading '{import.Solution.DisplayName}' solution ({index}/{count})");
+                                    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpgrading '{import.Solution.DisplayName}'");
                                     repo.UpgradeSolution(import.Solution);
 
                                     var upgradeTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
@@ -308,14 +310,30 @@ namespace Dataverse.XrmTools.Deployer
                                 }
                                 break;
                             case OperationType.DELETE:
-                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nDeleting '{operation.Solution.DisplayName}' solution ({index}/{count})");
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nDeleting '{operation.Solution.DisplayName}'");
                                 repo.DeleteSolution(operation.Solution);
 
                                 var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
                                 _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
                                 break;
+                            case OperationType.UNPACK:
+                                var unpack = operation as UnpackOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUnpacking '{unpack.Solution.DisplayName}'");
+                                repo.UnpackSolution(unpack);
+
+                                var unpackTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {unpack.Solution.DisplayName} successfully unpacked in {unpackTime}");
+                                break;
+                            case OperationType.PACK:
+                                //var pack = operation as PackOperation;
+                                //worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPacking '{pack.Solution.DisplayName}'");
+                                //repo.UnpackSolution(pack);
+
+                                //var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                //_logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
+                                break;
                             case OperationType.PUBLISH:
-                                worker.ReportProgress(progress, $"Queue execution: {progress}%\nPublishing all customizations ({index}/{count})");
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPublishing all customizations");
                                 repo.PublishCustomizations();
 
                                 var publishTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
@@ -397,15 +415,37 @@ namespace Dataverse.XrmTools.Deployer
                 case LogLevel.ERROR:
                     LogError(args.Message);
                     break;
+                case LogLevel.PACKAGER:
+                    LogInfo(args.Message);
+                    break;
                 default:
                     break;
             }
 
-            if (/*!args.Level.Equals(LogLevel.DEBUG) && */IsHandleCreated)
+            if (!args.Level.Equals(LogLevel.PACKAGER) && !args.Level.Equals(LogLevel.DEBUG) && IsHandleCreated)
             {
                 txtLogs.Invoke(new MethodInvoker(delegate {
                     txtLogs.AppendText($"{args.Level} | {DateTime.Now} | {args.Message}");
                     txtLogs.AppendText(Environment.NewLine);
+                }));
+            }
+
+            if (args.Level.Equals(LogLevel.PACKAGER) && IsHandleCreated)
+            {
+                txtOutput.Invoke(new MethodInvoker(delegate {
+                    txtOutput.AppendText($"{args.Level} | {DateTime.Now} | {args.Message}");
+                    txtOutput.AppendText(Environment.NewLine);
+                }));
+            }
+        }
+
+        private void Output(object sender, LoggerEventArgs args)
+        {
+            if (/*!args.Level.Equals(LogLevel.DEBUG) && */IsHandleCreated)
+            {
+                txtOutput.Invoke(new MethodInvoker(delegate {
+                    txtOutput.AppendText($"{args.Level} | {DateTime.Now} | {args.Message}");
+                    txtOutput.AppendText(Environment.NewLine);
                 }));
             }
         }
@@ -417,8 +457,8 @@ namespace Dataverse.XrmTools.Deployer
             _working = working;
             Cursor = working ? Cursors.WaitCursor : Cursors.Default;
 
-            tsbAbort.Text = "Abort";
-            tsbAbort.Visible = working;
+            tsbCancel.Text = "Cancel";
+            tsbCancel.Visible = working;
         }
 
         private void RenderInitialComponents(string connectionName)
@@ -555,6 +595,9 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
+                txtLogs.Clear();
+                txtOutput.Clear();
+
                 DeployQueue();
             }
             catch (Exception ex)
@@ -565,12 +608,12 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void tsbAbort_Click(object sender, EventArgs e)
+        private void tsbCancel_Click(object sender, EventArgs e)
         {
             try
             {
                 CancelWorker();
-                tsbAbort.Text = "Aborting...";
+                tsbCancel.Text = "Canceling...";
             }
             catch (Exception ex)
             {
@@ -613,7 +656,8 @@ namespace Dataverse.XrmTools.Deployer
 
         private void btnClearLogs_Click(object sender, EventArgs e)
         {
-            txtLogs.Text = string.Empty;
+            txtLogs.Clear();
+            txtOutput.Clear();
         }
 
         private void lvOperations_SelectedIndexChanged(object sender, EventArgs e)
@@ -673,6 +717,16 @@ namespace Dataverse.XrmTools.Deployer
                     RenderOperationsList(oldIndex + 1);
                 }
             }
+        }
+
+        private void txtLogs_TextChanged(object sender, EventArgs e)
+        {
+            txtOutput.ScrollToCaret();
+        }
+
+        private void txtOutput_TextChanged(object sender, EventArgs e)
+        {
+            txtOutput.ScrollToCaret();
         }
         #endregion Form Events
     }

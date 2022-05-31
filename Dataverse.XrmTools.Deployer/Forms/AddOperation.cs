@@ -95,6 +95,37 @@ namespace Dataverse.XrmTools.Deployer.Forms
             }
         }
 
+        private void rbUnpack_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                pnlOperationDetails.Controls.Clear();
+                var unpack = new UnpackOptions(_logger, _settings);
+                pnlOperationDetails.Controls.Add(unpack);
+
+                unpack.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
+                unpack.OnOperationSelected += HandleSelectedOperationEvent;
+                unpack.OnOperationUpdated += HandleUpdateOperationEvent;
+                unpack.OnWorkingStateSetRequested += HandleSetWorkingStateEvent;
+            }
+        }
+
+        private void rbPack_CheckedChanged(object sender, EventArgs e)
+        {
+            //var radio = sender as RadioButton;
+            //if (radio.Checked)
+            //{
+            //    pnlOperationDetails.Controls.Clear();
+            //    var export = new ExportOptions(_logger, _settings);
+            //    pnlOperationDetails.Controls.Add(export);
+
+            //    export.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
+            //    export.OnOperationSelected += HandleSelectedOperationEvent;
+            //    export.OnOperationUpdated += HandleUpdateOperationEvent;
+            //}
+        }
+
         private void rbPublish_CheckedChanged(object sender, EventArgs e)
         {
             pnlOperationDetails.Controls.Clear();
@@ -136,6 +167,12 @@ namespace Dataverse.XrmTools.Deployer.Forms
         private void HandleUpdateOperationEvent(object sender, Operation operation)
         {
             _operation = operation;
+        }
+
+        private void HandleSetWorkingStateEvent(bool working)
+        {
+            pnlBody.Enabled = !working;
+            Cursor = working ? Cursors.WaitCursor : Cursors.Default;
         }
 
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)

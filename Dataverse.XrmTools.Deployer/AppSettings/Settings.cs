@@ -10,6 +10,9 @@ namespace Dataverse.XrmTools.Deployer.AppSettings
         public List<Instance> Instances { get; set; }
         public List<Sort> Sorts { get; set; }
         public string ExportPath { get; set; }
+        public string WorkingDirectory { get; set; }
+        public string PackagerPath { get; set; }
+        public string UnpackPath { get; set; }
 
         public Instance this[Guid orgId]
         {

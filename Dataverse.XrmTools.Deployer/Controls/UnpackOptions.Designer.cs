@@ -1,7 +1,7 @@
 ﻿
 namespace Dataverse.XrmTools.Deployer.Controls
 {
-    partial class ImportOptions
+    partial class UnpackOptions
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,15 +29,17 @@ namespace Dataverse.XrmTools.Deployer.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.gbImport = new System.Windows.Forms.GroupBox();
-            this.gbImportSettings = new System.Windows.Forms.GroupBox();
-            this.chbPublishWorkflows = new System.Windows.Forms.CheckBox();
-            this.chbHoldingSolution = new System.Windows.Forms.CheckBox();
-            this.chbOverwriteUnmanaged = new System.Windows.Forms.CheckBox();
+            this.gbUnpack = new System.Windows.Forms.GroupBox();
+            this.gbUnpackSettings = new System.Windows.Forms.GroupBox();
+            this.btnDownloadPackager = new System.Windows.Forms.Button();
+            this.btnSetOutputPath = new System.Windows.Forms.Button();
+            this.lblOutputPath = new System.Windows.Forms.Label();
+            this.txtOutputPathValue = new System.Windows.Forms.TextBox();
+            this.btnSetPackagerPath = new System.Windows.Forms.Button();
+            this.lblPackagerPath = new System.Windows.Forms.Label();
+            this.txtPackagerPathValue = new System.Windows.Forms.TextBox();
             this.gbSolutionInfo = new System.Windows.Forms.GroupBox();
-            this.lblExistingValue = new System.Windows.Forms.Label();
             this.lblSolutionId = new System.Windows.Forms.Label();
-            this.lblExisting = new System.Windows.Forms.Label();
             this.lblDisplayNameValue = new System.Windows.Forms.Label();
             this.lblSolutionIdValue = new System.Windows.Forms.Label();
             this.lblLogicalNameValue = new System.Windows.Forms.Label();
@@ -49,104 +51,156 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblManagedValue = new System.Windows.Forms.Label();
             this.lblLogicalName = new System.Windows.Forms.Label();
             this.lblManaged = new System.Windows.Forms.Label();
-            this.gbImportFromQueue = new System.Windows.Forms.GroupBox();
+            this.gbUnpackFromQueue = new System.Windows.Forms.GroupBox();
             this.lvOperations = new System.Windows.Forms.ListView();
             this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlImportFrom = new System.Windows.Forms.Panel();
-            this.rbImportFromQueue = new System.Windows.Forms.RadioButton();
-            this.rbImportFromFile = new System.Windows.Forms.RadioButton();
-            this.lblImportFrom = new System.Windows.Forms.Label();
-            this.gbImportFromFile = new System.Windows.Forms.GroupBox();
+            this.rbUnpackFromQueue = new System.Windows.Forms.RadioButton();
+            this.rbUnpackFromFile = new System.Windows.Forms.RadioButton();
+            this.lblUnpackFrom = new System.Windows.Forms.Label();
+            this.gbUnpackFromFile = new System.Windows.Forms.GroupBox();
             this.btnAddSolutionFile = new System.Windows.Forms.Button();
             this.lblImportPath = new System.Windows.Forms.Label();
             this.txtImportPathValue = new System.Windows.Forms.TextBox();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.gbImport.SuspendLayout();
-            this.gbImportSettings.SuspendLayout();
+            this.gbUnpack.SuspendLayout();
+            this.gbUnpackSettings.SuspendLayout();
             this.gbSolutionInfo.SuspendLayout();
-            this.gbImportFromQueue.SuspendLayout();
+            this.gbUnpackFromQueue.SuspendLayout();
             this.pnlImportFrom.SuspendLayout();
-            this.gbImportFromFile.SuspendLayout();
+            this.gbUnpackFromFile.SuspendLayout();
             this.SuspendLayout();
             // 
-            // gbImport
+            // gbUnpack
             // 
-            this.gbImport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gbUnpack.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbImport.Controls.Add(this.gbImportSettings);
-            this.gbImport.Controls.Add(this.gbSolutionInfo);
-            this.gbImport.Controls.Add(this.gbImportFromQueue);
-            this.gbImport.Controls.Add(this.pnlImportFrom);
-            this.gbImport.Controls.Add(this.gbImportFromFile);
-            this.gbImport.Location = new System.Drawing.Point(0, 0);
-            this.gbImport.Name = "gbImport";
-            this.gbImport.Size = new System.Drawing.Size(1375, 465);
-            this.gbImport.TabIndex = 1;
-            this.gbImport.TabStop = false;
-            this.gbImport.Text = "Import Options";
+            this.gbUnpack.Controls.Add(this.gbUnpackSettings);
+            this.gbUnpack.Controls.Add(this.gbSolutionInfo);
+            this.gbUnpack.Controls.Add(this.gbUnpackFromQueue);
+            this.gbUnpack.Controls.Add(this.pnlImportFrom);
+            this.gbUnpack.Controls.Add(this.gbUnpackFromFile);
+            this.gbUnpack.Location = new System.Drawing.Point(0, 0);
+            this.gbUnpack.Name = "gbUnpack";
+            this.gbUnpack.Size = new System.Drawing.Size(1375, 465);
+            this.gbUnpack.TabIndex = 1;
+            this.gbUnpack.TabStop = false;
+            this.gbUnpack.Text = "Unpack Options";
             // 
-            // gbImportSettings
+            // gbUnpackSettings
             // 
-            this.gbImportSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.gbUnpackSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbImportSettings.Controls.Add(this.chbPublishWorkflows);
-            this.gbImportSettings.Controls.Add(this.chbHoldingSolution);
-            this.gbImportSettings.Controls.Add(this.chbOverwriteUnmanaged);
-            this.gbImportSettings.Location = new System.Drawing.Point(778, 53);
-            this.gbImportSettings.Name = "gbImportSettings";
-            this.gbImportSettings.Size = new System.Drawing.Size(591, 184);
-            this.gbImportSettings.TabIndex = 18;
-            this.gbImportSettings.TabStop = false;
-            this.gbImportSettings.Text = "Import Settings";
+            this.gbUnpackSettings.Controls.Add(this.btnDownloadPackager);
+            this.gbUnpackSettings.Controls.Add(this.btnSetOutputPath);
+            this.gbUnpackSettings.Controls.Add(this.lblOutputPath);
+            this.gbUnpackSettings.Controls.Add(this.txtOutputPathValue);
+            this.gbUnpackSettings.Controls.Add(this.btnSetPackagerPath);
+            this.gbUnpackSettings.Controls.Add(this.lblPackagerPath);
+            this.gbUnpackSettings.Controls.Add(this.txtPackagerPathValue);
+            this.gbUnpackSettings.Location = new System.Drawing.Point(757, 53);
+            this.gbUnpackSettings.Name = "gbUnpackSettings";
+            this.gbUnpackSettings.Size = new System.Drawing.Size(612, 210);
+            this.gbUnpackSettings.TabIndex = 18;
+            this.gbUnpackSettings.TabStop = false;
+            this.gbUnpackSettings.Text = "Unpack Settings";
             // 
-            // chbPublishWorkflows
+            // btnDownloadPackager
             // 
-            this.chbPublishWorkflows.AutoSize = true;
-            this.chbPublishWorkflows.Checked = true;
-            this.chbPublishWorkflows.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chbPublishWorkflows.Location = new System.Drawing.Point(10, 75);
-            this.chbPublishWorkflows.Name = "chbPublishWorkflows";
-            this.chbPublishWorkflows.Size = new System.Drawing.Size(144, 21);
-            this.chbPublishWorkflows.TabIndex = 6;
-            this.chbPublishWorkflows.Text = "Publish Workflows";
-            this.chbPublishWorkflows.UseVisualStyleBackColor = true;
-            this.chbPublishWorkflows.CheckedChanged += new System.EventHandler(this.OptionsUpdated_CheckedChanged);
+            this.btnDownloadPackager.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDownloadPackager.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.download_arrow;
+            this.btnDownloadPackager.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnDownloadPackager.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnDownloadPackager.Location = new System.Drawing.Point(563, 22);
+            this.btnDownloadPackager.Margin = new System.Windows.Forms.Padding(4);
+            this.btnDownloadPackager.Name = "btnDownloadPackager";
+            this.btnDownloadPackager.Size = new System.Drawing.Size(42, 29);
+            this.btnDownloadPackager.TabIndex = 27;
+            this.btnDownloadPackager.Tag = "";
+            this.btnDownloadPackager.UseVisualStyleBackColor = true;
+            this.btnDownloadPackager.Click += new System.EventHandler(this.btnDownloadPackager_Click);
             // 
-            // chbHoldingSolution
+            // btnSetOutputPath
             // 
-            this.chbHoldingSolution.AutoSize = true;
-            this.chbHoldingSolution.Location = new System.Drawing.Point(10, 21);
-            this.chbHoldingSolution.Name = "chbHoldingSolution";
-            this.chbHoldingSolution.Size = new System.Drawing.Size(133, 21);
-            this.chbHoldingSolution.TabIndex = 4;
-            this.chbHoldingSolution.Text = "Holding Solution";
-            this.chbHoldingSolution.UseVisualStyleBackColor = true;
-            this.chbHoldingSolution.CheckedChanged += new System.EventHandler(this.OptionsUpdated_CheckedChanged);
+            this.btnSetOutputPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetOutputPath.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSetOutputPath.Location = new System.Drawing.Point(513, 59);
+            this.btnSetOutputPath.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetOutputPath.Name = "btnSetOutputPath";
+            this.btnSetOutputPath.Size = new System.Drawing.Size(92, 29);
+            this.btnSetOutputPath.TabIndex = 25;
+            this.btnSetOutputPath.Tag = "output";
+            this.btnSetOutputPath.Text = "...";
+            this.btnSetOutputPath.UseVisualStyleBackColor = true;
+            this.btnSetOutputPath.Click += new System.EventHandler(this.btnSetOutputPath_Click);
             // 
-            // chbOverwriteUnmanaged
+            // lblOutputPath
             // 
-            this.chbOverwriteUnmanaged.AutoSize = true;
-            this.chbOverwriteUnmanaged.Checked = true;
-            this.chbOverwriteUnmanaged.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chbOverwriteUnmanaged.Location = new System.Drawing.Point(10, 48);
-            this.chbOverwriteUnmanaged.Name = "chbOverwriteUnmanaged";
-            this.chbOverwriteUnmanaged.Size = new System.Drawing.Size(171, 21);
-            this.chbOverwriteUnmanaged.TabIndex = 5;
-            this.chbOverwriteUnmanaged.Text = "Overwrite Unmanaged";
-            this.chbOverwriteUnmanaged.UseVisualStyleBackColor = true;
-            this.chbOverwriteUnmanaged.CheckedChanged += new System.EventHandler(this.OptionsUpdated_CheckedChanged);
+            this.lblOutputPath.AutoSize = true;
+            this.lblOutputPath.Location = new System.Drawing.Point(6, 58);
+            this.lblOutputPath.Name = "lblOutputPath";
+            this.lblOutputPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.lblOutputPath.Size = new System.Drawing.Size(55, 27);
+            this.lblOutputPath.TabIndex = 26;
+            this.lblOutputPath.Text = "Output:";
+            // 
+            // txtOutputPathValue
+            // 
+            this.txtOutputPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutputPathValue.Location = new System.Drawing.Point(85, 63);
+            this.txtOutputPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtOutputPathValue.Name = "txtOutputPathValue";
+            this.txtOutputPathValue.ReadOnly = true;
+            this.txtOutputPathValue.Size = new System.Drawing.Size(420, 22);
+            this.txtOutputPathValue.TabIndex = 24;
+            // 
+            // btnSetPackagerPath
+            // 
+            this.btnSetPackagerPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetPackagerPath.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSetPackagerPath.Location = new System.Drawing.Point(513, 22);
+            this.btnSetPackagerPath.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetPackagerPath.Name = "btnSetPackagerPath";
+            this.btnSetPackagerPath.Size = new System.Drawing.Size(42, 29);
+            this.btnSetPackagerPath.TabIndex = 22;
+            this.btnSetPackagerPath.Tag = "packager";
+            this.btnSetPackagerPath.Text = "...";
+            this.btnSetPackagerPath.UseVisualStyleBackColor = true;
+            this.btnSetPackagerPath.Click += new System.EventHandler(this.btnSetPackagerPath_Click);
+            // 
+            // lblPackagerPath
+            // 
+            this.lblPackagerPath.AutoSize = true;
+            this.lblPackagerPath.Location = new System.Drawing.Point(6, 21);
+            this.lblPackagerPath.Name = "lblPackagerPath";
+            this.lblPackagerPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.lblPackagerPath.Size = new System.Drawing.Size(72, 27);
+            this.lblPackagerPath.TabIndex = 23;
+            this.lblPackagerPath.Text = "Packager:";
+            // 
+            // txtPackagerPathValue
+            // 
+            this.txtPackagerPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPackagerPathValue.Location = new System.Drawing.Point(85, 26);
+            this.txtPackagerPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPackagerPathValue.Name = "txtPackagerPathValue";
+            this.txtPackagerPathValue.ReadOnly = true;
+            this.txtPackagerPathValue.Size = new System.Drawing.Size(420, 22);
+            this.txtPackagerPathValue.TabIndex = 21;
             // 
             // gbSolutionInfo
             // 
-            this.gbSolutionInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.gbSolutionInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbSolutionInfo.Controls.Add(this.lblExistingValue);
             this.gbSolutionInfo.Controls.Add(this.lblSolutionId);
-            this.gbSolutionInfo.Controls.Add(this.lblExisting);
             this.gbSolutionInfo.Controls.Add(this.lblDisplayNameValue);
             this.gbSolutionInfo.Controls.Add(this.lblSolutionIdValue);
             this.gbSolutionInfo.Controls.Add(this.lblLogicalNameValue);
@@ -158,21 +212,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutionInfo.Controls.Add(this.lblManagedValue);
             this.gbSolutionInfo.Controls.Add(this.lblLogicalName);
             this.gbSolutionInfo.Controls.Add(this.lblManaged);
-            this.gbSolutionInfo.Location = new System.Drawing.Point(778, 243);
+            this.gbSolutionInfo.Location = new System.Drawing.Point(757, 269);
             this.gbSolutionInfo.Name = "gbSolutionInfo";
-            this.gbSolutionInfo.Size = new System.Drawing.Size(591, 216);
+            this.gbSolutionInfo.Size = new System.Drawing.Size(612, 193);
             this.gbSolutionInfo.TabIndex = 35;
             this.gbSolutionInfo.TabStop = false;
             this.gbSolutionInfo.Text = "Solution Details";
-            // 
-            // lblExistingValue
-            // 
-            this.lblExistingValue.AutoSize = true;
-            this.lblExistingValue.Location = new System.Drawing.Point(111, 190);
-            this.lblExistingValue.Name = "lblExistingValue";
-            this.lblExistingValue.Size = new System.Drawing.Size(13, 17);
-            this.lblExistingValue.TabIndex = 33;
-            this.lblExistingValue.Text = "-";
             // 
             // lblSolutionId
             // 
@@ -183,16 +228,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblSolutionId.Size = new System.Drawing.Size(80, 27);
             this.lblSolutionId.TabIndex = 30;
             this.lblSolutionId.Text = "Solution ID:";
-            // 
-            // lblExisting
-            // 
-            this.lblExisting.AutoSize = true;
-            this.lblExisting.Location = new System.Drawing.Point(6, 180);
-            this.lblExisting.Name = "lblExisting";
-            this.lblExisting.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblExisting.Size = new System.Drawing.Size(60, 27);
-            this.lblExisting.TabIndex = 32;
-            this.lblExisting.Text = "Existing:";
             // 
             // lblDisplayNameValue
             // 
@@ -298,17 +333,17 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblManaged.TabIndex = 26;
             this.lblManaged.Text = "Is Managed:";
             // 
-            // gbImportFromQueue
+            // gbUnpackFromQueue
             // 
-            this.gbImportFromQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gbUnpackFromQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.gbImportFromQueue.Controls.Add(this.lvOperations);
-            this.gbImportFromQueue.Location = new System.Drawing.Point(6, 159);
-            this.gbImportFromQueue.Name = "gbImportFromQueue";
-            this.gbImportFromQueue.Size = new System.Drawing.Size(766, 303);
-            this.gbImportFromQueue.TabIndex = 12;
-            this.gbImportFromQueue.TabStop = false;
-            this.gbImportFromQueue.Text = "Import From Queue";
+            this.gbUnpackFromQueue.Controls.Add(this.lvOperations);
+            this.gbUnpackFromQueue.Location = new System.Drawing.Point(6, 159);
+            this.gbUnpackFromQueue.Name = "gbUnpackFromQueue";
+            this.gbUnpackFromQueue.Size = new System.Drawing.Size(744, 303);
+            this.gbUnpackFromQueue.TabIndex = 12;
+            this.gbUnpackFromQueue.TabStop = false;
+            this.gbUnpackFromQueue.Text = "Unpack From Queue";
             // 
             // lvOperations
             // 
@@ -324,7 +359,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lvOperations.Margin = new System.Windows.Forms.Padding(4);
             this.lvOperations.MultiSelect = false;
             this.lvOperations.Name = "lvOperations";
-            this.lvOperations.Size = new System.Drawing.Size(752, 274);
+            this.lvOperations.Size = new System.Drawing.Size(730, 274);
             this.lvOperations.TabIndex = 3;
             this.lvOperations.UseCompatibleStateImageBehavior = false;
             this.lvOperations.View = System.Windows.Forms.View.Details;
@@ -345,58 +380,58 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // 
             this.pnlImportFrom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlImportFrom.Controls.Add(this.rbImportFromQueue);
-            this.pnlImportFrom.Controls.Add(this.rbImportFromFile);
-            this.pnlImportFrom.Controls.Add(this.lblImportFrom);
+            this.pnlImportFrom.Controls.Add(this.rbUnpackFromQueue);
+            this.pnlImportFrom.Controls.Add(this.rbUnpackFromFile);
+            this.pnlImportFrom.Controls.Add(this.lblUnpackFrom);
             this.pnlImportFrom.Location = new System.Drawing.Point(7, 21);
             this.pnlImportFrom.Name = "pnlImportFrom";
             this.pnlImportFrom.Size = new System.Drawing.Size(1361, 26);
             this.pnlImportFrom.TabIndex = 11;
             // 
-            // rbImportFromQueue
+            // rbUnpackFromQueue
             // 
-            this.rbImportFromQueue.AutoSize = true;
-            this.rbImportFromQueue.Location = new System.Drawing.Point(186, 3);
-            this.rbImportFromQueue.Name = "rbImportFromQueue";
-            this.rbImportFromQueue.Size = new System.Drawing.Size(72, 21);
-            this.rbImportFromQueue.TabIndex = 14;
-            this.rbImportFromQueue.Text = "Queue";
-            this.rbImportFromQueue.UseVisualStyleBackColor = true;
-            this.rbImportFromQueue.CheckedChanged += new System.EventHandler(this.rbImportFromQueue_CheckedChanged);
+            this.rbUnpackFromQueue.AutoSize = true;
+            this.rbUnpackFromQueue.Location = new System.Drawing.Point(186, 3);
+            this.rbUnpackFromQueue.Name = "rbUnpackFromQueue";
+            this.rbUnpackFromQueue.Size = new System.Drawing.Size(72, 21);
+            this.rbUnpackFromQueue.TabIndex = 14;
+            this.rbUnpackFromQueue.Text = "Queue";
+            this.rbUnpackFromQueue.UseVisualStyleBackColor = true;
+            this.rbUnpackFromQueue.CheckedChanged += new System.EventHandler(this.rbImportFromQueue_CheckedChanged);
             // 
-            // rbImportFromFile
+            // rbUnpackFromFile
             // 
-            this.rbImportFromFile.AutoSize = true;
-            this.rbImportFromFile.Checked = true;
-            this.rbImportFromFile.Location = new System.Drawing.Point(112, 3);
-            this.rbImportFromFile.Name = "rbImportFromFile";
-            this.rbImportFromFile.Size = new System.Drawing.Size(51, 21);
-            this.rbImportFromFile.TabIndex = 13;
-            this.rbImportFromFile.TabStop = true;
-            this.rbImportFromFile.Text = "File";
-            this.rbImportFromFile.UseVisualStyleBackColor = true;
-            this.rbImportFromFile.CheckedChanged += new System.EventHandler(this.rbImportFromFile_CheckedChanged);
+            this.rbUnpackFromFile.AutoSize = true;
+            this.rbUnpackFromFile.Checked = true;
+            this.rbUnpackFromFile.Location = new System.Drawing.Point(112, 3);
+            this.rbUnpackFromFile.Name = "rbUnpackFromFile";
+            this.rbUnpackFromFile.Size = new System.Drawing.Size(51, 21);
+            this.rbUnpackFromFile.TabIndex = 13;
+            this.rbUnpackFromFile.TabStop = true;
+            this.rbUnpackFromFile.Text = "File";
+            this.rbUnpackFromFile.UseVisualStyleBackColor = true;
+            this.rbUnpackFromFile.CheckedChanged += new System.EventHandler(this.rbImportFromFile_CheckedChanged);
             // 
-            // lblImportFrom
+            // lblUnpackFrom
             // 
-            this.lblImportFrom.AutoSize = true;
-            this.lblImportFrom.Location = new System.Drawing.Point(3, 5);
-            this.lblImportFrom.Name = "lblImportFrom";
-            this.lblImportFrom.Size = new System.Drawing.Size(87, 17);
-            this.lblImportFrom.TabIndex = 16;
-            this.lblImportFrom.Text = "Import From:";
+            this.lblUnpackFrom.AutoSize = true;
+            this.lblUnpackFrom.Location = new System.Drawing.Point(3, 5);
+            this.lblUnpackFrom.Name = "lblUnpackFrom";
+            this.lblUnpackFrom.Size = new System.Drawing.Size(96, 17);
+            this.lblUnpackFrom.TabIndex = 16;
+            this.lblUnpackFrom.Text = "Unpack From:";
             // 
-            // gbImportFromFile
+            // gbUnpackFromFile
             // 
-            this.gbImportFromFile.Controls.Add(this.btnAddSolutionFile);
-            this.gbImportFromFile.Controls.Add(this.lblImportPath);
-            this.gbImportFromFile.Controls.Add(this.txtImportPathValue);
-            this.gbImportFromFile.Location = new System.Drawing.Point(7, 53);
-            this.gbImportFromFile.Name = "gbImportFromFile";
-            this.gbImportFromFile.Size = new System.Drawing.Size(765, 100);
-            this.gbImportFromFile.TabIndex = 10;
-            this.gbImportFromFile.TabStop = false;
-            this.gbImportFromFile.Text = "Import From File";
+            this.gbUnpackFromFile.Controls.Add(this.btnAddSolutionFile);
+            this.gbUnpackFromFile.Controls.Add(this.lblImportPath);
+            this.gbUnpackFromFile.Controls.Add(this.txtImportPathValue);
+            this.gbUnpackFromFile.Location = new System.Drawing.Point(7, 53);
+            this.gbUnpackFromFile.Name = "gbUnpackFromFile";
+            this.gbUnpackFromFile.Size = new System.Drawing.Size(744, 100);
+            this.gbUnpackFromFile.TabIndex = 10;
+            this.gbUnpackFromFile.TabStop = false;
+            this.gbUnpackFromFile.Text = "Unpack From File";
             // 
             // btnAddSolutionFile
             // 
@@ -406,7 +441,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnAddSolutionFile.Location = new System.Drawing.Point(7, 22);
             this.btnAddSolutionFile.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddSolutionFile.Name = "btnAddSolutionFile";
-            this.btnAddSolutionFile.Size = new System.Drawing.Size(752, 29);
+            this.btnAddSolutionFile.Size = new System.Drawing.Size(731, 29);
             this.btnAddSolutionFile.TabIndex = 8;
             this.btnAddSolutionFile.Text = "Add Solution File...";
             this.btnAddSolutionFile.UseVisualStyleBackColor = true;
@@ -430,7 +465,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.txtImportPathValue.Margin = new System.Windows.Forms.Padding(4);
             this.txtImportPathValue.Name = "txtImportPathValue";
             this.txtImportPathValue.ReadOnly = true;
-            this.txtImportPathValue.Size = new System.Drawing.Size(705, 22);
+            this.txtImportPathValue.Size = new System.Drawing.Size(684, 22);
             this.txtImportPathValue.TabIndex = 16;
             // 
             // btnClose
@@ -447,37 +482,32 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 0;
             // 
-            // ImportOptions
+            // UnpackOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.gbImport);
-            this.Name = "ImportOptions";
+            this.Controls.Add(this.gbUnpack);
+            this.Name = "UnpackOptions";
             this.Size = new System.Drawing.Size(1375, 465);
-            this.gbImport.ResumeLayout(false);
-            this.gbImportSettings.ResumeLayout(false);
-            this.gbImportSettings.PerformLayout();
+            this.gbUnpack.ResumeLayout(false);
+            this.gbUnpackSettings.ResumeLayout(false);
+            this.gbUnpackSettings.PerformLayout();
             this.gbSolutionInfo.ResumeLayout(false);
             this.gbSolutionInfo.PerformLayout();
-            this.gbImportFromQueue.ResumeLayout(false);
+            this.gbUnpackFromQueue.ResumeLayout(false);
             this.pnlImportFrom.ResumeLayout(false);
             this.pnlImportFrom.PerformLayout();
-            this.gbImportFromFile.ResumeLayout(false);
-            this.gbImportFromFile.PerformLayout();
+            this.gbUnpackFromFile.ResumeLayout(false);
+            this.gbUnpackFromFile.PerformLayout();
             this.ResumeLayout(false);
 
         }
         #endregion
 
-        private System.Windows.Forms.GroupBox gbImport;
-        private System.Windows.Forms.GroupBox gbImportSettings;
-        private System.Windows.Forms.CheckBox chbPublishWorkflows;
-        private System.Windows.Forms.CheckBox chbHoldingSolution;
-        private System.Windows.Forms.CheckBox chbOverwriteUnmanaged;
+        private System.Windows.Forms.GroupBox gbUnpack;
+        private System.Windows.Forms.GroupBox gbUnpackSettings;
         private System.Windows.Forms.GroupBox gbSolutionInfo;
-        private System.Windows.Forms.Label lblExistingValue;
         private System.Windows.Forms.Label lblSolutionId;
-        private System.Windows.Forms.Label lblExisting;
         private System.Windows.Forms.Label lblDisplayNameValue;
         private System.Windows.Forms.Label lblSolutionIdValue;
         private System.Windows.Forms.Label lblLogicalNameValue;
@@ -489,19 +519,26 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private System.Windows.Forms.Label lblManagedValue;
         private System.Windows.Forms.Label lblLogicalName;
         private System.Windows.Forms.Label lblManaged;
-        private System.Windows.Forms.GroupBox gbImportFromQueue;
+        private System.Windows.Forms.GroupBox gbUnpackFromQueue;
         private System.Windows.Forms.ListView lvOperations;
         private System.Windows.Forms.ColumnHeader chOpDisplayName;
         private System.Windows.Forms.ColumnHeader chOpLogicalName;
         private System.Windows.Forms.Panel pnlImportFrom;
-        private System.Windows.Forms.RadioButton rbImportFromQueue;
-        private System.Windows.Forms.RadioButton rbImportFromFile;
-        private System.Windows.Forms.Label lblImportFrom;
-        private System.Windows.Forms.GroupBox gbImportFromFile;
+        private System.Windows.Forms.RadioButton rbUnpackFromQueue;
+        private System.Windows.Forms.RadioButton rbUnpackFromFile;
+        private System.Windows.Forms.Label lblUnpackFrom;
+        private System.Windows.Forms.GroupBox gbUnpackFromFile;
         private System.Windows.Forms.Button btnAddSolutionFile;
         private System.Windows.Forms.Label lblImportPath;
         private System.Windows.Forms.TextBox txtImportPathValue;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnSetPackagerPath;
+        private System.Windows.Forms.Label lblPackagerPath;
+        private System.Windows.Forms.TextBox txtPackagerPathValue;
+        private System.Windows.Forms.Button btnSetOutputPath;
+        private System.Windows.Forms.Label lblOutputPath;
+        private System.Windows.Forms.TextBox txtOutputPathValue;
+        private System.Windows.Forms.Button btnDownloadPackager;
     }
 }

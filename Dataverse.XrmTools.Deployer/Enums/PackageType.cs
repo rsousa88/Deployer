@@ -4,6 +4,6 @@
     {
         MANAGED = 1,
         UNMANAGED = 2,
-        ALL = 4
+        BOTH = 4
     }
 }

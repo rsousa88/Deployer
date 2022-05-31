@@ -80,7 +80,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutionInfo.Controls.Add(this.lblDisplayName);
             this.gbSolutionInfo.Location = new System.Drawing.Point(757, 58);
             this.gbSolutionInfo.Name = "gbSolutionInfo";
-            this.gbSolutionInfo.Size = new System.Drawing.Size(436, 336);
+            this.gbSolutionInfo.Size = new System.Drawing.Size(611, 401);
             this.gbSolutionInfo.TabIndex = 9;
             this.gbSolutionInfo.TabStop = false;
             this.gbSolutionInfo.Text = "Solution Details";
@@ -222,7 +222,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbDeleteSettings.Controls.Add(this.lvSolutions);
             this.gbDeleteSettings.Location = new System.Drawing.Point(7, 58);
             this.gbDeleteSettings.Name = "gbDeleteSettings";
-            this.gbDeleteSettings.Size = new System.Drawing.Size(744, 336);
+            this.gbDeleteSettings.Size = new System.Drawing.Size(744, 401);
             this.gbDeleteSettings.TabIndex = 10;
             this.gbDeleteSettings.TabStop = false;
             this.gbDeleteSettings.Text = "Delete Settings";
@@ -264,7 +264,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lvSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(730, 276);
+            this.lvSolutions.Size = new System.Drawing.Size(730, 341);
             this.lvSolutions.TabIndex = 3;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
@@ -299,7 +299,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnLoadSolutions.Location = new System.Drawing.Point(7, 22);
             this.btnLoadSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.btnLoadSolutions.Name = "btnLoadSolutions";
-            this.btnLoadSolutions.Size = new System.Drawing.Size(1186, 29);
+            this.btnLoadSolutions.Size = new System.Drawing.Size(1361, 29);
             this.btnLoadSolutions.TabIndex = 9;
             this.btnLoadSolutions.Text = "Load all Solutions from Target instance";
             this.btnLoadSolutions.UseVisualStyleBackColor = true;
@@ -315,7 +315,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbDelete.Controls.Add(this.gbSolutionInfo);
             this.gbDelete.Location = new System.Drawing.Point(0, 0);
             this.gbDelete.Name = "gbDelete";
-            this.gbDelete.Size = new System.Drawing.Size(1200, 400);
+            this.gbDelete.Size = new System.Drawing.Size(1375, 465);
             this.gbDelete.TabIndex = 11;
             this.gbDelete.TabStop = false;
             this.gbDelete.Text = "Delete Options";
@@ -326,7 +326,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbDelete);
             this.Name = "DeleteOptions";
-            this.Size = new System.Drawing.Size(1200, 400);
+            this.Size = new System.Drawing.Size(1375, 465);
             this.gbSolutionInfo.ResumeLayout(false);
             this.gbSolutionInfo.PerformLayout();
             this.gbDeleteSettings.ResumeLayout(false);
