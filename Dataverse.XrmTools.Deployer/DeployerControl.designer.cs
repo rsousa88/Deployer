@@ -35,10 +35,11 @@
             this.lblSourceValue = new System.Windows.Forms.Label();
             this.lblTarget = new System.Windows.Forms.Label();
             this.lblTargetValue = new System.Windows.Forms.Label();
-            this.gbSettings = new System.Windows.Forms.GroupBox();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbQueue = new System.Windows.Forms.GroupBox();
             this.pnlOperationButtons = new System.Windows.Forms.Panel();
+            this.btnDown = new System.Windows.Forms.Button();
+            this.btnUp = new System.Windows.Forms.Button();
             this.btnClearQueue = new System.Windows.Forms.Button();
             this.btnAddOperation = new System.Windows.Forms.Button();
             this.lvOperations = new System.Windows.Forms.ListView();
@@ -53,8 +54,6 @@
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.txtLogs = new System.Windows.Forms.TextBox();
-            this.btnUp = new System.Windows.Forms.Button();
-            this.btnDown = new System.Windows.Forms.Button();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -75,7 +74,7 @@
             this.tsbAbort});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(1735, 30);
+            this.tsMain.Size = new System.Drawing.Size(1900, 30);
             this.tsMain.TabIndex = 9;
             this.tsMain.Text = "Queue Toolstrip";
             // 
@@ -113,7 +112,7 @@
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.RowCount = 1;
             this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlMain.Size = new System.Drawing.Size(1735, 940);
+            this.pnlMain.Size = new System.Drawing.Size(1900, 920);
             this.pnlMain.TabIndex = 91;
             // 
             // pnlSettings
@@ -121,15 +120,13 @@
             this.pnlSettings.ColumnCount = 1;
             this.pnlSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.pnlSettings.Controls.Add(this.gbEnvironments, 0, 0);
-            this.pnlSettings.Controls.Add(this.gbSettings, 0, 1);
             this.pnlSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlSettings.Location = new System.Drawing.Point(3, 2);
             this.pnlSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlSettings.Name = "pnlSettings";
-            this.pnlSettings.RowCount = 2;
-            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18F));
-            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 82F));
-            this.pnlSettings.Size = new System.Drawing.Size(254, 936);
+            this.pnlSettings.RowCount = 1;
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.pnlSettings.Size = new System.Drawing.Size(279, 916);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbEnvironments
@@ -144,20 +141,20 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(248, 164);
+            this.gbEnvironments.Size = new System.Drawing.Size(273, 160);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
             // 
             // btnConnectSource
             // 
-            this.btnConnectSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnConnectSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnectSource.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnConnectSource.Location = new System.Drawing.Point(7, 129);
+            this.btnConnectSource.Location = new System.Drawing.Point(7, 92);
             this.btnConnectSource.Margin = new System.Windows.Forms.Padding(4);
             this.btnConnectSource.Name = "btnConnectSource";
-            this.btnConnectSource.Size = new System.Drawing.Size(234, 29);
+            this.btnConnectSource.Size = new System.Drawing.Size(259, 29);
             this.btnConnectSource.TabIndex = 9;
             this.btnConnectSource.Text = "Add Source";
             this.btnConnectSource.UseVisualStyleBackColor = true;
@@ -203,18 +200,6 @@
             this.lblTargetValue.TabIndex = 1;
             this.lblTargetValue.Text = "Disconnected";
             // 
-            // gbSettings
-            // 
-            this.gbSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSettings.Location = new System.Drawing.Point(3, 170);
-            this.gbSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSettings.Name = "gbSettings";
-            this.gbSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSettings.Size = new System.Drawing.Size(248, 764);
-            this.gbSettings.TabIndex = 0;
-            this.gbSettings.TabStop = false;
-            this.gbSettings.Text = "Settings";
-            // 
             // pnlBody
             // 
             this.pnlBody.ColumnCount = 2;
@@ -223,14 +208,14 @@
             this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
             this.pnlBody.Controls.Add(this.gbLogs, 7, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlBody.Location = new System.Drawing.Point(263, 2);
+            this.pnlBody.Location = new System.Drawing.Point(288, 2);
             this.pnlBody.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.Name = "pnlBody";
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlBody.Size = new System.Drawing.Size(1469, 936);
+            this.pnlBody.Size = new System.Drawing.Size(1609, 916);
             this.pnlBody.TabIndex = 1;
             // 
             // gbQueue
@@ -245,7 +230,7 @@
             this.gbQueue.Name = "gbQueue";
             this.gbQueue.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbQueue, 2);
-            this.gbQueue.Size = new System.Drawing.Size(1022, 932);
+            this.gbQueue.Size = new System.Drawing.Size(1120, 912);
             this.gbQueue.TabIndex = 1;
             this.gbQueue.TabStop = false;
             this.gbQueue.Text = "Queue";
@@ -257,8 +242,36 @@
             this.pnlOperationButtons.Controls.Add(this.btnUp);
             this.pnlOperationButtons.Location = new System.Drawing.Point(6, 58);
             this.pnlOperationButtons.Name = "pnlOperationButtons";
-            this.pnlOperationButtons.Size = new System.Drawing.Size(46, 869);
+            this.pnlOperationButtons.Size = new System.Drawing.Size(45, 1086);
             this.pnlOperationButtons.TabIndex = 9;
+            // 
+            // btnDown
+            // 
+            this.btnDown.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_down_disabled_35px;
+            this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDown.Enabled = false;
+            this.btnDown.FlatAppearance.BorderSize = 0;
+            this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDown.Location = new System.Drawing.Point(3, 49);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(38, 38);
+            this.btnDown.TabIndex = 1;
+            this.btnDown.UseVisualStyleBackColor = false;
+            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+            // 
+            // btnUp
+            // 
+            this.btnUp.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_up_disabled_35px;
+            this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnUp.Enabled = false;
+            this.btnUp.FlatAppearance.BorderSize = 0;
+            this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUp.Location = new System.Drawing.Point(3, 3);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(38, 38);
+            this.btnUp.TabIndex = 0;
+            this.btnUp.UseVisualStyleBackColor = false;
+            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
             // 
             // btnClearQueue
             // 
@@ -268,7 +281,7 @@
             this.btnClearQueue.Location = new System.Drawing.Point(808, 21);
             this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearQueue.Name = "btnClearQueue";
-            this.btnClearQueue.Size = new System.Drawing.Size(207, 29);
+            this.btnClearQueue.Size = new System.Drawing.Size(305, 29);
             this.btnClearQueue.TabIndex = 8;
             this.btnClearQueue.Text = "Clear Queue";
             this.btnClearQueue.UseVisualStyleBackColor = true;
@@ -305,7 +318,7 @@
             this.lvOperations.Margin = new System.Windows.Forms.Padding(4);
             this.lvOperations.MultiSelect = false;
             this.lvOperations.Name = "lvOperations";
-            this.lvOperations.Size = new System.Drawing.Size(956, 868);
+            this.lvOperations.Size = new System.Drawing.Size(1054, 848);
             this.lvOperations.TabIndex = 2;
             this.lvOperations.UseCompatibleStateImageBehavior = false;
             this.lvOperations.View = System.Windows.Forms.View.Details;
@@ -362,12 +375,12 @@
             this.gbLogs.Controls.Add(this.btnClearLogs);
             this.gbLogs.Controls.Add(this.txtLogs);
             this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLogs.Location = new System.Drawing.Point(1031, 2);
+            this.gbLogs.Location = new System.Drawing.Point(1129, 2);
             this.gbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbLogs.Name = "gbLogs";
             this.gbLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbLogs, 2);
-            this.gbLogs.Size = new System.Drawing.Size(435, 932);
+            this.gbLogs.Size = new System.Drawing.Size(477, 912);
             this.gbLogs.TabIndex = 2;
             this.gbLogs.TabStop = false;
             this.gbLogs.Text = "Logs";
@@ -380,7 +393,7 @@
             this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
             this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearLogs.Name = "btnClearLogs";
-            this.btnClearLogs.Size = new System.Drawing.Size(422, 29);
+            this.btnClearLogs.Size = new System.Drawing.Size(464, 29);
             this.btnClearLogs.TabIndex = 9;
             this.btnClearLogs.Text = "Clear Logs";
             this.btnClearLogs.UseVisualStyleBackColor = true;
@@ -396,36 +409,8 @@
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(423, 869);
+            this.txtLogs.Size = new System.Drawing.Size(465, 849);
             this.txtLogs.TabIndex = 2;
-            // 
-            // btnUp
-            // 
-            this.btnUp.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_up_disabled_35px;
-            this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnUp.Enabled = false;
-            this.btnUp.FlatAppearance.BorderSize = 0;
-            this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUp.Location = new System.Drawing.Point(3, 3);
-            this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(40, 40);
-            this.btnUp.TabIndex = 0;
-            this.btnUp.UseVisualStyleBackColor = false;
-            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
-            // 
-            // btnDown
-            // 
-            this.btnDown.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_down_disabled_35px;
-            this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnDown.Enabled = false;
-            this.btnDown.FlatAppearance.BorderSize = 0;
-            this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDown.Location = new System.Drawing.Point(3, 49);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(40, 40);
-            this.btnDown.TabIndex = 1;
-            this.btnDown.UseVisualStyleBackColor = false;
-            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
             // 
             // DeployerControl
             // 
@@ -434,9 +419,9 @@
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.tsMain);
-            this.MinimumSize = new System.Drawing.Size(600, 400);
+            this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "DeployerControl";
-            this.Size = new System.Drawing.Size(1735, 670);
+            this.Size = new System.Drawing.Size(1900, 950);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
             this.tsMain.ResumeLayout(false);
             this.tsMain.PerformLayout();
@@ -466,7 +451,6 @@
 
         // Settings
         private System.Windows.Forms.TableLayoutPanel pnlSettings;
-        private System.Windows.Forms.GroupBox gbSettings;
 
         // Body
         private System.Windows.Forms.TableLayoutPanel pnlBody;

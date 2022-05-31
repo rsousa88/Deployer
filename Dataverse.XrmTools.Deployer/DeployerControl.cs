@@ -5,6 +5,7 @@ using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 // Microsoft
 using Microsoft.Xrm.Sdk;
@@ -22,7 +23,6 @@ using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
-using System.Collections.Specialized;
 
 namespace Dataverse.XrmTools.Deployer
 {
