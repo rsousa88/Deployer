@@ -23,6 +23,7 @@ using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
+using System.IO;
 
 namespace Dataverse.XrmTools.Deployer
 {
@@ -469,14 +470,17 @@ namespace Dataverse.XrmTools.Deployer
             tsbExecute.Enabled = false;
         }
 
-        private void RenderOperationsList(int selectedIndex)
+        private void RenderOperationsList(int? selectedIndex = null)
         {
             _operations = _operations.OrderBy(op => op.Index).ToList();
 
             lvOperations.Items.Clear();
             lvOperations.Items.AddRange(_operations.Select(op => op.ToListViewItem()).ToArray());
 
-            lvOperations.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).Index.Equals(selectedIndex)).Selected = true;
+            if(selectedIndex.HasValue)
+            {
+                lvOperations.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).Index.Equals(selectedIndex)).Selected = true;
+            }
         }
         #endregion Private Helper Methods
 
@@ -511,6 +515,8 @@ namespace Dataverse.XrmTools.Deployer
             _logger.Log(LogLevel.INFO, message);
 
             tsbExecute.Enabled = true;
+            btnSaveQueue.Enabled = true;
+            btnClearQueue.Enabled = true;
         }
 
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
@@ -589,6 +595,9 @@ namespace Dataverse.XrmTools.Deployer
 
             btnDown.Enabled = false;
             btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+
+            btnSaveQueue.Enabled = false;
+            btnClearQueue.Enabled = false;
         }
 
         private void tsbDeploy_Click(object sender, EventArgs e)
@@ -650,6 +659,12 @@ namespace Dataverse.XrmTools.Deployer
                     var message = $"Removed '{operation.OperationType}' operation from queue";
                     if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
                     _logger.Log(LogLevel.INFO, message);
+
+                    if(lvOperations.Items.Count.Equals(0))
+                    {
+                        btnSaveQueue.Enabled = false;
+                        btnClearQueue.Enabled = false;
+                    }
                 }
             }
         }
@@ -729,5 +744,61 @@ namespace Dataverse.XrmTools.Deployer
             txtOutput.ScrollToCaret();
         }
         #endregion Form Events
+
+        private void btnSaveQueue_Click(object sender, EventArgs e)
+        {
+            _logger.Log(LogLevel.INFO, $"Saving queue...");
+
+            var dirPath = string.Empty;
+            using (var fbd = new FolderBrowserDialog())
+            {
+                fbd.Description = "Select export directory";
+                if (fbd.ShowDialog(this) == DialogResult.OK)
+                {
+                    dirPath = fbd.SelectedPath;
+                }
+            }
+
+            var json = _operations.SerializeObject();
+            var filename = $"{dirPath}\\{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
+            File.WriteAllText(filename, json);
+
+            _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
+            MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnLoadQueue_Click(object sender, EventArgs e)
+        {
+            _logger.Log(LogLevel.INFO, $"Loading queue...");
+
+            var filePath = string.Empty;
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Select queue file...";
+                ofd.Filter = "Json files (*.json)|*.queue.json";
+                ofd.FilterIndex = 2;
+                ofd.RestoreDirectory = true;
+
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    filePath = ofd.FileName;
+                }
+            }
+
+            if (string.IsNullOrEmpty(filePath)) { return; }
+
+            var json = File.ReadAllText(filePath);
+            _operations = json.DeserializeObject<List<Operation>>();
+
+            RenderOperationsList();
+
+            _logger.Log(LogLevel.INFO, $"Queue loaded from file {filePath}");
+
+            if (lvOperations.Items.Count > 0)
+            {
+                btnSaveQueue.Enabled = true;
+                btnClearQueue.Enabled = true;
+            }
+        }
     }
 }

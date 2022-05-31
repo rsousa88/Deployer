@@ -56,6 +56,8 @@
             this.txtOutput = new System.Windows.Forms.RichTextBox();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
+            this.btnLoadQueue = new System.Windows.Forms.Button();
+            this.btnSaveQueue = new System.Windows.Forms.Button();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -223,6 +225,8 @@
             // 
             // gbQueue
             // 
+            this.gbQueue.Controls.Add(this.btnSaveQueue);
+            this.gbQueue.Controls.Add(this.btnLoadQueue);
             this.gbQueue.Controls.Add(this.pnlOperationButtons);
             this.gbQueue.Controls.Add(this.btnClearQueue);
             this.gbQueue.Controls.Add(this.btnAddOperation);
@@ -251,11 +255,12 @@
             // btnClearQueue
             // 
             this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearQueue.Enabled = false;
             this.btnClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnClearQueue.Location = new System.Drawing.Point(808, 21);
+            this.btnClearQueue.Location = new System.Drawing.Point(963, 21);
             this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearQueue.Name = "btnClearQueue";
-            this.btnClearQueue.Size = new System.Drawing.Size(305, 29);
+            this.btnClearQueue.Size = new System.Drawing.Size(150, 29);
             this.btnClearQueue.TabIndex = 8;
             this.btnClearQueue.Text = "Clear Queue";
             this.btnClearQueue.UseVisualStyleBackColor = true;
@@ -265,11 +270,12 @@
             // 
             this.btnAddOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddOperation.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnAddOperation.Location = new System.Drawing.Point(7, 21);
+            this.btnAddOperation.Location = new System.Drawing.Point(323, 21);
             this.btnAddOperation.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddOperation.Name = "btnAddOperation";
-            this.btnAddOperation.Size = new System.Drawing.Size(793, 29);
+            this.btnAddOperation.Size = new System.Drawing.Size(632, 29);
             this.btnAddOperation.TabIndex = 7;
             this.btnAddOperation.Text = "Add Operation to Queue";
             this.btnAddOperation.UseVisualStyleBackColor = true;
@@ -442,6 +448,31 @@
             this.btnUp.UseVisualStyleBackColor = false;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
             // 
+            // btnLoadQueue
+            // 
+            this.btnLoadQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnLoadQueue.Location = new System.Drawing.Point(7, 21);
+            this.btnLoadQueue.Margin = new System.Windows.Forms.Padding(4);
+            this.btnLoadQueue.Name = "btnLoadQueue";
+            this.btnLoadQueue.Size = new System.Drawing.Size(150, 29);
+            this.btnLoadQueue.TabIndex = 10;
+            this.btnLoadQueue.Text = "Load Queue";
+            this.btnLoadQueue.UseVisualStyleBackColor = true;
+            this.btnLoadQueue.Click += new System.EventHandler(this.btnLoadQueue_Click);
+            // 
+            // btnSaveQueue
+            // 
+            this.btnSaveQueue.Enabled = false;
+            this.btnSaveQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSaveQueue.Location = new System.Drawing.Point(165, 21);
+            this.btnSaveQueue.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSaveQueue.Name = "btnSaveQueue";
+            this.btnSaveQueue.Size = new System.Drawing.Size(150, 29);
+            this.btnSaveQueue.TabIndex = 11;
+            this.btnSaveQueue.Text = "Save Queue";
+            this.btnSaveQueue.UseVisualStyleBackColor = true;
+            this.btnSaveQueue.Click += new System.EventHandler(this.btnSaveQueue_Click);
+            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -514,5 +545,7 @@
         private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.GroupBox gbOutput;
         private System.Windows.Forms.RichTextBox txtOutput;
+        private System.Windows.Forms.Button btnSaveQueue;
+        private System.Windows.Forms.Button btnLoadQueue;
     }
 }

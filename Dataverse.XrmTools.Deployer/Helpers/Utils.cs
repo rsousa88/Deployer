@@ -5,11 +5,32 @@ using System.Windows.Forms;
 // Deployer
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.AppSettings;
+using Newtonsoft.Json;
 
 namespace Dataverse.XrmTools.Deployer.Helpers
 {
     public static class Utils
     {
+        public static T DeserializeObject<T>(this string json)
+        {
+            return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        public static T DeserializeObject<T>(this string json, params JsonConverter[] converters)
+        {
+            return JsonConvert.DeserializeObject<T>(json, converters);
+        }
+
+        public static string SerializeObject(this object value)
+        {
+            return JsonConvert.SerializeObject(value, Formatting.Indented);
+        }
+
+        public static string SerializeObject(this object value, params JsonConverter[] converters)
+        {
+            return JsonConvert.SerializeObject(value, Formatting.Indented, converters);
+        }
+
         public static ListViewItem ToListViewItem<T>(this T value)
         {
             if (value is Operation) {
