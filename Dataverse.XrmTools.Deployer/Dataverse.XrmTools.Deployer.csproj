@@ -239,6 +239,9 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\HistoryOperation.cs" />
+    <Compile Include="Enums\HistoryResult.cs" />
+    <Compile Include="Enums\HistoryStatus.cs" />
     <Compile Include="Enums\ImportType.cs" />
     <Compile Include="Enums\PackageType.cs" />
     <Compile Include="Enums\ConnectionType.cs" />
@@ -255,10 +258,14 @@
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Models\ExportOperation.cs" />
     <Compile Include="Models\ImportOperation.cs" />
+    <Compile Include="Models\JointRecord.cs" />
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />
     <Compile Include="Models\PackagerOptions.cs" />
+    <Compile Include="Models\Record.cs" />
+    <Compile Include="Models\SolutionHistory.cs" />
+    <Compile Include="Models\Publisher.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />

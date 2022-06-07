@@ -3,13 +3,14 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Diagnostics;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 // Microsoft
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Tooling.Connector;
@@ -19,12 +20,6 @@ using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.RepoInterfaces;
-
-// 3rd Party
-using NuGet.Protocol;
-using NuGet.Packaging;
-using NuGet.Protocol.Core.Types;
-using System.Diagnostics;
 
 namespace Dataverse.XrmTools.Deployer.Repositories
 {
@@ -55,33 +50,25 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         #endregion Constructors
 
         #region Interface Methods
-        public IEnumerable<Entity> GetSolutions(string[] columns = null, PackageType queryType = PackageType.BOTH, ConnectionType connType = ConnectionType.TARGET)
+        public IEnumerable<SolutionHistory> GetSolutionHistory(ConnectionType connType = ConnectionType.TARGET)
         {
             try
             {
-                if(columns is null) { columns = new string[] { "solutionid" }; }
-                var query = new QueryExpression("solution")
-                {
-                    ColumnSet = new ColumnSet((from c in columns select c.ToLower()).ToArray()),
-                    PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
-                };
+                var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
+                var orgContext = new OrganizationServiceContext(connection);
 
-                if (!queryType.Equals(PackageType.BOTH))
-                {
-                    query.Criteria = new FilterExpression(LogicalOperator.And)
+                var query = orgContext.CreateQuery("msdyn_solutionhistory")
+                    .Select(sh => new SolutionHistory
                     {
-                        Conditions =
-                        {
-                            new ConditionExpression("ismanaged", ConditionOperator.Equal, queryType.Equals(PackageType.MANAGED) ? true : false)
-                        }
-                    };
-                }
+                        LogicalName = sh.GetAttributeValue<string>("msdyn_name"),
+                        Operation = (HistoryOperation)sh.GetAttributeValue<OptionSetValue>("msdyn_operation").Value,
+                        Status = (HistoryStatus)sh.GetAttributeValue<OptionSetValue>("msdyn_status").Value,
+                        Result = sh.GetAttributeValue<bool>("msdyn_result") ? HistoryResult.SUCCESS : HistoryResult.FAILURE,
+                        StartTime = sh.GetAttributeValue<DateTime>("msdyn_starttime"),
+                        Message = sh.GetAttributeValue<string>("msdyn_exceptionmessage")
+                    }).AsEnumerable().OrderByDescending(sh => sh.StartTime).Take(100);
 
-                var publisher = query.AddLink("publisher", "publisherid", "publisherid");
-                publisher.EntityAlias = "publisher";
-                publisher.Columns.AddColumns("uniquename", "friendlyname");
-
-                return GetRecords(query, connType);
+                return query;
             }
             catch
             {
@@ -89,27 +76,78 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public Entity GetSolution(string logicalName, string[] columns = null, ConnectionType connType = ConnectionType.TARGET)
+        public IEnumerable<JointRecord> GetAllSolutions(ConnectionType connType = ConnectionType.TARGET)
         {
             try
             {
-                if (columns is null) { columns = new string[] { "solutionid" }; }
-                var filter = new FilterExpression(LogicalOperator.And)
-                {
-                    Conditions =
-                        {
-                            new ConditionExpression("uniquename", ConditionOperator.Equal, logicalName)
-                        }
-                };
+                var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
+                var orgContext = new OrganizationServiceContext(connection);
 
-                var query = new QueryExpression("solution")
-                {
-                    ColumnSet = new ColumnSet((from c in columns select c.ToLower()).ToArray()),
-                    Criteria = filter,
-                    PageInfo = new PagingInfo() { Count = 5000, PageNumber = 1 }
-                };
+                var query = orgContext.CreateQuery("solution")
+                    .Join(
+                        orgContext.CreateQuery("publisher"),
+                        sol => sol["publisherid"],
+                        pub => pub["publisherid"],
+                        (sol, pub) => new { sol, pub })
+                    .Select(join => new JointRecord
+                    {
+                        Record = new Record("solution", new string[] { "uniquename", "friendlyname", "version", "ismanaged", "description" }, join.sol),
+                        Related = new Record("publisher", new string[] { "uniquename", "friendlyname" }, join.pub)
+                    });
 
-                return GetRecords(query, connType).FirstOrDefault();
+                return query;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<JointRecord> GetSolutionsByType(PackageType queryType = PackageType.UNMANAGED, ConnectionType connType = ConnectionType.TARGET)
+        {
+            try
+            {
+                if(queryType.Equals(PackageType.BOTH))
+                {
+                    throw new Exception($"For all solution package types, please use method GetAllSolutions()");
+                }
+
+                var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
+                var orgContext = new OrganizationServiceContext(connection);
+
+                var query = orgContext.CreateQuery("solution")
+                    .Join(
+                        orgContext.CreateQuery("publisher"),
+                        sol => sol["publisherid"],
+                        pub => pub["publisherid"],
+                        (sol, pub) => new { sol, pub })
+                    .Where(join => join.sol.GetAttributeValue<bool>("ismanaged").Equals(queryType.Equals(PackageType.MANAGED)))
+                    .Select(join => new JointRecord
+                    {
+                        Record = new Record("solution", new string[] { "uniquename", "friendlyname", "version", "ismanaged", "description" }, join.sol),
+                        Related = new Record("publisher", new string[] { "uniquename", "friendlyname" }, join.pub)
+                    });
+
+                return query;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public Entity GetSolution(string logicalName, string[] columns, ConnectionType connType = ConnectionType.TARGET)
+        {
+            try
+            {
+                var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
+                var orgContext = new OrganizationServiceContext(connection);
+
+                var query = orgContext.CreateQuery("solution")
+                    .Where(sol => sol.GetAttributeValue<string>("uniquename").Equals(logicalName))
+                    .Select(sol => new Record("solution", columns, sol));
+
+                return query.FirstOrDefault();
             }
             catch
             {
@@ -261,18 +299,16 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                     }
                 };
 
-                var query = new QueryExpression("solution")
-                {
-                    ColumnSet = new ColumnSet("solutionid"),
-                    Criteria = filter
-                };
-
                 var request = new BulkDeleteRequest
                 {
                     JobName = $"Solution {solution.DisplayName} Delete",
                     QuerySet = new QueryExpression[]
                     {
-                        query
+                        new QueryExpression("solution")
+                        {
+                            ColumnSet = new ColumnSet("solutionid"),
+                            Criteria = filter
+                        }
                     },
                     ToRecipients = new Guid[] { },
                     CCRecipients = new Guid[] { },
@@ -382,37 +418,6 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         #endregion Interface Methods
 
         #region Private Methods
-        public IEnumerable<Entity> GetRecords(QueryExpression query, ConnectionType connType, int batchSize = 250)
-        {
-            try
-            {
-                // page info settings
-                query.PageInfo.PageNumber = 1;
-                query.PageInfo.Count = batchSize;
-
-                RetrieveMultipleResponse response;
-
-                var records = new List<Entity>();
-                do
-                {
-                    var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
-                    response = connection.Execute(new RetrieveMultipleRequest() { Query = query }) as RetrieveMultipleResponse;
-                    if (response == null || response.EntityCollection == null) { break; }
-
-                    records.AddRange(response.EntityCollection.Entities);
-                    query.PageInfo.PageNumber++;
-                    query.PageInfo.PagingCookie = response.EntityCollection.PagingCookie;
-                }
-                while (response.EntityCollection.MoreRecords);
-
-                return records.AsEnumerable();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
         private OperationResponse CheckProgress(ConnectionType connType, Guid operationId, Guid? importJobId = null, string baseMsg = null)
         {
             var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;

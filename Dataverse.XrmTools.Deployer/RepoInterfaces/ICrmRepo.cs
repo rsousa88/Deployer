@@ -2,19 +2,33 @@
 using Microsoft.Xrm.Sdk;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
+using System;
 
 namespace Dataverse.XrmTools.Deployer.RepoInterfaces
 {
     public interface ICrmRepo
     {
         /// <summary>
-        /// Retrieve Solutions
+        /// Retrieve Solution History
         /// </summary>
-        /// <param name="columns">[OPTIONAL] Columns to be retrieved</param>
+        /// <param name="connType">[OPTIONAL] Connection type to be used (defaults to TARGET - query target instance)</param>
+        /// <returns>A list of Solution History records</returns>
+        IEnumerable<SolutionHistory> GetSolutionHistory(ConnectionType connType = ConnectionType.TARGET);
+
+        /// <summary>
+        /// Retrieve Solutions (with Publisher) of both types (managed and unmanaged)
+        /// </summary>
+        /// <param name="connType">[OPTIONAL] Connection type to be used (defaults to TARGET - query target instance)</param>
+        /// <returns>A list of Solutions with Publishers</returns>
+        IEnumerable<JointRecord> GetAllSolutions(ConnectionType connType = ConnectionType.TARGET);
+
+        /// <summary>
+        /// Retrieve Solutions (with Publisher) of a specific type (managed or unmanaged)
+        /// </summary>
         /// <param name="queryType">[OPTIONAL] Solution package type to retrieved (defaults to ALL - both unmanaged and managed)</param>
         /// <param name="connType">[OPTIONAL] Connection type to be used (defaults to TARGET - query target instance)</param>
-        /// <returns>A list of Solutions</returns>
-        IEnumerable<Entity> GetSolutions(string[] columns = null, PackageType queryType = PackageType.BOTH, ConnectionType connType = ConnectionType.TARGET);
+        /// <returns>A list of Solutions with Publishers</returns>
+        IEnumerable<JointRecord> GetSolutionsByType(PackageType queryType = PackageType.UNMANAGED, ConnectionType connType = ConnectionType.TARGET);
 
         /// <summary>
         /// Retrieve a single solution by logical name

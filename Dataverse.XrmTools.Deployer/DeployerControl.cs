@@ -197,23 +197,22 @@ namespace Dataverse.XrmTools.Deployer
             LogInfo($"Loading solutions...");
 
             var repo = new CrmRepo(_primary, _logger, _secondary);
-            var solutions = repo.GetSolutions(new string[] { "uniquename", "friendlyname", "version", "ismanaged", "description" }, queryType, connType);
+            var results = queryType.Equals(PackageType.BOTH) ? repo.GetAllSolutions(connType) : repo.GetSolutionsByType(queryType, connType);
 
-
-            return solutions.Select(sol =>
+            return results.Select(res =>
             {
                 var solution = new Solution
                 {
-                    SolutionId = sol.GetAttributeValue<Guid>("solutionid"),
-                    LogicalName = sol.GetAttributeValue<string>("uniquename"),
-                    DisplayName = sol.GetAttributeValue<string>("friendlyname"),
-                    Version = sol.GetAttributeValue<string>("version"),
-                    Description = sol.GetAttributeValue<string>("description"),
-                    IsManaged = sol.GetAttributeValue<bool>("ismanaged"),
+                    SolutionId = res.Record.GetAttributeValue<Guid>("solutionid"),
+                    LogicalName = res.Record.GetAttributeValue<string>("uniquename"),
+                    DisplayName = res.Record.GetAttributeValue<string>("friendlyname"),
+                    Version = res.Record.GetAttributeValue<string>("version"),
+                    Description = res.Record.GetAttributeValue<string>("description"),
+                    IsManaged = res.Record.GetAttributeValue<bool>("ismanaged"),
                     Publisher = new Publisher
                     {
-                        LogicalName = sol.GetAttributeValue<AliasedValue>("publisher.uniquename").Value.ToString(),
-                        DisplayName = sol.GetAttributeValue<AliasedValue>("publisher.friendlyname").Value.ToString()
+                        LogicalName = res.Related.GetAttributeValue<string>("uniquename"),
+                        DisplayName = res.Related.GetAttributeValue<string>("friendlyname")
                     }
                 };
 
@@ -240,7 +239,7 @@ namespace Dataverse.XrmTools.Deployer
             LogInfo($"Loading solutions...");
 
             var repo = new CrmRepo(_primary, _logger, _secondary);
-            var record = repo.GetSolution(logicalName);
+            var record = repo.GetSolution(logicalName, new string[] { "solutionid", "uniquename" });
 
             return record is null ? null : new Solution { SolutionId = record.GetAttributeValue<Guid>("solutionid") };
         }
@@ -550,7 +549,7 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void lvSolutions_Resize(object sender, EventArgs e)
+        private void lvOperations_Resize(object sender, EventArgs e)
         {
             var maxWidth = lvOperations.Width >= 713 ? lvOperations.Width : 713;
             chOpIndex.Width = (int)Math.Floor(maxWidth * 0.03);
@@ -559,6 +558,14 @@ namespace Dataverse.XrmTools.Deployer
             chOpVersion.Width = (int)Math.Floor(maxWidth * 0.10);
             chOpManaged.Width = (int)Math.Floor(maxWidth * 0.12);
             chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.24);
+        }
+
+        private void lvSolutionHistory_Resize(object sender, EventArgs e)
+        {
+            var maxWidth = lvSolutionHistory.Width >= 268 ? lvSolutionHistory.Width : 268;
+            chSolHistName.Width = (int)Math.Floor(maxWidth * 0.39);
+            chSolHistOperation.Width = (int)Math.Floor(maxWidth * 0.29);
+            chSolHistStatus.Width = (int)Math.Floor(maxWidth * 0.29);
         }
 
         private void btnAddOperation_Click(object sender, EventArgs e)
@@ -798,6 +805,58 @@ namespace Dataverse.XrmTools.Deployer
             {
                 btnSaveQueue.Enabled = true;
                 btnClearQueue.Enabled = true;
+            }
+        }
+
+        private void btnRefreshHistory_Click(object sender, EventArgs e)
+        {
+            _logger.Log(LogLevel.INFO, $"Retrieving solution history...");
+            if (_working) { return; }
+            ManageWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = $"Retrieving solution history...",
+                Work = (worker, args) =>
+                {
+                    var repo = new CrmRepo(_primary, _logger, null, null);
+                    args.Result = repo.GetSolutionHistory().Select(sh => sh.ToListViewItem()).ToArray();
+                },
+                PostWorkCallBack = args =>
+                {
+                    ManageWorkingState(false);
+
+                    if (args.Error != null)
+                    {
+                        _logger.Log(LogLevel.ERROR, args.Error.Message);
+                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        var items = args.Result as ListViewItem[];
+                        lvSolutionHistory.Items.AddRange(items);
+
+                        _logger.Log(LogLevel.DEBUG, $"Solution history retrieved");
+
+                        lvSolutionHistory.Enabled = true;
+                    }
+                },
+                ProgressChanged = args =>
+                {
+                    SetWorkingMessage(args.UserState.ToString());
+                }
+            });
+        }
+
+        private void lvSolutionHistory_DoubleClick(object sender, EventArgs e)
+        {
+            if (lvSolutionHistory.SelectedItems.Count > 0)
+            {
+                var history = lvSolutionHistory.SelectedItems[0].ToObject(new SolutionHistory()) as SolutionHistory;
+                if (!string.IsNullOrEmpty(history.Message))
+                {
+                    MessageBox.Show(this, history.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }
