@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using System.Xml.Linq;
 using System.Windows.Forms;
-using System.IO.Compression;
 using System.Collections.Generic;
 
 // Dataverse
@@ -13,11 +12,10 @@ using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
-using Dataverse.XrmTools.Deployer.Repositories;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
-    public partial class UnpackOptions : UserControl
+    public partial class PackOptions : UserControl
     {
         private readonly Logger _logger;
         public event OperationsRetrieve OnOperationsRetrieveRequested;
@@ -27,23 +25,23 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private IEnumerable<Operation> _operations;
         private Settings _settings;
-        private UnpackOperation _unpack;
+        private PackOperation _pack;
 
-        public UnpackOptions(Logger logger, Settings settings)
+        public PackOptions(Logger logger, Settings settings)
         {
             _logger = logger;
             _settings = settings;
 
             InitializeComponent();
 
-            gbUnpackFromQueue.Enabled = false;
+            gbPackFromQueue.Enabled = false;
             gbSolutionInfo.Enabled = false;
-            gbUnpackSettings.Enabled = false;
+            gbPackSettings.Enabled = false;
 
-            if (!string.IsNullOrEmpty(_settings.DefaultUnpackPath)) { txtOutputDirPathValue.Text = _settings.DefaultUnpackPath; }
+            if (!string.IsNullOrEmpty(_settings.DefaultPackPath)) { txtOutputSolutionFilePathValue.Text = _settings.DefaultPackPath; }
         }
 
-        private void btnAddSolution_Click(object sender, EventArgs e)
+        private void btnAddSourceDir_Click(object sender, EventArgs e)
         {
             try
             {
@@ -57,23 +55,23 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     lblManagedValue.Text = solution.IsManaged.ToString();
                     lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                    _unpack = new UnpackOperation
+                    _pack = new PackOperation
                     {
-                        OperationType = OperationType.UNPACK,
+                        OperationType = OperationType.PACK,
                         Solution = solution,
-                        Action = "Extract",
+                        Action = "Pack",
                         WorkingDir = _settings.WorkingDirectory,
                         Packager = _settings.PackagerPath,
-                        Folder = txtOutputDirPathValue.Text,
                         PackageType = solution.IsManaged ? "Managed" : "Unmanaged",
-                        ZipFile = txtSolutionFilePathValue.Text,
+                        ZipFile = $"{txtOutputSolutionFilePathValue.Text}\\{solution.Package.Name}",
+                        Folder = txtOutputDirPathValue.Text,
                         Map = string.Empty
                     };
 
                     gbSolutionInfo.Enabled = true;
-                    gbUnpackSettings.Enabled = true;
+                    gbPackSettings.Enabled = true;
 
-                    OnOperationSelected?.Invoke(this, _unpack);
+                    OnOperationSelected?.Invoke(this, _pack);
                 }
             }
             catch (Exception ex)
@@ -85,32 +83,33 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private Solution GetSolutionData()
         {
-            _logger.Log(LogLevel.DEBUG, $"Loading solution file...");
+            _logger.Log(LogLevel.DEBUG, $"Loading source directory...");
 
-            var dialog = new OpenFileDialog
+            var dirPath = string.Empty;
+            using (var fbd = new FolderBrowserDialog())
             {
-                Title = "Select solution file...",
-                Filter = "Zip files (*.zip)|*.zip",
-                FilterIndex = 2,
-                RestoreDirectory = true
-            };
+                fbd.Description = "Select source directory";
+                if (fbd.ShowDialog(this) == DialogResult.OK)
+                {
+                    dirPath = fbd.SelectedPath;
+                }
+            }
 
-            var path = GetFileDialogPath(dialog);
-            if (string.IsNullOrEmpty(path)) { return null; }
-
-            txtSolutionFilePathValue.Text = path;
+            if (string.IsNullOrEmpty(dirPath)) { return null; }
+            txtOutputDirPathValue.Text = dirPath;
 
             // read solution data
-            XDocument doc;
-            using (var zip = ZipFile.Open(path, ZipArchiveMode.Read))
-            {
-                var file = zip.Entries.FirstOrDefault(ent => ent.Name.Equals("solution.xml"));
-                if (file is null) { throw new Exception("Invalid solution file"); }
+            var filePath = $"{dirPath}\\Other\\Solution.xml";
 
-                using (var stream = file.Open())
-                {
-                    doc = XDocument.Load(stream);
-                }
+            if (!Directory.Exists($"{dirPath}\\Other") || !File.Exists(filePath))
+            {
+                throw new Exception("Invalid source directory");
+            }
+
+            XDocument doc;
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                doc = XDocument.Load(stream);
             }
 
             if (doc is null) { throw new Exception("Invalid solution file"); }
@@ -121,27 +120,30 @@ namespace Dataverse.XrmTools.Deployer.Controls
             var publisherNodes = solManifestNodes.Select(node => node.Element("Publisher")).FirstOrDefault().Descendants();
             var pubDisplayNames = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("LocalizedNames")).Descendants();
 
-            var package = new Package
-            {
-                Type = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? PackageType.MANAGED : PackageType.UNMANAGED,
-                Bytes = File.ReadAllBytes(path)
-            };
-
             var logicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value;
-
-            return new Solution
+            var solution = new Solution
             {
                 LogicalName = logicalName,
                 DisplayName = displayNameNode is null ? logicalName : displayNameNode.Attribute("description").Value,
                 Version = solManifestNodes.Select(node => node.Element("Version")).FirstOrDefault().Value,
-                IsManaged = package.Type.Equals(PackageType.MANAGED) ? true : false,
                 Publisher = new Publisher
                 {
                     LogicalName = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("UniqueName")).Value,
                     DisplayName = pubDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value
                 },
-                Package = package
+                Package = new Package
+                {
+                    Type = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? PackageType.MANAGED : PackageType.UNMANAGED,
+                    //ExportPath = dirPath
+                }
             };
+
+            solution.IsManaged = solution.Package.Type.Equals(PackageType.MANAGED) ? true : false;
+
+            var suffix = solution.Package.Type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
+            solution.Package.Name = $"{solution.LogicalName}_{solution.Version}{suffix}";
+
+            return solution;
         }
 
         private string GetFileDialogPath(FileDialog dialog)
@@ -159,25 +161,25 @@ namespace Dataverse.XrmTools.Deployer.Controls
             return path;
         }
 
-        private void rbUnpackFromFile_CheckedChanged(object sender, EventArgs e)
+        private void rbPackFromDir_CheckedChanged(object sender, EventArgs e)
         {
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
-                gbUnpackFromFile.Enabled = true;
-                gbUnpackFromQueue.Enabled = false;
+                gbPackFromDir.Enabled = true;
+                gbPackFromQueue.Enabled = false;
             }
         }
 
-        private void rbUnpackFromQueue_CheckedChanged(object sender, EventArgs e)
+        private void rbPackFromQueue_CheckedChanged(object sender, EventArgs e)
         {
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
-                gbUnpackFromFile.Enabled = false;
-                gbUnpackFromQueue.Enabled = true;
+                gbPackFromDir.Enabled = false;
+                gbPackFromQueue.Enabled = true;
 
-                _operations = OnOperationsRetrieveRequested?.Invoke(OperationType.EXPORT);
+                _operations = OnOperationsRetrieveRequested?.Invoke(OperationType.UNPACK);
                 LoadOperationsList();
             }
         }
@@ -211,32 +213,32 @@ namespace Dataverse.XrmTools.Deployer.Controls
         {
             if (lvOperations.SelectedItems.Count > 0)
             {
-                var export = lvOperations.SelectedItems[0].ToObject(new Operation()) as ExportOperation;
+                var unpack = lvOperations.SelectedItems[0].ToObject(new Operation()) as UnpackOperation;
 
-                lblSolutionIdValue.Text = export.Solution.SolutionId.ToString();
-                lblLogicalNameValue.Text = export.Solution.LogicalName;
-                lblDisplayNameValue.Text = export.Solution.DisplayName;
-                lblVersionValue.Text = export.Solution.Version;
-                lblManagedValue.Text = export.Solution.Package.Type.Equals(PackageType.MANAGED) ? "Yes" : "No";
-                lblPublisherValue.Text = export.Solution.Publisher.DisplayName;
+                lblSolutionIdValue.Text = unpack.Solution.SolutionId.ToString();
+                lblLogicalNameValue.Text = unpack.Solution.LogicalName;
+                lblDisplayNameValue.Text = unpack.Solution.DisplayName;
+                lblVersionValue.Text = unpack.Solution.Version;
+                lblManagedValue.Text = unpack.Solution.Package.Type.Equals(PackageType.MANAGED) ? "Yes" : "No";
+                lblPublisherValue.Text = unpack.Solution.Publisher.DisplayName;
 
-                _unpack = new UnpackOperation
+                _pack = new PackOperation
                 {
-                    OperationType = OperationType.UNPACK,
-                    Solution = export.Solution,
-                    Action = "Extract",
-                    WorkingDir = _settings.WorkingDirectory,
+                    OperationType = OperationType.PACK,
+                    Solution = unpack.Solution,
+                    Action = "Pack",
+                    WorkingDir = unpack.WorkingDir,
                     Packager = _settings.PackagerPath,
-                    Folder = txtOutputDirPathValue.Text,
-                    PackageType = export.Solution.Package.Type.Equals(PackageType.MANAGED) ? "Managed" : "Unmanaged",
-                    ZipFile = export.Solution.Package.Path,
+                    PackageType = unpack.PackageType,
+                    ZipFile = $"{txtOutputSolutionFilePathValue.Text}\\{unpack.Solution.Package.Name}",
+                    Folder = unpack.Folder,
                     Map = string.Empty
                 };
 
                 gbSolutionInfo.Enabled = true;
-                gbUnpackSettings.Enabled = true;
+                gbPackSettings.Enabled = true;
 
-                OnOperationSelected?.Invoke(this, _unpack);
+                OnOperationSelected?.Invoke(this, _pack);
             }
         }
 
@@ -257,15 +259,15 @@ namespace Dataverse.XrmTools.Deployer.Controls
             }
 
             var toolsDir = Path.GetDirectoryName(packager);
-            _unpack.WorkingDir = toolsDir;
-            _unpack.Packager = packager;
+            _pack.WorkingDir = toolsDir;
+            _pack.Packager = packager;
 
             _settings.WorkingDirectory = toolsDir;
             _settings.PackagerPath = packager;
 
             _settings.SaveSettings();
 
-            OnOperationUpdated?.Invoke(this, _unpack);
+            OnOperationUpdated?.Invoke(this, _pack);
         }
 
         private void btnSetOutputPath_Click(object sender, EventArgs e)
@@ -290,14 +292,18 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     throw new Exception("Invalid directory path");
                 }
 
-                txtOutputDirPathValue.Text = dirPath;
+                txtOutputSolutionFilePathValue.Text = dirPath;
 
-                _settings.DefaultUnpackPath = dirPath;
+                _settings.DefaultPackPath = dirPath;
                 _settings.SaveSettings();
 
-                _unpack.Folder = dirPath;
+                var suffix = _pack.Solution.Package.Type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
+                var name = $"{_pack.Solution.LogicalName}_{_pack.Solution.Version}{suffix}";
 
-                OnOperationUpdated?.Invoke(this, _unpack);
+                _pack.Solution.Package.Name = name;
+                _pack.Solution.Package.Path = $"{dirPath}\\{name}";
+
+                OnOperationUpdated?.Invoke(this, _pack);
             }
             catch (Exception ex)
             {

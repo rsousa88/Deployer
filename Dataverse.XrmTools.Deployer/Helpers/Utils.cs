@@ -15,7 +15,12 @@ namespace Dataverse.XrmTools.Deployer.Helpers
     {
         public static T DeserializeObject<T>(this string json)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            var settings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            };
+
+            return JsonConvert.DeserializeObject<T>(json, settings);
         }
 
         public static T DeserializeObject<T>(this string json, params JsonConverter[] converters)
@@ -25,7 +30,12 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
         public static string SerializeObject(this object value)
         {
-            return JsonConvert.SerializeObject(value, Formatting.Indented);
+            var settings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            };
+
+            return JsonConvert.SerializeObject(value, Formatting.Indented, settings);
         }
 
         public static string SerializeObject(this object value, params JsonConverter[] converters)

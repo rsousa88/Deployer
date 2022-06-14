@@ -3,6 +3,5 @@
     public class ExportOperation : Operation
     {
         public bool UnpackSolution { get; set; }
-        public PackagerOptions Packager { get; set; }
     }
 }

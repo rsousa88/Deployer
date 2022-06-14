@@ -24,6 +24,7 @@ using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Dataverse.XrmTools.Deployer
 {
@@ -115,7 +116,8 @@ namespace Dataverse.XrmTools.Deployer
                     // render UI components
                     _logger.Log(LogLevel.DEBUG, $"Rendering UI components...");
                     RenderInitialComponents(_targetInstance.FriendlyName);
-                    RenderConnectionLabel(ConnectionType.TARGET, _targetInstance.FriendlyName);
+                    RenderConnectionStatus(ConnectionType.TARGET, _targetInstance.FriendlyName);
+                    RenderSolutionPackagerStatus();
                 }
             }
             catch (Exception ex)
@@ -169,7 +171,7 @@ namespace Dataverse.XrmTools.Deployer
 
                     _settings.SaveSettings();
 
-                    RenderConnectionLabel(ConnectionType.SOURCE, _sourceInstance.FriendlyName);
+                    RenderConnectionStatus(ConnectionType.SOURCE, _sourceInstance.FriendlyName);
                 }
             }
             catch (Exception ex)
@@ -242,6 +244,24 @@ namespace Dataverse.XrmTools.Deployer
             var record = repo.GetSolution(logicalName, new string[] { "solutionid", "uniquename" });
 
             return record is null ? null : new Solution { SolutionId = record.GetAttributeValue<Guid>("solutionid") };
+        }
+
+        private async Task CheckRequirements()
+        {
+            _logger.Log(LogLevel.INFO, $"Checking requirements...");
+            var packagerRequired = _operations.Any(op => op.OperationType.Equals(OperationType.UNPACK) || op.OperationType.Equals(OperationType.PACK));
+            if (packagerRequired && (!File.Exists(_settings.PackagerPath) || string.IsNullOrEmpty(_settings.PackagerVersion)))
+            {
+                var packager = await InstallSolutionPackager();
+
+                _settings.WorkingDirectory = packager["tools"];
+                _settings.PackagerPath = packager["path"];
+                _settings.PackagerVersion = packager["version"];
+
+                _settings.SaveSettings();
+
+                RenderSolutionPackagerStatus();
+            }
         }
 
         private void DeployQueue()
@@ -325,12 +345,12 @@ namespace Dataverse.XrmTools.Deployer
                                 _logger.Log(LogLevel.INFO, $"Solution {unpack.Solution.DisplayName} successfully unpacked in {unpackTime}");
                                 break;
                             case OperationType.PACK:
-                                //var pack = operation as PackOperation;
-                                //worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPacking '{pack.Solution.DisplayName}'");
-                                //repo.UnpackSolution(pack);
+                                var pack = operation as PackOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPacking '{pack.Solution.DisplayName}'");
+                                repo.PackSolution(pack);
 
-                                //var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-                                //_logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
+                                var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
                                 break;
                             case OperationType.PUBLISH:
                                 worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPublishing all customizations");
@@ -392,11 +412,25 @@ namespace Dataverse.XrmTools.Deployer
         #endregion Private Main Methods
 
         #region Private Helper Methods
-        private void RenderConnectionLabel(ConnectionType serviceType, string name)
+        private void RenderConnectionStatus(ConnectionType serviceType, string name)
         {
             var label = serviceType.Equals(ConnectionType.SOURCE) ? lblSourceValue : lblTargetValue;
             label.Text = name;
             label.ForeColor = Color.MediumSeaGreen;
+        }
+
+        private void RenderSolutionPackagerStatus()
+        {
+            if (File.Exists(_settings.PackagerPath) && !string.IsNullOrEmpty(_settings.PackagerVersion))
+            {
+                lblPackagerVersionValue.Text = _settings.PackagerVersion;
+                lblPackagerVersionValue.ForeColor = Color.MediumSeaGreen;
+            }
+            else
+            {
+                lblPackagerVersionValue.Text = "Not installed";
+                lblPackagerVersionValue.ForeColor = Color.DarkRed;
+            }
         }
 
         private void Log(object sender, LoggerEventArgs args)
@@ -607,13 +641,14 @@ namespace Dataverse.XrmTools.Deployer
             btnClearQueue.Enabled = false;
         }
 
-        private void tsbDeploy_Click(object sender, EventArgs e)
+        private async void tsbDeploy_Click(object sender, EventArgs e)
         {
             try
             {
                 txtLogs.Clear();
                 txtOutput.Clear();
 
+                await CheckRequirements();
                 DeployQueue();
             }
             catch (Exception ex)
@@ -766,6 +801,8 @@ namespace Dataverse.XrmTools.Deployer
                 }
             }
 
+            if(string.IsNullOrEmpty(dirPath)) { return; }
+
             var json = _operations.SerializeObject();
             var filename = $"{dirPath}\\{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
             File.WriteAllText(filename, json);
@@ -805,6 +842,7 @@ namespace Dataverse.XrmTools.Deployer
             {
                 btnSaveQueue.Enabled = true;
                 btnClearQueue.Enabled = true;
+                tsbExecute.Enabled = true;
             }
         }
 
@@ -858,6 +896,27 @@ namespace Dataverse.XrmTools.Deployer
                     MessageBox.Show(this, history.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private async Task<Dictionary<string, string>> InstallSolutionPackager()
+        {
+            _logger.Log(LogLevel.INFO, $"Downloading latest version of Core Tools...");
+
+            var package = "Microsoft.CrmSdk.CoreTools";
+            var feed = "https://packages.nuget.org/api/v2";
+
+            var toolsDir = Path.GetDirectoryName(typeof(DeployerControl).Assembly.Location);
+            toolsDir = Path.Combine(toolsDir, package);
+            Directory.CreateDirectory(toolsDir);
+
+            ManageWorkingState(true);
+
+            var repo = new NuGetRepo();
+            var packager = await repo.DownloadCoreToolsAsync(toolsDir, feed, package);
+
+            ManageWorkingState(false);
+
+            return packager;
         }
     }
 }

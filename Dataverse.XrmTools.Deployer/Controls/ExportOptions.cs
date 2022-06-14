@@ -36,7 +36,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             gbExportSettings.Enabled = false;
             gbSolutionInfo.Enabled = false;
 
-            if(!string.IsNullOrEmpty(_settings.ExportPath)) { txtSolutionPathValue.Text = _settings.ExportPath; }
+            if(!string.IsNullOrEmpty(_settings.DefaultExportPath)) { txtSolutionPathValue.Text = _settings.DefaultExportPath; }
         }
 
         private void LoadSolutionsList()
@@ -104,12 +104,13 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 var type = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED;
 
                 var suffix = type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
+                var name = $"{solution.LogicalName}_{solution.Version}{suffix}";
 
                 solution.Package = new Package
                 {
                     Type = type,
-                    Name = $"{solution.LogicalName}_{solution.Version}{suffix}",
-                    ExportPath = txtSolutionPathValue.Text
+                    Name = name,
+                    Path = $"{txtSolutionPathValue.Text}\\{name}"
                 };
 
                 lblSolutionIdValue.Text = solution.SolutionId.ToString();
@@ -122,8 +123,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 _export = new ExportOperation
                 {
                     OperationType = OperationType.EXPORT,
-                    Solution = solution,
-                    UnpackSolution = true
+                    Solution = solution
                 };
 
                 OnOperationSelected?.Invoke(this, _export);
@@ -156,11 +156,16 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 }
 
                 txtSolutionPathValue.Text = dirPath;
-                _export.Solution.Package.ExportPath = dirPath;
-                _settings.ExportPath = dirPath;
 
+                _settings.DefaultExportPath = dirPath;
                 _settings.SaveSettings();
-                
+
+                var suffix = _export.Solution.Package.Type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
+                var name = $"{_export.Solution.LogicalName}_{_export.Solution.Version}{suffix}";
+
+                _export.Solution.Package.Name = name;
+                _export.Solution.Package.Path = $"{dirPath}\\{name}";
+
                 OnOperationUpdated?.Invoke(this, _export);
             }
             catch (Exception ex)

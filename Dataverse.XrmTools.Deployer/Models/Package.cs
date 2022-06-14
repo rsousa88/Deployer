@@ -6,8 +6,10 @@ namespace Dataverse.XrmTools.Deployer.Models
     {
         public PackageType Type { get; set; }
         public string Name { get; set; }
-        public string ExportPath { get; set; }
-        public string UnpackPath { get; set; }
+        public string Path { get; set; }
+        //public string ExportPath { get; set; }
+        //public string UnpackPath { get; set; }
+        //public string PackPath { get; set; }
         public byte[] Bytes { get; set; }
     }
 }

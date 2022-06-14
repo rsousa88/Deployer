@@ -42,7 +42,7 @@
             this.lblTarget = new System.Windows.Forms.Label();
             this.lblTargetValue = new System.Windows.Forms.Label();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
-            this.gbOutput = new System.Windows.Forms.GroupBox();
+            this.gbSolutionPackager = new System.Windows.Forms.GroupBox();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
             this.gbQueue = new System.Windows.Forms.GroupBox();
             this.btnSaveQueue = new System.Windows.Forms.Button();
@@ -64,13 +64,15 @@
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.txtLogs = new System.Windows.Forms.TextBox();
+            this.lblPackagerVersion = new System.Windows.Forms.Label();
+            this.lblPackagerVersionValue = new System.Windows.Forms.Label();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
             this.gbSolutionHistory.SuspendLayout();
             this.gbEnvironments.SuspendLayout();
             this.pnlBody.SuspendLayout();
-            this.gbOutput.SuspendLayout();
+            this.gbSolutionPackager.SuspendLayout();
             this.gbQueue.SuspendLayout();
             this.pnlOperationButtons.SuspendLayout();
             this.cmsContextMenu.SuspendLayout();
@@ -283,7 +285,7 @@
             this.pnlBody.ColumnCount = 2;
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.pnlBody.Controls.Add(this.gbOutput, 0, 1);
+            this.pnlBody.Controls.Add(this.gbSolutionPackager, 0, 1);
             this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
             this.pnlBody.Controls.Add(this.gbLogs, 7, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -296,28 +298,32 @@
             this.pnlBody.Size = new System.Drawing.Size(1514, 916);
             this.pnlBody.TabIndex = 1;
             // 
-            // gbOutput
+            // gbSolutionPackager
             // 
-            this.gbOutput.Controls.Add(this.txtOutput);
-            this.gbOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbOutput.Location = new System.Drawing.Point(1062, 460);
-            this.gbOutput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbOutput.Name = "gbOutput";
-            this.gbOutput.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbOutput.Size = new System.Drawing.Size(449, 454);
-            this.gbOutput.TabIndex = 3;
-            this.gbOutput.TabStop = false;
-            this.gbOutput.Text = "Solution Packager Output";
+            this.gbSolutionPackager.Controls.Add(this.lblPackagerVersion);
+            this.gbSolutionPackager.Controls.Add(this.lblPackagerVersionValue);
+            this.gbSolutionPackager.Controls.Add(this.txtOutput);
+            this.gbSolutionPackager.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbSolutionPackager.Location = new System.Drawing.Point(1062, 460);
+            this.gbSolutionPackager.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbSolutionPackager.Name = "gbSolutionPackager";
+            this.gbSolutionPackager.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbSolutionPackager.Size = new System.Drawing.Size(449, 454);
+            this.gbSolutionPackager.TabIndex = 3;
+            this.gbSolutionPackager.TabStop = false;
+            this.gbSolutionPackager.Text = "Solution Packager";
             // 
             // txtOutput
             // 
+            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutput.BackColor = System.Drawing.Color.Black;
-            this.txtOutput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtOutput.ForeColor = System.Drawing.Color.White;
-            this.txtOutput.Location = new System.Drawing.Point(3, 17);
+            this.txtOutput.Location = new System.Drawing.Point(3, 57);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(443, 435);
+            this.txtOutput.Size = new System.Drawing.Size(443, 395);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
             this.txtOutput.TextChanged += new System.EventHandler(this.txtOutput_TextChanged);
@@ -546,6 +552,26 @@
             this.txtLogs.TabIndex = 2;
             this.txtLogs.TextChanged += new System.EventHandler(this.txtLogs_TextChanged);
             // 
+            // lblPackagerVersion
+            // 
+            this.lblPackagerVersion.AutoSize = true;
+            this.lblPackagerVersion.Location = new System.Drawing.Point(6, 28);
+            this.lblPackagerVersion.Name = "lblPackagerVersion";
+            this.lblPackagerVersion.Size = new System.Drawing.Size(60, 17);
+            this.lblPackagerVersion.TabIndex = 4;
+            this.lblPackagerVersion.Text = "Version:";
+            // 
+            // lblPackagerVersionValue
+            // 
+            this.lblPackagerVersionValue.AutoSize = true;
+            this.lblPackagerVersionValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.lblPackagerVersionValue.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblPackagerVersionValue.Location = new System.Drawing.Point(72, 27);
+            this.lblPackagerVersionValue.Name = "lblPackagerVersionValue";
+            this.lblPackagerVersionValue.Size = new System.Drawing.Size(86, 19);
+            this.lblPackagerVersionValue.TabIndex = 5;
+            this.lblPackagerVersionValue.Text = "Not installed";
+            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -565,7 +591,8 @@
             this.gbEnvironments.ResumeLayout(false);
             this.gbEnvironments.PerformLayout();
             this.pnlBody.ResumeLayout(false);
-            this.gbOutput.ResumeLayout(false);
+            this.gbSolutionPackager.ResumeLayout(false);
+            this.gbSolutionPackager.PerformLayout();
             this.gbQueue.ResumeLayout(false);
             this.pnlOperationButtons.ResumeLayout(false);
             this.cmsContextMenu.ResumeLayout(false);
@@ -617,7 +644,7 @@
         private System.Windows.Forms.Button btnUp;
         private System.Windows.Forms.Panel pnlOperationButtons;
         private System.Windows.Forms.Button btnDown;
-        private System.Windows.Forms.GroupBox gbOutput;
+        private System.Windows.Forms.GroupBox gbSolutionPackager;
         private System.Windows.Forms.RichTextBox txtOutput;
         private System.Windows.Forms.Button btnSaveQueue;
         private System.Windows.Forms.Button btnLoadQueue;
@@ -627,5 +654,7 @@
         private System.Windows.Forms.ColumnHeader chSolHistName;
         private System.Windows.Forms.ColumnHeader chSolHistOperation;
         private System.Windows.Forms.ColumnHeader chSolHistStatus;
+        private System.Windows.Forms.Label lblPackagerVersion;
+        private System.Windows.Forms.Label lblPackagerVersionValue;
     }
 }

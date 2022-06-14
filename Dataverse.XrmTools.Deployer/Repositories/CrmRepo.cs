@@ -221,8 +221,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 var package = export.Solution.Package;
                 package.Bytes = downloadResp["ExportSolutionFile"] as byte[];
 
-                var fullPath = $"{package.ExportPath}\\{export.Solution.Package.Name}";
-                using (var writer = new BinaryWriter(File.OpenWrite(fullPath)))
+                using (var writer = new BinaryWriter(File.OpenWrite(package.Path)))
                 {
                     writer.Write(package.Bytes);
                 }
@@ -336,6 +335,12 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         {
             try
             {
+                _logger.Log(LogLevel.INFO, $"Checking requirements...");
+                if(!File.Exists(unpack.Packager))
+                {
+                    throw new Exception($"Solution Packager not found - Please download Solution Packager before executing an Unpack operation");
+                }
+
                 _logger.Log(LogLevel.INFO, $"Unpacking solution {unpack.Solution.DisplayName}...");
                 var process = new Process
                 {
@@ -381,11 +386,54 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void PackSolution(ImportOperation import)
+        public void PackSolution(PackOperation pack)
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Packing solution {import.Solution.DisplayName}...");
+                _logger.Log(LogLevel.INFO, $"Checking requirements...");
+                if (!File.Exists(pack.Packager))
+                {
+                    throw new Exception($"Solution Packager not found - Please download Solution Packager before executing a Pack operation");
+                }
+
+                _logger.Log(LogLevel.INFO, $"Packing solution {pack.Solution.DisplayName}...");
+                var process = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = pack.Packager,
+                        Arguments = $"/action:{pack.Action} /zipfile:\"{pack.ZipFile}\" /folder:\"{pack.Folder}\" /packagetype:\"{pack.PackageType}\" /allowDelete:\"No\"",
+                        WorkingDirectory = pack.WorkingDir,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    },
+                    EnableRaisingEvents = true
+                };
+
+                _logger.Output(LogLevel.PACKAGER, "Process starting...");
+
+                process.Start();
+
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var output = process.StandardOutput.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, output);
+                }
+
+                while (!process.StandardError.EndOfStream)
+                {
+                    var errors = process.StandardError.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, errors);
+                }
+
+                process.WaitForExit(30000);
+
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception("An error occurred while executing Solution Packager");
+                }
             }
             catch
             {

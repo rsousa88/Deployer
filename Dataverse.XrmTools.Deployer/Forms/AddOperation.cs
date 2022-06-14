@@ -113,17 +113,18 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
         private void rbPack_CheckedChanged(object sender, EventArgs e)
         {
-            //var radio = sender as RadioButton;
-            //if (radio.Checked)
-            //{
-            //    pnlOperationDetails.Controls.Clear();
-            //    var export = new ExportOptions(_logger, _settings);
-            //    pnlOperationDetails.Controls.Add(export);
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                pnlOperationDetails.Controls.Clear();
+                var pack = new PackOptions(_logger, _settings);
+                pnlOperationDetails.Controls.Add(pack);
 
-            //    export.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
-            //    export.OnOperationSelected += HandleSelectedOperationEvent;
-            //    export.OnOperationUpdated += HandleUpdateOperationEvent;
-            //}
+                pack.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
+                pack.OnOperationSelected += HandleSelectedOperationEvent;
+                pack.OnOperationUpdated += HandleUpdateOperationEvent;
+                pack.OnWorkingStateSetRequested += HandleSetWorkingStateEvent;
+            }
         }
 
         private void rbPublish_CheckedChanged(object sender, EventArgs e)

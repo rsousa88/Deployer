@@ -8,6 +8,6 @@ namespace Dataverse.XrmTools.Deployer.Models
         public Guid OperationId { get; set; }
         public int Index { get; set; }
         public OperationType OperationType { get; set; }
-        public Solution Solution{ get; set; }
+        public Solution Solution { get; set; }
     }
 }

@@ -130,7 +130,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             {
                 Type = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? PackageType.MANAGED : PackageType.UNMANAGED,
                 Bytes = File.ReadAllBytes(path),
-                ExportPath = path
+                //ExportPath = path
             };
 
             return new Solution

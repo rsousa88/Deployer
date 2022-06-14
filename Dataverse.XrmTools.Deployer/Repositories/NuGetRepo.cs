@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Dataverse.XrmTools.Deployer.RepoInterfaces;
 using NuGet.Packaging;
 using NuGet.Protocol;
@@ -12,7 +13,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 {
     public class NuGetRepo : INuGetRepo
     {
-        public async Task<string> DownloadCoreToolsAsync(string toolsDir, string feed, string package)
+        public async Task<Dictionary<string, string>> DownloadCoreToolsAsync(string toolsDir, string feed, string package)
         {
             var logger = NuGet.Common.NullLogger.Instance;
             var cancelToken = CancellationToken.None;
@@ -23,11 +24,11 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             var resource = await repo.GetResourceAsync<FindPackageByIdResource>();
 
             var metadata = (await search.SearchAsync(package, new SearchFilter(false, SearchFilterType.IsLatestVersion), 0, 1, logger, cancelToken)).FirstOrDefault();
-            var version = (await metadata.GetVersionsAsync()).Max(ver => ver.Version);
+            var nugetVersion = (await metadata.GetVersionsAsync()).Max(ver => ver.Version);
 
             using (var mStream = new MemoryStream())
             {
-                if (!await resource.CopyNupkgToStreamAsync(package, version, mStream, cacheCtx, logger, cancelToken))
+                if (!await resource.CopyNupkgToStreamAsync(package, nugetVersion, mStream, cacheCtx, logger, cancelToken))
                 {
                     throw new Exception($"NuGet package '{package}' was not found!");
                 }
@@ -50,7 +51,16 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
             // check solution packager tool
             var packager = new FileInfo(Path.Combine(toolsDir, "SolutionPackager.exe"));
-            return packager.Exists ? packager.FullName : string.Empty;
+            var path = packager.Exists ? packager.FullName : string.Empty;
+
+            var version = packager.Exists ? nugetVersion.ToNormalizedString() : string.Empty;
+
+            return new Dictionary<string, string>()
+            {
+                { "tools", toolsDir },
+                { "path", path },
+                { "version", version }
+            };
         }
     }
 }

@@ -208,6 +208,12 @@
     <Compile Include="Controls\DeleteOptions.Designer.cs">
       <DependentUpon>DeleteOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PackOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PackOptions.Designer.cs">
+      <DependentUpon>PackOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UnpackOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -262,7 +268,6 @@
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />
-    <Compile Include="Models\PackagerOptions.cs" />
     <Compile Include="Models\Record.cs" />
     <Compile Include="Models\SolutionHistory.cs" />
     <Compile Include="Models\Publisher.cs" />
@@ -270,6 +275,7 @@
     <Compile Include="Helpers\ListViewComparer.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Models\PackOperation.cs" />
     <Compile Include="Models\UnpackOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -290,6 +296,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\DeleteOptions.resx">
       <DependentUpon>DeleteOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PackOptions.resx">
+      <DependentUpon>PackOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UnpackOptions.resx">
       <DependentUpon>UnpackOptions.cs</DependentUpon>
