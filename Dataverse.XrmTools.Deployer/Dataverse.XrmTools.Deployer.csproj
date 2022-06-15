@@ -254,6 +254,7 @@
     <Compile Include="Enums\OperationStatus.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\LogLevel.cs" />
+    <Compile Include="External\FolderSelectDialog.cs" />
     <Compile Include="Forms\AddOperation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -262,6 +263,7 @@
     </Compile>
     <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Helpers\VersionHelper.cs" />
     <Compile Include="Models\ExportOperation.cs" />
     <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\JointRecord.cs" />
@@ -277,6 +279,7 @@
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Models\PackOperation.cs" />
     <Compile Include="Models\UnpackOperation.cs" />
+    <Compile Include="Models\UpdateOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

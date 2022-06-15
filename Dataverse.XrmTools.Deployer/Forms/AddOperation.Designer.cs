@@ -37,6 +37,8 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.pnlOperationDetails = new System.Windows.Forms.TableLayoutPanel();
             this.gbOperationType = new System.Windows.Forms.GroupBox();
+            this.rbPack = new System.Windows.Forms.RadioButton();
+            this.rbUnpack = new System.Windows.Forms.RadioButton();
             this.rbPublish = new System.Windows.Forms.RadioButton();
             this.rbUpdate = new System.Windows.Forms.RadioButton();
             this.rbExport = new System.Windows.Forms.RadioButton();
@@ -45,8 +47,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
-            this.rbUnpack = new System.Windows.Forms.RadioButton();
-            this.rbPack = new System.Windows.Forms.RadioButton();
             this.pnlHeader.SuspendLayout();
             this.pnlBody.SuspendLayout();
             this.gbOperationType.SuspendLayout();
@@ -140,6 +140,28 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.gbOperationType.TabStop = false;
             this.gbOperationType.Text = "Operation Type";
             // 
+            // rbPack
+            // 
+            this.rbPack.AutoSize = true;
+            this.rbPack.Location = new System.Drawing.Point(1005, 24);
+            this.rbPack.Name = "rbPack";
+            this.rbPack.Size = new System.Drawing.Size(115, 21);
+            this.rbPack.TabIndex = 12;
+            this.rbPack.Text = "Pack Solution";
+            this.rbPack.UseVisualStyleBackColor = true;
+            this.rbPack.CheckedChanged += new System.EventHandler(this.rbPack_CheckedChanged);
+            // 
+            // rbUnpack
+            // 
+            this.rbUnpack.AutoSize = true;
+            this.rbUnpack.Location = new System.Drawing.Point(810, 24);
+            this.rbUnpack.Name = "rbUnpack";
+            this.rbUnpack.Size = new System.Drawing.Size(132, 21);
+            this.rbUnpack.TabIndex = 11;
+            this.rbUnpack.Text = "Unpack Solution";
+            this.rbUnpack.UseVisualStyleBackColor = true;
+            this.rbUnpack.CheckedChanged += new System.EventHandler(this.rbUnpack_CheckedChanged);
+            // 
             // rbPublish
             // 
             this.rbPublish.AutoSize = true;
@@ -154,7 +176,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // rbUpdate
             // 
             this.rbUpdate.AutoSize = true;
-            this.rbUpdate.Location = new System.Drawing.Point(9, 24);
+            this.rbUpdate.Location = new System.Drawing.Point(196, 24);
             this.rbUpdate.Name = "rbUpdate";
             this.rbUpdate.Size = new System.Drawing.Size(177, 21);
             this.rbUpdate.TabIndex = 9;
@@ -165,7 +187,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             // rbExport
             // 
             this.rbExport.AutoSize = true;
-            this.rbExport.Location = new System.Drawing.Point(249, 24);
+            this.rbExport.Location = new System.Drawing.Point(9, 24);
             this.rbExport.Name = "rbExport";
             this.rbExport.Size = new System.Drawing.Size(124, 21);
             this.rbExport.TabIndex = 6;
@@ -230,28 +252,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.btnClose.Text = "OK";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // rbUnpack
-            // 
-            this.rbUnpack.AutoSize = true;
-            this.rbUnpack.Location = new System.Drawing.Point(810, 24);
-            this.rbUnpack.Name = "rbUnpack";
-            this.rbUnpack.Size = new System.Drawing.Size(132, 21);
-            this.rbUnpack.TabIndex = 11;
-            this.rbUnpack.Text = "Unpack Solution";
-            this.rbUnpack.UseVisualStyleBackColor = true;
-            this.rbUnpack.CheckedChanged += new System.EventHandler(this.rbUnpack_CheckedChanged);
-            // 
-            // rbPack
-            // 
-            this.rbPack.AutoSize = true;
-            this.rbPack.Location = new System.Drawing.Point(1005, 24);
-            this.rbPack.Name = "rbPack";
-            this.rbPack.Size = new System.Drawing.Size(115, 21);
-            this.rbPack.TabIndex = 12;
-            this.rbPack.Text = "Pack Solution";
-            this.rbPack.UseVisualStyleBackColor = true;
-            this.rbPack.CheckedChanged += new System.EventHandler(this.rbPack_CheckedChanged);
             // 
             // AddOperation
             // 

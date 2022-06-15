@@ -5,7 +5,12 @@ namespace Dataverse.XrmTools.Deployer.Models
 {
     public class Operation
     {
-        public Guid OperationId { get; set; }
+        public Operation()
+        {
+            OperationId = Guid.NewGuid();
+        }
+
+        public Guid OperationId { get; }
         public int Index { get; set; }
         public OperationType OperationType { get; set; }
         public Solution Solution { get; set; }

@@ -13,7 +13,6 @@ using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
-using Dataverse.XrmTools.Deployer.Repositories;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
@@ -22,8 +21,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private readonly Logger _logger;
         public event OperationsRetrieve OnOperationsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
-        public event EventHandler<Operation> OnOperationUpdated;
-        public event WorkingStateSet OnWorkingStateSetRequested;
 
         private IEnumerable<Operation> _operations;
         private Settings _settings;
@@ -40,7 +37,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             gbSolutionInfo.Enabled = false;
             gbUnpackSettings.Enabled = false;
 
-            if (!string.IsNullOrEmpty(_settings.DefaultUnpackPath)) { txtOutputDirPathValue.Text = _settings.DefaultUnpackPath; }
+            if (!string.IsNullOrEmpty(_settings.Defaults.UnpackPath)) { txtOutputDirPathValue.Text = _settings.Defaults.UnpackPath; }
         }
 
         private void btnAddSolution_Click(object sender, EventArgs e)
@@ -86,16 +83,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private Solution GetSolutionData()
         {
             _logger.Log(LogLevel.DEBUG, $"Loading solution file...");
-
-            var dialog = new OpenFileDialog
-            {
-                Title = "Select solution file...",
-                Filter = "Zip files (*.zip)|*.zip",
-                FilterIndex = 2,
-                RestoreDirectory = true
-            };
-
-            var path = GetFileDialogPath(dialog);
+            var path = this.SelectFile("Zip files (*.zip)|*.zip");
             if (string.IsNullOrEmpty(path)) { return null; }
 
             txtSolutionFilePathValue.Text = path;
@@ -240,64 +228,19 @@ namespace Dataverse.XrmTools.Deployer.Controls
             }
         }
 
-        private void btnSetPackagerPath_Click(object sender, EventArgs e)
-        {
-            var dialog = new OpenFileDialog
-            {
-                Title = "Select solution packager executable...",
-                Filter = "Exe files (*.exe)|*.exe",
-                FilterIndex = 2,
-                RestoreDirectory = true
-            };
-
-            var packager = GetFileDialogPath(dialog);
-            if (string.IsNullOrEmpty(packager))
-            {
-                throw new Exception("Invalid file path");
-            }
-
-            var toolsDir = Path.GetDirectoryName(packager);
-            _unpack.WorkingDir = toolsDir;
-            _unpack.Packager = packager;
-
-            _settings.WorkingDirectory = toolsDir;
-            _settings.PackagerPath = packager;
-
-            _settings.SaveSettings();
-
-            OnOperationUpdated?.Invoke(this, _unpack);
-        }
-
         private void btnSetOutputPath_Click(object sender, EventArgs e)
         {
             try
             {
-                var tag = (sender as Button).Tag as string;
-
-                var dirPath = string.Empty;
-                using (var fbd = new FolderBrowserDialog())
-                {
-                    fbd.Description = "Select export directory";
-
-                    if (fbd.ShowDialog(this) == DialogResult.OK)
-                    {
-                        dirPath = fbd.SelectedPath;
-                    }
-                }
-
-                if (string.IsNullOrEmpty(dirPath))
-                {
-                    throw new Exception("Invalid directory path");
-                }
+                var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
+                if (string.IsNullOrEmpty(dirPath)) { return; }
 
                 txtOutputDirPathValue.Text = dirPath;
 
-                _settings.DefaultUnpackPath = dirPath;
+                _settings.Defaults.UnpackPath = dirPath;
                 _settings.SaveSettings();
 
                 _unpack.Folder = dirPath;
-
-                OnOperationUpdated?.Invoke(this, _unpack);
             }
             catch (Exception ex)
             {

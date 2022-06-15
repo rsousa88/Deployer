@@ -1,13 +1,17 @@
 ﻿// System
+using System;
 using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
 
 // Deployer
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.AppSettings;
-using Newtonsoft.Json;
-using System.Drawing;
 using Dataverse.XrmTools.Deployer.Enums;
+using Dataverse.XrmTools.Deployer.External;
+
+// 3rd Party
+using Newtonsoft.Json;
 
 namespace Dataverse.XrmTools.Deployer.Helpers
 {
@@ -145,6 +149,35 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
             if (solution.DisplayName.ToLower().Contains(filter) || solution.LogicalName.ToLower().Contains(filter)) { return true; }
             return false;
+        }
+
+        public static string SelectDirectory(this IntPtr owner, string initialDir)
+        {
+            var dialog = new FolderSelectDialog
+            {
+                InitialDirectory = !string.IsNullOrEmpty(initialDir) ? initialDir : "C:\\",
+                Title = "Select directory..."
+            };
+
+            var dirPath = string.Empty;
+            if (dialog.Show(owner)) { dirPath = dialog.FileName; }
+            return dirPath;
+        }
+
+        public static string SelectFile(this IWin32Window owner, string filter)
+        {
+            var filePath = string.Empty;
+            using (var dialog = new OpenFileDialog())
+            {
+                dialog.Title = "Select file...";
+                dialog.Filter = filter;
+                dialog.FilterIndex = 2;
+                dialog.RestoreDirectory = true;
+
+                if (dialog.ShowDialog(owner).Equals(DialogResult.OK)) { filePath = dialog.FileName; }
+            }
+
+            return filePath;
         }
     }
 }

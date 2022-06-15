@@ -56,6 +56,11 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnLoadSolutions = new System.Windows.Forms.Button();
             this.gbExport = new System.Windows.Forms.GroupBox();
+            this.gbQuickActions = new System.Windows.Forms.GroupBox();
+            this.txtQuickUpdateVersion = new System.Windows.Forms.TextBox();
+            this.chbPack = new System.Windows.Forms.CheckBox();
+            this.chbUnpack = new System.Windows.Forms.CheckBox();
+            this.chbUpdateVersion = new System.Windows.Forms.CheckBox();
             this.gbExportSettings = new System.Windows.Forms.GroupBox();
             this.btnSetSolutionLocation = new System.Windows.Forms.Button();
             this.lblSolutionPath = new System.Windows.Forms.Label();
@@ -67,6 +72,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutionInfo.SuspendLayout();
             this.gbSolutions.SuspendLayout();
             this.gbExport.SuspendLayout();
+            this.gbQuickActions.SuspendLayout();
             this.gbExportSettings.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -88,9 +94,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutionInfo.Controls.Add(this.lblLogicalNameValue);
             this.gbSolutionInfo.Controls.Add(this.lblLogicalName);
             this.gbSolutionInfo.Controls.Add(this.lblDisplayName);
-            this.gbSolutionInfo.Location = new System.Drawing.Point(757, 157);
+            this.gbSolutionInfo.Location = new System.Drawing.Point(757, 262);
             this.gbSolutionInfo.Name = "gbSolutionInfo";
-            this.gbSolutionInfo.Size = new System.Drawing.Size(611, 302);
+            this.gbSolutionInfo.Size = new System.Drawing.Size(611, 197);
             this.gbSolutionInfo.TabIndex = 9;
             this.gbSolutionInfo.TabStop = false;
             this.gbSolutionInfo.Text = "Solution Details";
@@ -320,6 +326,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbExport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbExport.Controls.Add(this.gbQuickActions);
             this.gbExport.Controls.Add(this.gbExportSettings);
             this.gbExport.Controls.Add(this.btnLoadSolutions);
             this.gbExport.Controls.Add(this.gbSolutions);
@@ -330,6 +337,69 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbExport.TabIndex = 11;
             this.gbExport.TabStop = false;
             this.gbExport.Text = "Export Options";
+            // 
+            // gbQuickActions
+            // 
+            this.gbQuickActions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbQuickActions.Controls.Add(this.txtQuickUpdateVersion);
+            this.gbQuickActions.Controls.Add(this.chbPack);
+            this.gbQuickActions.Controls.Add(this.chbUnpack);
+            this.gbQuickActions.Controls.Add(this.chbUpdateVersion);
+            this.gbQuickActions.Location = new System.Drawing.Point(757, 157);
+            this.gbQuickActions.Name = "gbQuickActions";
+            this.gbQuickActions.Size = new System.Drawing.Size(611, 99);
+            this.gbQuickActions.TabIndex = 17;
+            this.gbQuickActions.TabStop = false;
+            this.gbQuickActions.Text = "Quick Actions";
+            // 
+            // txtQuickUpdateVersion
+            // 
+            this.txtQuickUpdateVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtQuickUpdateVersion.Enabled = false;
+            this.txtQuickUpdateVersion.Location = new System.Drawing.Point(141, 19);
+            this.txtQuickUpdateVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.txtQuickUpdateVersion.Name = "txtQuickUpdateVersion";
+            this.txtQuickUpdateVersion.Size = new System.Drawing.Size(161, 22);
+            this.txtQuickUpdateVersion.TabIndex = 5;
+            this.txtQuickUpdateVersion.TextChanged += new System.EventHandler(this.txtQuickUpdateVersion_TextChanged);
+            // 
+            // chbPack
+            // 
+            this.chbPack.AutoSize = true;
+            this.chbPack.Enabled = false;
+            this.chbPack.Location = new System.Drawing.Point(6, 75);
+            this.chbPack.Name = "chbPack";
+            this.chbPack.Size = new System.Drawing.Size(61, 21);
+            this.chbPack.TabIndex = 2;
+            this.chbPack.Tag = "";
+            this.chbPack.Text = "Pack";
+            this.chbPack.UseVisualStyleBackColor = true;
+            this.chbPack.CheckedChanged += new System.EventHandler(this.chbPack_CheckedChanged);
+            // 
+            // chbUnpack
+            // 
+            this.chbUnpack.AutoSize = true;
+            this.chbUnpack.Location = new System.Drawing.Point(6, 48);
+            this.chbUnpack.Name = "chbUnpack";
+            this.chbUnpack.Size = new System.Drawing.Size(78, 21);
+            this.chbUnpack.TabIndex = 1;
+            this.chbUnpack.Tag = "";
+            this.chbUnpack.Text = "Unpack";
+            this.chbUnpack.UseVisualStyleBackColor = true;
+            this.chbUnpack.CheckedChanged += new System.EventHandler(this.chbUnpack_CheckedChanged);
+            // 
+            // chbUpdateVersion
+            // 
+            this.chbUpdateVersion.AutoSize = true;
+            this.chbUpdateVersion.Location = new System.Drawing.Point(6, 21);
+            this.chbUpdateVersion.Name = "chbUpdateVersion";
+            this.chbUpdateVersion.Size = new System.Drawing.Size(128, 21);
+            this.chbUpdateVersion.TabIndex = 0;
+            this.chbUpdateVersion.Text = "Update Version";
+            this.chbUpdateVersion.UseVisualStyleBackColor = true;
+            this.chbUpdateVersion.CheckedChanged += new System.EventHandler(this.chbUpdateVersion_CheckedChanged);
             // 
             // gbExportSettings
             // 
@@ -360,7 +430,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnSetSolutionLocation.Tag = "solution";
             this.btnSetSolutionLocation.Text = "...";
             this.btnSetSolutionLocation.UseVisualStyleBackColor = true;
-            this.btnSetSolutionLocation.Click += new System.EventHandler(this.SetExportLocations_Click);
+            this.btnSetSolutionLocation.Click += new System.EventHandler(this.btnSetSolutionLocation_Click);
             // 
             // lblSolutionPath
             // 
@@ -440,6 +510,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbSolutions.ResumeLayout(false);
             this.gbSolutions.PerformLayout();
             this.gbExport.ResumeLayout(false);
+            this.gbQuickActions.ResumeLayout(false);
+            this.gbQuickActions.PerformLayout();
             this.gbExportSettings.ResumeLayout(false);
             this.gbExportSettings.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -482,5 +554,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private System.Windows.Forms.Label lblSolutionPath;
         private System.Windows.Forms.TextBox txtSolutionPathValue;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.GroupBox gbQuickActions;
+        private System.Windows.Forms.CheckBox chbUpdateVersion;
+        private System.Windows.Forms.CheckBox chbPack;
+        private System.Windows.Forms.CheckBox chbUnpack;
+        private System.Windows.Forms.TextBox txtQuickUpdateVersion;
     }
 }

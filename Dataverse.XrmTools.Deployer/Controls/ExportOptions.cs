@@ -19,11 +19,14 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private readonly Logger _logger;
         public event SolutionsRetrieve OnSolutionsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
-        public event EventHandler<Operation> OnOperationUpdated;
+        public event EventHandler<Operation> OnOperationRemoved;
 
         private IEnumerable<Solution> _solutions;
         private Settings _settings;
         private ExportOperation _export;
+        private UpdateOperation _update;
+        private UnpackOperation _unpack;
+        private PackOperation _pack;
 
         public ExportOptions(Logger logger, Settings settings)
         {
@@ -34,9 +37,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             gbSolutions.Enabled = false;
             gbExportSettings.Enabled = false;
+            gbQuickActions.Enabled = false;
             gbSolutionInfo.Enabled = false;
 
-            if(!string.IsNullOrEmpty(_settings.DefaultExportPath)) { txtSolutionPathValue.Text = _settings.DefaultExportPath; }
+            if(!string.IsNullOrEmpty(_settings.Defaults.ExportPath)) { txtSolutionPathValue.Text = _settings.Defaults.ExportPath; }
         }
 
         private void LoadSolutionsList()
@@ -129,35 +133,21 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 OnOperationSelected?.Invoke(this, _export);
 
                 gbExportSettings.Enabled = true;
+                gbQuickActions.Enabled = true;
                 gbSolutionInfo.Enabled = true;
             }
         }
 
-        private void SetExportLocations_Click(object sender, EventArgs e)
+        private void btnSetSolutionLocation_Click(object sender, EventArgs e)
         {
             try
             {
-                var tag = (sender as Button).Tag as string;
-
-                var dirPath = string.Empty;
-                using (var fbd = new FolderBrowserDialog())
-                {
-                    fbd.Description = "Select export directory";
-
-                    if (fbd.ShowDialog(this) == DialogResult.OK)
-                    {
-                        dirPath = fbd.SelectedPath;
-                    }
-                }
-
-                if (string.IsNullOrEmpty(dirPath))
-                {
-                    throw new Exception("Invalid directory path");
-                }
+                var dirPath = Handle.SelectDirectory(_settings.Defaults.ExportPath);
+                if (string.IsNullOrEmpty(dirPath)){ return; }
 
                 txtSolutionPathValue.Text = dirPath;
 
-                _settings.DefaultExportPath = dirPath;
+                _settings.Defaults.ExportPath = dirPath;
                 _settings.SaveSettings();
 
                 var suffix = _export.Solution.Package.Type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
@@ -165,8 +155,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
                 _export.Solution.Package.Name = name;
                 _export.Solution.Package.Path = $"{dirPath}\\{name}";
-
-                OnOperationUpdated?.Invoke(this, _export);
             }
             catch (Exception ex)
             {
@@ -184,8 +172,177 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             _export.Solution.Package.Type = type;
             _export.Solution.Package.Name = $"{_export.Solution.LogicalName}_{_export.Solution.Version}{suffix}";
+        }
 
-            OnOperationUpdated?.Invoke(this, _export);
+        private void chbUpdateVersion_CheckedChanged(object sender, EventArgs e)
+        {
+            txtQuickUpdateVersion.Enabled = chbUpdateVersion.Checked;
+
+            if (chbUpdateVersion.Checked)
+            {
+                var version = !string.IsNullOrEmpty(_settings.Defaults.Version) ? new Version(_settings.Defaults.Version) : new Version(_export.Solution.Version).IncrementRevision();
+
+                txtQuickUpdateVersion.Text = version.ToString();
+                _export.Solution.Version = version.ToString();
+
+                _settings.Defaults.Version = version.ToString();
+                _settings.SaveSettings();
+
+                var solution = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
+
+                _update = new UpdateOperation
+                {
+                    OperationType = OperationType.UPDATE,
+                    Solution = solution
+                };
+
+                _export.QuickUpdateId = _update.OperationId;
+
+                OnOperationSelected?.Invoke(this, _update);
+            }
+            else
+            {
+                if (_update != null) { OnOperationRemoved?.Invoke(this, _update); }
+                _export.QuickUpdateId = Guid.Empty;
+            }
+        }
+
+        private async void txtQuickUpdateVersion_TextChanged(object sender, EventArgs e)
+        {
+            var box = sender as TextBox;
+            async Task<bool> UserKeepsTyping()
+            {
+                var txt = box.Text;
+                await Task.Delay(250);
+
+                return txt != box.Text;
+            }
+
+            if (await UserKeepsTyping()) return;
+
+            try
+            {
+                var isValid = Version.TryParse(txtQuickUpdateVersion.Text, out Version version);
+                if (isValid)
+                {
+                    _export.Solution.Version = version.ToString();
+
+                    _settings.Defaults.Version = version.ToString();
+                    _settings.SaveSettings();
+
+                    _update.Solution.Version = version.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                box.Focus();
+            }
+        }
+
+        private void chbUnpack_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if(chbUnpack.Checked)
+                {
+                    var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
+                    if (string.IsNullOrEmpty(dirPath))
+                    {
+                        chbUnpack.Checked = false;
+                        return;
+                    }
+
+                    if (_export is null) { throw new Exception($"An Export operation is required for the Unpack quick action"); }
+
+                    _settings.Defaults.UnpackPath = dirPath;
+                    _settings.SaveSettings();
+
+                    _unpack = new UnpackOperation
+                    {
+                        OperationType = OperationType.UNPACK,
+                        Solution = _export.Solution,
+                        Action = "Extract",
+                        WorkingDir = _settings.WorkingDirectory,
+                        Packager = _settings.PackagerPath,
+                        Folder = dirPath,
+                        PackageType = _export.Solution.Package.Type.Equals(PackageType.MANAGED) ? "Managed" : "Unmanaged",
+                        ZipFile = _export.Solution.Package.Path,
+                        Map = string.Empty
+                    };
+
+                    OnOperationSelected?.Invoke(this, _unpack);
+
+                    _export.QuickUnpackId = _unpack.OperationId;
+                    chbPack.Enabled = true;
+                }
+                else
+                {
+                    if (_unpack != null) { OnOperationRemoved?.Invoke(this, _unpack); }
+
+                    _export.QuickUnpackId = Guid.Empty;
+
+                    chbPack.Checked = false;
+                    chbPack.Enabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void chbPack_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (chbPack.Checked)
+                {
+                    var dirPath = Handle.SelectDirectory(_settings.Defaults.PackPath);
+                    if (string.IsNullOrEmpty(dirPath))
+                    {
+                        chbPack.Checked = false;
+                        return;
+                    }
+
+                    if (_export is null) { throw new Exception($"An Unpack operation is required for the Pack quick action"); }
+
+                    _settings.Defaults.PackPath = dirPath;
+                    _settings.SaveSettings();
+
+                    _pack = new PackOperation
+                    {
+                        OperationType = OperationType.PACK,
+                        Solution = _unpack.Solution,
+                        Action = "Pack",
+                        WorkingDir = _unpack.WorkingDir,
+                        Packager = _settings.PackagerPath,
+                        PackageType = _unpack.PackageType,
+                        ZipFile = $"{dirPath}\\{_unpack.Solution.Package.Name}",
+                        Folder = _unpack.Folder,
+                        Map = string.Empty
+                    };
+
+                    OnOperationSelected?.Invoke(this, _pack);
+
+                    _export.QuickPackId = _pack.OperationId;
+                }
+                else
+                {
+                    if (_pack != null) { OnOperationRemoved?.Invoke(this, _pack); }
+                    _export.QuickPackId = Guid.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

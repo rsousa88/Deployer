@@ -91,16 +91,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private Solution GetSolutionData()
         {
             _logger.Log(LogLevel.DEBUG, $"Loading solution file...");
-
-            var dialog = new OpenFileDialog
-            {
-                Title = "Select solution file...",
-                Filter = "Zip files (*.zip)|*.zip",
-                FilterIndex = 2,
-                RestoreDirectory = true
-            };
-
-            var path = GetFileDialogPath(dialog);
+            var path = this.SelectFile("Zip files (*.zip)|*.zip");
             if (string.IsNullOrEmpty(path)) { return null; }
 
             txtImportPathValue.Text = path;
@@ -146,21 +137,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 },
                 Package = package
             };
-        }
-
-        private string GetFileDialogPath(FileDialog dialog)
-        {
-            var path = string.Empty;
-
-            using (var ofd = dialog as OpenFileDialog)
-            {
-                if (ofd.ShowDialog(this) == DialogResult.OK)
-                {
-                    path = ofd.FileName;
-                }
-            }
-
-            return path;
         }
 
         private void rbImportFromFile_CheckedChanged(object sender, EventArgs e)

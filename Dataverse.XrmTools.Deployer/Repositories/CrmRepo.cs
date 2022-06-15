@@ -155,21 +155,21 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void UpdateSolution(Operation operation)
+        public void UpdateSolution(UpdateOperation update)
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Updating solution {operation.Solution.DisplayName}...");
+                _logger.Log(LogLevel.INFO, $"Updating solution {update.Solution.DisplayName}...");
                 var request = new UpdateRequest
                 {
                     Target = new Entity("solution")
                     {
                         Attributes =
                         {
-                            { "solutionid", operation.Solution.SolutionId },
-                            { "friendlyname", operation.Solution.DisplayName },
-                            { "version", operation.Solution.Version },
-                            { "description", operation.Solution.Description }
+                            { "solutionid", update.Solution.SolutionId },
+                            { "friendlyname", update.Solution.DisplayName },
+                            { "version", update.Solution.Version },
+                            { "description", update.Solution.Description }
                         }
                     }
                 };
@@ -339,6 +339,14 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 if(!File.Exists(unpack.Packager))
                 {
                     throw new Exception($"Solution Packager not found - Please download Solution Packager before executing an Unpack operation");
+                }
+
+                _logger.Log(LogLevel.INFO, $"Cleaning output directory...");
+                if (Directory.Exists(unpack.Folder))
+                {
+                    var dirInfo = new DirectoryInfo(unpack.Folder);
+                    foreach (var file in dirInfo.GetFiles()) { file.Delete(); }
+                    foreach (var dir in dirInfo.GetDirectories()) { dir.Delete(true); }
                 }
 
                 _logger.Log(LogLevel.INFO, $"Unpacking solution {unpack.Solution.DisplayName}...");

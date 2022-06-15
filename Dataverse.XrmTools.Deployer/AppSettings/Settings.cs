@@ -12,15 +12,13 @@ namespace Dataverse.XrmTools.Deployer.AppSettings
         public string WorkingDirectory { get; set; }
         public string PackagerPath { get; set; }
         public string PackagerVersion { get; set; }
-        public string DefaultExportPath { get; set; }
-        public string DefaultUnpackPath { get; set; }
-        public string DefaultPackPath { get; set; }
+        public Defaults Defaults { get; set; }
 
         public Instance this[Guid orgId]
         {
             get
             {
-                if (Instances == null)
+                if (Instances is null)
                 {
                     Instances = new List<Instance>();
                 }
@@ -28,5 +26,13 @@ namespace Dataverse.XrmTools.Deployer.AppSettings
                 return Instances.Where(org => org.Id.Equals(orgId)).FirstOrDefault();
             }
         }
+    }
+
+    public class Defaults
+    {
+        public string ExportPath { get; set; }
+        public string UnpackPath { get; set; }
+        public string PackPath { get; set; }
+        public string Version { get; set; }
     }
 }

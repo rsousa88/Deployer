@@ -17,7 +17,7 @@ namespace Dataverse.XrmTools.Deployer.Helpers
             {
                 if (!SettingsManager.Instance.TryLoad(typeof(DeployerControl), out settings))
                 {
-                    settings = new Settings { Instances = new List<Instance>(), Sorts = new List<Sort>() };
+                    settings = new Settings { Instances = new List<Instance>(), Sorts = new List<Sort>(), Defaults = new Defaults() };
                     settings.SaveSettings();
                 }
             }

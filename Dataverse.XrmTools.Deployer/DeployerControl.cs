@@ -1,9 +1,11 @@
 ﻿// System
 using System;
+using System.IO;
 using System.Data;
 using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
@@ -12,10 +14,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Tooling.Connector;
 
-// 3rd Party
-using McTools.Xrm.Connection;
-using XrmToolBox.Extensibility;
-
 // Deployer
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Forms;
@@ -23,8 +21,10 @@ using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.AppSettings;
 using Dataverse.XrmTools.Deployer.Repositories;
-using System.IO;
-using System.Threading.Tasks;
+
+// 3rd Party
+using McTools.Xrm.Connection;
+using XrmToolBox.Extensibility;
 
 namespace Dataverse.XrmTools.Deployer
 {
@@ -295,11 +295,12 @@ namespace Dataverse.XrmTools.Deployer
                         switch (operation.OperationType)
                         {
                             case OperationType.UPDATE:
-                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpdating '{operation.Solution.DisplayName}'");
-                                repo.UpdateSolution(operation);
+                                var update = operation as UpdateOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpdating '{update.Solution.DisplayName}'");
+                                repo.UpdateSolution(update);
 
                                 var updateTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully updated in {updateTime}");
+                                _logger.Log(LogLevel.INFO, $"Solution {update.Solution.DisplayName} successfully updated in {updateTime}");
                                 break;
                             case OperationType.EXPORT:
                                 var export = operation as ExportOperation;
@@ -518,38 +519,41 @@ namespace Dataverse.XrmTools.Deployer
         #endregion Private Helper Methods
 
         #region Custom Handler Events
-        private void HandleOperationEvent(object sender, Operation operation)
+        private void HandleOperationsEvent(object sender, List<Operation> operations)
         {
-            if(!operation.OperationType.Equals(OperationType.PUBLISH))
+            foreach (var operation in operations)
             {
-                if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
+                if (!operation.OperationType.Equals(OperationType.PUBLISH))
                 {
-                    throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
+                    //if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
+                    //{
+                    //    throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
+                    //}
+
+                    var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
+                    if (updated != null)
+                    {
+                        // found an update operation -> also update queued operations
+                        operation.Solution.DisplayName = updated.Solution.DisplayName;
+                        operation.Solution.Version = updated.Solution.Version;
+                        operation.Solution.Description = updated.Solution.Description;
+                    }
                 }
 
-                var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
-                if (updated != null)
-                {
-                    // found an update operation -> also update queued operations
-                    operation.Solution.DisplayName = updated.Solution.DisplayName;
-                    operation.Solution.Version = updated.Solution.Version;
-                    operation.Solution.Description = updated.Solution.Description;
-                }
+                operation.Index = lvOperations.Items.Count + 1;
+
+                _operations.Add(operation);
+                var lvItem = operation.ToListViewItem();
+                lvOperations.Items.Add(lvItem);
+
+                var message = $"Added '{operation.OperationType}' operation to queue";
+                if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
+                _logger.Log(LogLevel.INFO, message);
+
+                tsbExecute.Enabled = true;
+                btnSaveQueue.Enabled = true;
+                btnClearQueue.Enabled = true;
             }
-
-            operation.Index = lvOperations.Items.Count + 1;
-
-            _operations.Add(operation);
-            var lvItem = operation.ToListViewItem();
-            lvOperations.Items.Add(lvItem);
-
-            var message = $"Added '{operation.OperationType}' operation to queue";
-            if(!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
-            _logger.Log(LogLevel.INFO, message);
-
-            tsbExecute.Enabled = true;
-            btnSaveQueue.Enabled = true;
-            btnClearQueue.Enabled = true;
         }
 
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
@@ -608,7 +612,7 @@ namespace Dataverse.XrmTools.Deployer
             {
                 using (var form = new AddOperation(_logger, _settings))
                 {
-                    form.OnOperation += HandleOperationEvent;
+                    form.OnOperations += HandleOperationsEvent;
                     form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
                     form.OnSingleSolutionRetrieve += HandleRetrieveSingleSolutionEvent;
                     form.OnOperationsRetrieve += HandleRetrieveOperationsEvent;
@@ -790,18 +794,8 @@ namespace Dataverse.XrmTools.Deployer
         private void btnSaveQueue_Click(object sender, EventArgs e)
         {
             _logger.Log(LogLevel.INFO, $"Saving queue...");
-
-            var dirPath = string.Empty;
-            using (var fbd = new FolderBrowserDialog())
-            {
-                fbd.Description = "Select export directory";
-                if (fbd.ShowDialog(this) == DialogResult.OK)
-                {
-                    dirPath = fbd.SelectedPath;
-                }
-            }
-
-            if(string.IsNullOrEmpty(dirPath)) { return; }
+            var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
+            if (string.IsNullOrEmpty(dirPath)) { return; }
 
             var json = _operations.SerializeObject();
             var filename = $"{dirPath}\\{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
@@ -814,29 +808,15 @@ namespace Dataverse.XrmTools.Deployer
         private void btnLoadQueue_Click(object sender, EventArgs e)
         {
             _logger.Log(LogLevel.INFO, $"Loading queue...");
+            var path = this.SelectFile("Json files (*.json)|*.queue.json");
+            if (string.IsNullOrEmpty(path)) { return; }
 
-            var filePath = string.Empty;
-            using (var ofd = new OpenFileDialog())
-            {
-                ofd.Title = "Select queue file...";
-                ofd.Filter = "Json files (*.json)|*.queue.json";
-                ofd.FilterIndex = 2;
-                ofd.RestoreDirectory = true;
-
-                if (ofd.ShowDialog(this) == DialogResult.OK)
-                {
-                    filePath = ofd.FileName;
-                }
-            }
-
-            if (string.IsNullOrEmpty(filePath)) { return; }
-
-            var json = File.ReadAllText(filePath);
+            var json = File.ReadAllText(path);
             _operations = json.DeserializeObject<List<Operation>>();
 
             RenderOperationsList();
 
-            _logger.Log(LogLevel.INFO, $"Queue loaded from file {filePath}");
+            _logger.Log(LogLevel.INFO, $"Queue loaded from file {path}");
 
             if (lvOperations.Items.Count > 0)
             {

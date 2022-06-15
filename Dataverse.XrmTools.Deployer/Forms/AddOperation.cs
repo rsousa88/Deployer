@@ -1,5 +1,6 @@
 ﻿// System
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -15,9 +16,9 @@ namespace Dataverse.XrmTools.Deployer.Forms
     public partial class AddOperation : Form
     {
         private readonly Logger _logger;
-        private Operation _operation;
+        private List<Operation> _operations = new List<Operation>();
 
-        public event EventHandler<Operation> OnOperation;
+        public event EventHandler<List<Operation>> OnOperations;
 
         public event SolutionsRetrieve OnSolutionsRetrieve;
         public event SingleSolutionRetrieve OnSingleSolutionRetrieve;
@@ -33,22 +34,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             InitializeComponent();
 
             btnClose.Enabled = false;
-            rbUpdate.Checked = true;
-        }
-
-        private void rbUpdate_CheckedChanged(object sender, EventArgs e)
-        {
-            var radio = sender as RadioButton;
-            if (radio.Checked)
-            {
-                pnlOperationDetails.Controls.Clear();
-                var update = new UpdateOptions(_logger);
-                pnlOperationDetails.Controls.Add(update);
-
-                update.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
-                update.OnOperationSelected += HandleSelectedOperationEvent;
-                update.OnOperationUpdated += HandleUpdateOperationEvent;
-            }
+            rbExport.Checked = true;
         }
 
         private void rbExport_CheckedChanged(object sender, EventArgs e)
@@ -62,7 +48,21 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
                 export.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
                 export.OnOperationSelected += HandleSelectedOperationEvent;
-                export.OnOperationUpdated += HandleUpdateOperationEvent;
+                export.OnOperationRemoved += HandleRemoveOperationEvent;
+            }
+        }
+
+        private void rbUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            var radio = sender as RadioButton;
+            if (radio.Checked)
+            {
+                pnlOperationDetails.Controls.Clear();
+                var update = new UpdateOptions(_logger);
+                pnlOperationDetails.Controls.Add(update);
+
+                update.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
+                update.OnOperationSelected += HandleSelectedOperationEvent;
             }
         }
 
@@ -106,8 +106,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
                 unpack.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
                 unpack.OnOperationSelected += HandleSelectedOperationEvent;
-                unpack.OnOperationUpdated += HandleUpdateOperationEvent;
-                unpack.OnWorkingStateSetRequested += HandleSetWorkingStateEvent;
             }
         }
 
@@ -122,8 +120,6 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
                 pack.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
                 pack.OnOperationSelected += HandleSelectedOperationEvent;
-                pack.OnOperationUpdated += HandleUpdateOperationEvent;
-                pack.OnWorkingStateSetRequested += HandleSetWorkingStateEvent;
             }
         }
 
@@ -148,7 +144,28 @@ namespace Dataverse.XrmTools.Deployer.Forms
         {
             try
             {
-                OnOperation?.Invoke(this, _operation);
+                var operation = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.EXPORT));
+                if(operation != null)
+                {
+                    var export = operation as ExportOperation;
+                    var update = !export.QuickUpdateId.Equals(Guid.Empty) ? _operations.FirstOrDefault(op => op.OperationId.Equals(export.QuickUpdateId)) : null;
+                    var unpack = !export.QuickUnpackId.Equals(Guid.Empty) ? _operations.FirstOrDefault(op => op.OperationId.Equals(export.QuickUnpackId)) : null;
+                    var pack = !export.QuickPackId.Equals(Guid.Empty) ? _operations.FirstOrDefault(op => op.OperationId.Equals(export.QuickPackId)) : null;
+
+                    // reorder quick actions
+                    var temp = new List<Operation>();
+                    if(update != null)
+                    {
+                        temp.Add(update);
+                        temp.Add(export);
+                    }
+                    if (unpack != null) { temp.Add(unpack); }
+                    if (pack != null) { temp.Add(pack); }
+
+                    _operations = temp;
+                }
+
+                OnOperations?.Invoke(this, _operations);
                 Close();
             }
             catch (Exception ex)
@@ -159,21 +176,17 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
         private void HandleSelectedOperationEvent(object sender, Operation operation)
         {
-            operation.OperationId = Guid.NewGuid();
-
-            _operation = operation;
+            _operations.Add(operation);
             btnClose.Enabled = true;
         }
 
-        private void HandleUpdateOperationEvent(object sender, Operation operation)
+        private void HandleRemoveOperationEvent(object sender, Operation operation)
         {
-            _operation = operation;
-        }
-
-        private void HandleSetWorkingStateEvent(bool working)
-        {
-            pnlBody.Enabled = !working;
-            Cursor = working ? Cursors.WaitCursor : Cursors.Default;
+            var remove = _operations.FirstOrDefault(op => op.OperationId.Equals(operation.OperationId));
+            if (remove != null)
+            {
+                _operations.Remove(remove);
+            }
         }
 
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)

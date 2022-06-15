@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
-using Dataverse.XrmTools.Deployer.AppSettings;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
@@ -19,10 +18,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private readonly Logger _logger;
         public event SolutionsRetrieve OnSolutionsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
-        public event EventHandler<Operation> OnOperationUpdated;
 
         private IEnumerable<Solution> _solutions;
-        private Operation _update;
+        private UpdateOperation _update;
 
         public UpdateOptions(Logger logger)
         {
@@ -105,7 +103,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
                 txtUpdateDescription.Text = solution.Description;
 
-                _update = new Operation
+                _update = new UpdateOperation
                 {
                     OperationType = OperationType.UPDATE,
                     Solution = solution
@@ -123,7 +121,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             async Task<bool> UserKeepsTyping()
             {
                 var txt = box.Text;
-                await Task.Delay(500);
+                await Task.Delay(250);
 
                 return txt != box.Text;
             }
@@ -135,7 +133,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             _update.Solution.Version = txtUpdateVersion.Text;
             _update.Solution.Description = txtUpdateDescription.Text;
 
-            OnOperationUpdated?.Invoke(this, _update);
             box.Focus();
         }
     }
