@@ -212,7 +212,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 {
                     OperationType = OperationType.UNPACK,
                     Solution = export.Solution,
-                    ParentOperationId = export.OperationId,
                     Action = "Extract",
                     WorkingDir = _settings.WorkingDirectory,
                     Packager = _settings.PackagerPath,

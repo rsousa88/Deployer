@@ -215,7 +215,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 {
                     OperationType = OperationType.PACK,
                     Solution = unpack.Solution,
-                    ParentOperationId = unpack.OperationId,
                     Action = "Pack",
                     WorkingDir = unpack.WorkingDir,
                     Packager = _settings.PackagerPath,

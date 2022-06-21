@@ -267,7 +267,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     {
                         OperationType = OperationType.UNPACK,
                         Solution = _export.Solution,
-                        ParentOperationId = _export.OperationId,
                         Action = "Extract",
                         WorkingDir = _settings.WorkingDirectory,
                         Packager = _settings.PackagerPath,
@@ -321,7 +320,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     {
                         OperationType = OperationType.PACK,
                         Solution = _unpack.Solution,
-                        ParentOperationId = _unpack.OperationId,
                         Action = "Pack",
                         WorkingDir = _unpack.WorkingDir,
                         Packager = _settings.PackagerPath,
