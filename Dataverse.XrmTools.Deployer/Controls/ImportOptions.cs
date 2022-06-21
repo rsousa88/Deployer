@@ -208,7 +208,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     Solution = operation.Solution,
                     HoldingSolution = existing != null ? true : false,
                     OverwriteUnmanaged = true,
-                    PublishWorkflows = true
+                    PublishWorkflows = true,
+                    ParentOperationId = operation.OperationId
                 };
 
                 if (existing != null)

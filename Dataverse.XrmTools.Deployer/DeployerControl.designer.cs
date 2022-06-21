@@ -481,12 +481,12 @@
             // chOpPublisher
             // 
             this.chOpPublisher.Text = "Publisher";
-            this.chOpPublisher.Width = 250;
+            this.chOpPublisher.Width = 200;
             // 
             // chOpDescription
             // 
             this.chOpDescription.Text = "Description";
-            this.chOpDescription.Width = 270;
+            this.chOpDescription.Width = 350;
             // 
             // cmsContextMenu
             // 

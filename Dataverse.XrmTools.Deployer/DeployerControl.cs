@@ -637,8 +637,8 @@ namespace Dataverse.XrmTools.Deployer
             chOpIndex.Width = (int)Math.Floor(maxWidth * 0.03);
             chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
             chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.29);
-            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.24);
-            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.27);
+            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.20);
+            chOpDescription.Width = (int)Math.Floor(maxWidth * 0.35);
         }
 
         private void lvSolutionHistory_Resize(object sender, EventArgs e)
@@ -726,13 +726,12 @@ namespace Dataverse.XrmTools.Deployer
             if (lvOperations.FocusedItem != null && lvOperations.SelectedItems.Count > 0)
             {
                 var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-                lvOperations.Items.RemoveAt(selected.Index);
 
                 var operation = selected.ToObject(new Operation()) as Operation;
                 var item = _operations.SingleOrDefault(op => op.OperationType.Equals(operation.OperationType) && (op.OperationType.Equals(OperationType.PUBLISH) || op.Solution.LogicalName.Equals(operation.Solution.LogicalName)));
                 if (item != null)
                 {
-                    _operations.Remove(item);
+                    RemoveOperationItem(item);
 
                     if(_operations.Count.Equals(0))
                     {
@@ -756,6 +755,19 @@ namespace Dataverse.XrmTools.Deployer
                     }
                 }
             }
+        }
+
+        private void RemoveOperationItem(Operation item)
+        {
+            var dependent = _operations.Where(op => op.ParentOperationId.Equals(item.OperationId)).ToList();
+            foreach (var dep in dependent)
+            {
+                RemoveOperationItem(dep);
+            }
+
+            var lvIndex = lvOperations.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(item.OperationId)).Index;
+            lvOperations.Items.RemoveAt(lvIndex);
+            _operations.Remove(item);
         }
 
         private void btnClearLogs_Click(object sender, EventArgs e)
