@@ -267,6 +267,7 @@
     <Compile Include="Models\ExportOperation.cs" />
     <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\JointRecord.cs" />
+    <Compile Include="Models\OperationGroup.cs" />
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />

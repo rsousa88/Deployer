@@ -43,6 +43,8 @@
             this.lblTargetValue = new System.Windows.Forms.Label();
             this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
             this.gbSolutionPackager = new System.Windows.Forms.GroupBox();
+            this.lblPackagerVersion = new System.Windows.Forms.Label();
+            this.lblPackagerVersionValue = new System.Windows.Forms.Label();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
             this.gbQueue = new System.Windows.Forms.GroupBox();
             this.btnSaveQueue = new System.Windows.Forms.Button();
@@ -63,8 +65,6 @@
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.txtLogs = new System.Windows.Forms.TextBox();
-            this.lblPackagerVersion = new System.Windows.Forms.Label();
-            this.lblPackagerVersionValue = new System.Windows.Forms.Label();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -312,6 +312,26 @@
             this.gbSolutionPackager.TabStop = false;
             this.gbSolutionPackager.Text = "Solution Packager";
             // 
+            // lblPackagerVersion
+            // 
+            this.lblPackagerVersion.AutoSize = true;
+            this.lblPackagerVersion.Location = new System.Drawing.Point(6, 28);
+            this.lblPackagerVersion.Name = "lblPackagerVersion";
+            this.lblPackagerVersion.Size = new System.Drawing.Size(60, 17);
+            this.lblPackagerVersion.TabIndex = 4;
+            this.lblPackagerVersion.Text = "Version:";
+            // 
+            // lblPackagerVersionValue
+            // 
+            this.lblPackagerVersionValue.AutoSize = true;
+            this.lblPackagerVersionValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.lblPackagerVersionValue.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblPackagerVersionValue.Location = new System.Drawing.Point(72, 27);
+            this.lblPackagerVersionValue.Name = "lblPackagerVersionValue";
+            this.lblPackagerVersionValue.Size = new System.Drawing.Size(86, 19);
+            this.lblPackagerVersionValue.TabIndex = 5;
+            this.lblPackagerVersionValue.Text = "Not installed";
+            // 
             // txtOutput
             // 
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -461,6 +481,7 @@
             this.lvOperations.UseCompatibleStateImageBehavior = false;
             this.lvOperations.View = System.Windows.Forms.View.Details;
             this.lvOperations.SelectedIndexChanged += new System.EventHandler(this.lvOperations_SelectedIndexChanged);
+            this.lvOperations.DoubleClick += new System.EventHandler(this.lvOperations_DoubleClick);
             this.lvOperations.Resize += new System.EventHandler(this.lvOperations_Resize);
             // 
             // chOpIndex
@@ -544,26 +565,6 @@
             this.txtLogs.Size = new System.Drawing.Size(437, 391);
             this.txtLogs.TabIndex = 2;
             this.txtLogs.TextChanged += new System.EventHandler(this.txtLogs_TextChanged);
-            // 
-            // lblPackagerVersion
-            // 
-            this.lblPackagerVersion.AutoSize = true;
-            this.lblPackagerVersion.Location = new System.Drawing.Point(6, 28);
-            this.lblPackagerVersion.Name = "lblPackagerVersion";
-            this.lblPackagerVersion.Size = new System.Drawing.Size(60, 17);
-            this.lblPackagerVersion.TabIndex = 4;
-            this.lblPackagerVersion.Text = "Version:";
-            // 
-            // lblPackagerVersionValue
-            // 
-            this.lblPackagerVersionValue.AutoSize = true;
-            this.lblPackagerVersionValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.lblPackagerVersionValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblPackagerVersionValue.Location = new System.Drawing.Point(72, 27);
-            this.lblPackagerVersionValue.Name = "lblPackagerVersionValue";
-            this.lblPackagerVersionValue.Size = new System.Drawing.Size(86, 19);
-            this.lblPackagerVersionValue.TabIndex = 5;
-            this.lblPackagerVersionValue.Text = "Not installed";
             // 
             // DeployerControl
             // 

@@ -69,6 +69,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbManaged = new System.Windows.Forms.RadioButton();
             this.rbUnmanaged = new System.Windows.Forms.RadioButton();
             this.lblType = new System.Windows.Forms.Label();
+            this.btnSetUnpackLocation = new System.Windows.Forms.Button();
+            this.txtUnpackPathValue = new System.Windows.Forms.TextBox();
+            this.txtPackPathValue = new System.Windows.Forms.TextBox();
+            this.btnSetPackLocation = new System.Windows.Forms.Button();
             this.gbSolutionInfo.SuspendLayout();
             this.gbSolutions.SuspendLayout();
             this.gbExport.SuspendLayout();
@@ -342,7 +346,11 @@ namespace Dataverse.XrmTools.Deployer.Controls
             // 
             this.gbQuickActions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbQuickActions.Controls.Add(this.btnSetPackLocation);
+            this.gbQuickActions.Controls.Add(this.txtPackPathValue);
+            this.gbQuickActions.Controls.Add(this.btnSetUnpackLocation);
             this.gbQuickActions.Controls.Add(this.txtQuickUpdateVersion);
+            this.gbQuickActions.Controls.Add(this.txtUnpackPathValue);
             this.gbQuickActions.Controls.Add(this.chbPack);
             this.gbQuickActions.Controls.Add(this.chbUnpack);
             this.gbQuickActions.Controls.Add(this.chbUpdateVersion);
@@ -498,6 +506,56 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblType.TabIndex = 10;
             this.lblType.Text = "Export as:";
             // 
+            // btnSetUnpackLocation
+            // 
+            this.btnSetUnpackLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetUnpackLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSetUnpackLocation.Location = new System.Drawing.Point(568, 42);
+            this.btnSetUnpackLocation.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetUnpackLocation.Name = "btnSetUnpackLocation";
+            this.btnSetUnpackLocation.Size = new System.Drawing.Size(36, 29);
+            this.btnSetUnpackLocation.TabIndex = 18;
+            this.btnSetUnpackLocation.Tag = "solution";
+            this.btnSetUnpackLocation.Text = "...";
+            this.btnSetUnpackLocation.UseVisualStyleBackColor = true;
+            // 
+            // txtUnpackPathValue
+            // 
+            this.txtUnpackPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUnpackPathValue.Location = new System.Drawing.Point(141, 46);
+            this.txtUnpackPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtUnpackPathValue.Name = "txtUnpackPathValue";
+            this.txtUnpackPathValue.ReadOnly = true;
+            this.txtUnpackPathValue.Size = new System.Drawing.Size(419, 22);
+            this.txtUnpackPathValue.TabIndex = 17;
+            // 
+            // txtPackPathValue
+            // 
+            this.txtPackPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPackPathValue.Location = new System.Drawing.Point(141, 73);
+            this.txtPackPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPackPathValue.Name = "txtPackPathValue";
+            this.txtPackPathValue.ReadOnly = true;
+            this.txtPackPathValue.Size = new System.Drawing.Size(419, 22);
+            this.txtPackPathValue.TabIndex = 19;
+            // 
+            // btnSetPackLocation
+            // 
+            this.btnSetPackLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetPackLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSetPackLocation.Location = new System.Drawing.Point(568, 70);
+            this.btnSetPackLocation.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetPackLocation.Name = "btnSetPackLocation";
+            this.btnSetPackLocation.Size = new System.Drawing.Size(36, 29);
+            this.btnSetPackLocation.TabIndex = 20;
+            this.btnSetPackLocation.Tag = "solution";
+            this.btnSetPackLocation.Text = "...";
+            this.btnSetPackLocation.UseVisualStyleBackColor = true;
+            // 
             // ExportOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -559,5 +617,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private System.Windows.Forms.CheckBox chbPack;
         private System.Windows.Forms.CheckBox chbUnpack;
         private System.Windows.Forms.TextBox txtQuickUpdateVersion;
+        private System.Windows.Forms.Button btnSetPackLocation;
+        private System.Windows.Forms.TextBox txtPackPathValue;
+        private System.Windows.Forms.Button btnSetUnpackLocation;
+        private System.Windows.Forms.TextBox txtUnpackPathValue;
     }
 }

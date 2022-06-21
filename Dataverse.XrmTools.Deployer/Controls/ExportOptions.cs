@@ -40,7 +40,11 @@ namespace Dataverse.XrmTools.Deployer.Controls
             gbQuickActions.Enabled = false;
             gbSolutionInfo.Enabled = false;
 
-            if(!string.IsNullOrEmpty(_settings.Defaults.ExportPath)) { txtSolutionPathValue.Text = _settings.Defaults.ExportPath; }
+            if(!string.IsNullOrEmpty(_settings.Defaults.ExportPath))
+            {
+                txtSolutionPathValue.Text = _settings.Defaults.ExportPath;
+                txtSolutionPathValue.Select(txtSolutionPathValue.Text.Length, 0);
+            }
         }
 
         private void LoadSolutionsList()
@@ -146,6 +150,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 if (string.IsNullOrEmpty(dirPath)){ return; }
 
                 txtSolutionPathValue.Text = dirPath;
+                txtSolutionPathValue.Select(txtSolutionPathValue.Text.Length, 0);
 
                 _settings.Defaults.ExportPath = dirPath;
                 _settings.SaveSettings();
@@ -251,12 +256,15 @@ namespace Dataverse.XrmTools.Deployer.Controls
             {
                 if(chbUnpack.Checked)
                 {
-                    var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
+                    var dirPath = string.IsNullOrEmpty(_settings.Defaults.UnpackPath) ? Handle.SelectDirectory(_settings.Defaults.UnpackPath) : _settings.Defaults.UnpackPath;
                     if (string.IsNullOrEmpty(dirPath))
                     {
                         chbUnpack.Checked = false;
                         return;
                     }
+
+                    txtUnpackPathValue.Text = dirPath;
+                    txtUnpackPathValue.Select(txtUnpackPathValue.Text.Length, 0);
 
                     if (_export is null) { throw new Exception($"An Export operation is required for the Unpack quick action"); }
 
@@ -304,12 +312,15 @@ namespace Dataverse.XrmTools.Deployer.Controls
             {
                 if (chbPack.Checked)
                 {
-                    var dirPath = Handle.SelectDirectory(_settings.Defaults.PackPath);
+                    var dirPath = string.IsNullOrEmpty(_settings.Defaults.PackPath) ? Handle.SelectDirectory(_settings.Defaults.PackPath) : _settings.Defaults.PackPath;
                     if (string.IsNullOrEmpty(dirPath))
                     {
                         chbPack.Checked = false;
                         return;
                     }
+
+                    txtPackPathValue.Text = dirPath;
+                    txtPackPathValue.Select(txtPackPathValue.Text.Length, 0);
 
                     if (_export is null) { throw new Exception($"An Unpack operation is required for the Pack quick action"); }
 

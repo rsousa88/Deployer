@@ -41,6 +41,7 @@ namespace Dataverse.XrmTools.Deployer
         // models
         private Instance _targetInstance;
         private Instance _sourceInstance;
+        private List<OperationGroup> _groups= new List<OperationGroup>();
         private List<Operation> _operations = new List<Operation>();
 
         // flags
@@ -506,14 +507,26 @@ namespace Dataverse.XrmTools.Deployer
 
         private void RenderOperationsList(int? selectedIndex = null)
         {
-            _operations = _operations.OrderBy(op => op.Index).ToList();
-
             lvOperations.Items.Clear();
-            lvOperations.Items.AddRange(_operations.Select(op => op.ToListViewItem()).ToArray());
 
-            if(selectedIndex.HasValue)
+            _groups = _groups.OrderBy(grp => grp.Index).ToList();
+
+            var index = 1;
+            foreach (var grp in _groups)
             {
-                lvOperations.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).Index.Equals(selectedIndex)).Selected = true;
+                var grpOps = grp.Operations.OrderBy(op => op.Index).ToList();
+                foreach (var op in grpOps)
+                {
+                    op.Index = index++;
+                }
+
+                lvOperations.Items.AddRange(grpOps.Select(op => op.ToListViewItem()).ToArray());
+            }
+
+            if (selectedIndex.HasValue)
+            {
+                var operation = _groups.SingleOrDefault(grp => grp.Index.Equals(selectedIndex)).Operations.First();
+                lvOperations.Items.Cast<ListViewItem>().FirstOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(operation.OperationId)).Selected = true;
             }
         }
 
@@ -558,11 +571,64 @@ namespace Dataverse.XrmTools.Deployer
             _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
             MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        private void MarkAllFromGroup()
+        {
+            var lvItems = lvOperations.Items.Cast<ListViewItem>().Where(lvi => lvi.Selected);
+            var selected = lvItems.LastOrDefault().Tag as Operation;
+
+            var operations = _operations.Where(op => op.GroupId.Equals(selected.GroupId));
+
+            foreach (var op in operations)
+            {
+                var grpItem = lvOperations.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(op.OperationId));
+                grpItem.BackColor = Color.LightGray;
+            }
+        }
+
+        private void MoveOperationItem(Operation selected, string action)
+        {
+            var group = _groups.FirstOrDefault(grp => grp.GroupId.Equals(selected.GroupId));
+
+            if (action.Equals("up"))
+            {
+                var oldIndex = group.Index;
+                if (oldIndex > 1)
+                {
+                    var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(_groups.FindIndex(grp2 => grp2.Index.Equals(oldIndex))));
+                    var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
+
+                    oldGrp.Index++;
+                    newGrp.Index--;
+
+                    RenderOperationsList(oldIndex - 1);
+                }
+            }
+
+            if (action.Equals("down"))
+            {
+                var oldIndex = group.Index;
+                if (oldIndex < _groups.Count)
+                {
+                    var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(oldIndex + 1));
+                    var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
+
+                    oldGrp.Index--;
+                    newGrp.Index++;
+
+                    RenderOperationsList(oldIndex + 1);
+                }
+            }
+        }
         #endregion Private Helper Methods
 
         #region Custom Handler Events
-        private void HandleOperationsEvent(object sender, List<Operation> operations)
+        private void HandleOperationsEvent(object sender, List<Operation> opsList)
         {
+            var group = new OperationGroup(opsList, _groups.Count + 1);
+            _groups.Add(group);
+
+            var operations = group.Operations;
             foreach (var operation in operations)
             {
                 if (!operation.OperationType.Equals(OperationType.PUBLISH))
@@ -766,14 +832,16 @@ namespace Dataverse.XrmTools.Deployer
 
         private void lvOperations_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selected = lvOperations.SelectedItems.Count;
-            if (selected > 0)
+            var count = lvOperations.SelectedItems.Count;
+            if (count > 0)
             {
                 btnUp.Enabled = true;
                 btnUp.BackgroundImage = Properties.Resources.arrow_up_35px;
 
                 btnDown.Enabled = true;
                 btnDown.BackgroundImage = Properties.Resources.arrow_down_35px;
+
+                MarkAllFromGroup();
             }
             else
             {
@@ -782,6 +850,21 @@ namespace Dataverse.XrmTools.Deployer
 
                 btnDown.Enabled = false;
                 btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+
+                var marked = lvOperations.Items.Cast<ListViewItem>().Where(lvi => lvi.BackColor.Equals(Color.LightGray));
+                foreach (var lvi in marked)
+                {
+                    lvi.BackColor = SystemColors.Window;
+                }
+            }
+        }
+
+        private void lvOperations_DoubleClick(object sender, EventArgs e)
+        {
+            var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+            if (selected != null)
+            {
+                // TODO: on double click, show details
             }
         }
 
@@ -790,17 +873,7 @@ namespace Dataverse.XrmTools.Deployer
             var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
             if (selected != null)
             {
-                var oldIndex = (selected.Tag as Operation).Index;
-                if (oldIndex > 1)
-                {
-                    var oldOperation = _operations.SingleOrDefault(op => op.Index.Equals(_operations.FindIndex(op2 => op2.Index.Equals(oldIndex))));
-                    var newOperation = _operations.SingleOrDefault(op => op.OperationId.Equals((selected.Tag as Operation).OperationId));
-
-                    oldOperation.Index++;
-                    newOperation.Index--;
-
-                    RenderOperationsList(oldIndex -1);
-                }
+                MoveOperationItem(selected.Tag as Operation, "up");
             }
         }
 
@@ -809,17 +882,7 @@ namespace Dataverse.XrmTools.Deployer
             var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
             if (selected != null)
             {
-                var oldIndex = (selected.Tag as Operation).Index;
-                if (oldIndex < _operations.Count)
-                {
-                    var oldOperation = _operations.SingleOrDefault(op => op.Index.Equals(oldIndex +1));
-                    var newOperation = _operations.SingleOrDefault(op => op.OperationId.Equals((selected.Tag as Operation).OperationId));
-
-                    oldOperation.Index--;
-                    newOperation.Index++;
-
-                    RenderOperationsList(oldIndex + 1);
-                }
+                MoveOperationItem(selected.Tag as Operation, "down");
             }
         }
 
