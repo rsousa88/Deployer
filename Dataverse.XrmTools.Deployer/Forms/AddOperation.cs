@@ -154,11 +154,8 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
                     // reorder quick actions
                     var temp = new List<Operation>();
-                    if(update != null)
-                    {
-                        temp.Add(update);
-                        temp.Add(export);
-                    }
+                    if(update != null) { temp.Add(update); }
+                    temp.Add(export);
                     if (unpack != null) { temp.Add(unpack); }
                     if (pack != null) { temp.Add(pack); }
 

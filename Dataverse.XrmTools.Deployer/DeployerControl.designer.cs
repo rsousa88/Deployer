@@ -56,9 +56,8 @@
             this.chOpIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.gbLogs = new System.Windows.Forms.GroupBox();
@@ -448,9 +447,8 @@
             this.chOpIndex,
             this.chOpType,
             this.chOpDisplayName,
-            this.chOpVersion,
-            this.chOpManaged,
-            this.chOpPublisher});
+            this.chOpPublisher,
+            this.chOpDescription});
             this.lvOperations.ContextMenuStrip = this.cmsContextMenu;
             this.lvOperations.FullRowSelect = true;
             this.lvOperations.HideSelection = false;
@@ -478,22 +476,17 @@
             // chOpDisplayName
             // 
             this.chOpDisplayName.Text = "Display Name";
-            this.chOpDisplayName.Width = 350;
-            // 
-            // chOpVersion
-            // 
-            this.chOpVersion.Text = "Version";
-            this.chOpVersion.Width = 100;
-            // 
-            // chOpManaged
-            // 
-            this.chOpManaged.Text = "Managed";
-            this.chOpManaged.Width = 120;
+            this.chOpDisplayName.Width = 300;
             // 
             // chOpPublisher
             // 
             this.chOpPublisher.Text = "Publisher";
             this.chOpPublisher.Width = 250;
+            // 
+            // chOpDescription
+            // 
+            this.chOpDescription.Text = "Description";
+            this.chOpDescription.Width = 270;
             // 
             // cmsContextMenu
             // 
@@ -627,9 +620,8 @@
         private System.Windows.Forms.ColumnHeader chOpIndex;
         private System.Windows.Forms.ColumnHeader chOpType;
         private System.Windows.Forms.ColumnHeader chOpDisplayName;
-        private System.Windows.Forms.ColumnHeader chOpVersion;
-        private System.Windows.Forms.ColumnHeader chOpManaged;
         private System.Windows.Forms.ColumnHeader chOpPublisher;
+        private System.Windows.Forms.ColumnHeader chOpDescription;
         private System.Windows.Forms.ContextMenuStrip cmsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem cmsiRemove;
 

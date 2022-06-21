@@ -91,7 +91,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                         (sol, pub) => new { sol, pub })
                     .Select(join => new JointRecord
                     {
-                        Record = new Record("solution", new string[] { "uniquename", "friendlyname", "version", "ismanaged", "description" }, join.sol),
+                        Record = new Record("solution", new string[] { "solutionid", "uniquename", "friendlyname", "version", "ismanaged", "description" }, join.sol),
                         Related = new Record("publisher", new string[] { "uniquename", "friendlyname" }, join.pub)
                     });
 
@@ -124,7 +124,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                     .Where(join => join.sol.GetAttributeValue<bool>("ismanaged").Equals(queryType.Equals(PackageType.MANAGED)))
                     .Select(join => new JointRecord
                     {
-                        Record = new Record("solution", new string[] { "uniquename", "friendlyname", "version", "ismanaged", "description" }, join.sol),
+                        Record = new Record("solution", new string[] { "solutionid", "uniquename", "friendlyname", "version", "ismanaged", "description" }, join.sol),
                         Related = new Record("publisher", new string[] { "uniquename", "friendlyname" }, join.pub)
                     });
 

@@ -389,7 +389,7 @@ namespace Dataverse.XrmTools.Deployer
                     else
                     {
                         _logger.Log(LogLevel.INFO, $"All operations were successfully executed");
-                        MessageBox.Show(this, "All operations were successfully executed", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (DialogResult.Yes == MessageBox.Show(this, "All operations were successfully executed.\n\nDo you want to save current queue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { SaveQueue(); }
 
                         // clear queue
                         lvOperations.Items.Clear();
@@ -516,6 +516,48 @@ namespace Dataverse.XrmTools.Deployer
                 lvOperations.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).Index.Equals(selectedIndex)).Selected = true;
             }
         }
+
+        private string GetOperationDescription(Operation operation)
+        {
+            switch (operation.OperationType)
+            {
+                case OperationType.UPDATE:
+                    var update = operation as UpdateOperation;
+                    return $"Update solution '{update.Solution.DisplayName}' details";
+                case OperationType.EXPORT:
+                    var export = operation as ExportOperation;
+                    return $"Export '{export.Solution.Package.Type}' package (version '{export.Solution.Version}')";
+                case OperationType.IMPORT:
+                    var import = operation as ImportOperation;
+                    return $"Import '{import.Solution.Package.Type}' package (version '{import.Solution.Version}')";
+                case OperationType.DELETE:
+                    return $"Delete '{operation.Solution.DisplayName}' solution";
+                case OperationType.UNPACK:
+                    var unpack = operation as UnpackOperation;
+                    return $"Unpack '{unpack.PackageType.ToUpper()}' package to '{unpack.Folder}'";
+                case OperationType.PACK:
+                    var pack = operation as PackOperation;
+                    return $"Pack '{pack.PackageType.ToUpper()}' package to '{pack.ZipFile}'";
+                case OperationType.PUBLISH:
+                    return $"Publish all customizations";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        private void SaveQueue()
+        {
+            _logger.Log(LogLevel.INFO, $"Saving queue...");
+            var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
+            if (string.IsNullOrEmpty(dirPath)) { return; }
+
+            var json = _operations.SerializeObject();
+            var filename = $"{dirPath}\\{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
+            File.WriteAllText(filename, json);
+
+            _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
+            MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
         #endregion Private Helper Methods
 
         #region Custom Handler Events
@@ -541,6 +583,8 @@ namespace Dataverse.XrmTools.Deployer
                 }
 
                 operation.Index = lvOperations.Items.Count + 1;
+
+                operation.Description = GetOperationDescription(operation);
 
                 _operations.Add(operation);
                 var lvItem = operation.ToListViewItem();
@@ -589,13 +633,12 @@ namespace Dataverse.XrmTools.Deployer
 
         private void lvOperations_Resize(object sender, EventArgs e)
         {
-            var maxWidth = lvOperations.Width >= 713 ? lvOperations.Width : 713;
+            var maxWidth = lvOperations.Width >= 741 ? lvOperations.Width : 741;
             chOpIndex.Width = (int)Math.Floor(maxWidth * 0.03);
             chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
-            chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.34);
-            chOpVersion.Width = (int)Math.Floor(maxWidth * 0.10);
-            chOpManaged.Width = (int)Math.Floor(maxWidth * 0.12);
+            chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.29);
             chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.24);
+            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.27);
         }
 
         private void lvSolutionHistory_Resize(object sender, EventArgs e)
@@ -793,16 +836,7 @@ namespace Dataverse.XrmTools.Deployer
 
         private void btnSaveQueue_Click(object sender, EventArgs e)
         {
-            _logger.Log(LogLevel.INFO, $"Saving queue...");
-            var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
-            if (string.IsNullOrEmpty(dirPath)) { return; }
-
-            var json = _operations.SerializeObject();
-            var filename = $"{dirPath}\\{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
-            File.WriteAllText(filename, json);
-
-            _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
-            MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SaveQueue();
         }
 
         private void btnLoadQueue_Click(object sender, EventArgs e)

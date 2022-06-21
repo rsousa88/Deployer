@@ -56,9 +56,8 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                     operation.Index.ToString(),
                     operation.OperationType.ToString(),
                     operation.Solution != null ? operation.Solution.DisplayName : "-",
-                    operation.Solution != null ? operation.Solution.Version : "-",
-                    operation.Solution != null ? (operation.Solution.IsManaged ? "Yes" : "No") : "-",
-                    operation.Solution != null && operation.Solution.Publisher != null ? operation.Solution.Publisher.DisplayName : "-"
+                    operation.Solution != null && operation.Solution.Publisher != null ? operation.Solution.Publisher.DisplayName : "-",
+                    operation.Description
                 });
 
                 item.Tag = operation;

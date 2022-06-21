@@ -121,7 +121,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblLogicalNameValue.Text = solution.LogicalName;
                 lblDisplayNameValue.Text = solution.DisplayName;
                 lblVersionValue.Text = solution.Version;
-                lblManagedValue.Text = solution.IsManaged.ToString();
+                lblManagedValue.Text = solution.IsManaged ? "Yes" : "No";
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
 
                 _export = new ExportOperation
@@ -165,13 +165,14 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private void rbPackageType_CheckedChanged(object sender, EventArgs e)
         {
-            var radio = sender as RadioButton;
-
             var type = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED;
             var suffix = type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
 
             _export.Solution.Package.Type = type;
             _export.Solution.Package.Name = $"{_export.Solution.LogicalName}_{_export.Solution.Version}{suffix}";
+
+            if(_unpack != null) { _unpack.PackageType = type.Equals(PackageType.MANAGED) ? "Managed" : "Unmanaged"; }
+            if(_pack != null) { _pack.PackageType = type.Equals(PackageType.MANAGED) ? "Managed" : "Unmanaged"; }
         }
 
         private void chbUpdateVersion_CheckedChanged(object sender, EventArgs e)
