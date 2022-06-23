@@ -864,7 +864,22 @@ namespace Dataverse.XrmTools.Deployer
             var selected = lvOperations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
             if (selected != null)
             {
-                // TODO: on double click, show details
+                try
+                {
+                    var operation = selected.Tag as Operation;
+                    if(operation.OperationType.Equals(OperationType.PUBLISH)) { return; }
+
+                    using (var form = new OperationDetails(_logger, operation))
+                    {
+                        form.ShowDialog();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ManageWorkingState(false);
+                    LogError(ex.Message);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 

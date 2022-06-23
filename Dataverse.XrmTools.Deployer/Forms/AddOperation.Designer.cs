@@ -269,7 +269,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "AddOperation";
+            this.Text = "Add Operation";
             this.pnlHeader.ResumeLayout(false);
             this.pnlHeader.PerformLayout();
             this.pnlBody.ResumeLayout(false);

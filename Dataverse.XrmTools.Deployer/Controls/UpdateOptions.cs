@@ -10,21 +10,26 @@ using System.Collections.Generic;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
+using Dataverse.XrmTools.Deployer.AppSettings;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
     public partial class UpdateOptions : UserControl
     {
         private readonly Logger _logger;
+        private readonly Settings _settings;
+
         public event SolutionsRetrieve OnSolutionsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
+        public event EventHandler<Operation> OnOperationRemoved;
 
         private IEnumerable<Solution> _solutions;
         private UpdateOperation _update;
 
-        public UpdateOptions(Logger logger)
+        public UpdateOptions(Logger logger, Settings settings)
         {
             _logger = logger;
+            _settings = settings;
 
             InitializeComponent();
 
@@ -103,6 +108,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
                 txtUpdateDescription.Text = solution.Description;
 
+                if (_update != null) { OnOperationRemoved?.Invoke(this, _update); }
+
                 _update = new UpdateOperation
                 {
                     OperationType = OperationType.UPDATE,
@@ -128,10 +135,34 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             if (await UserKeepsTyping()) return;
 
-            // user is done typing -> execute logic
-            _update.Solution.DisplayName = txtUpdateName.Text;
-            _update.Solution.Version = txtUpdateVersion.Text;
-            _update.Solution.Description = txtUpdateDescription.Text;
+            if(box.Tag.Equals("name"))
+            {
+                _update.OldDisplayName = _update.Solution.DisplayName;
+                _update.Solution.DisplayName = txtUpdateName.Text;
+            }
+
+            if (box.Tag.Equals("version"))
+            {
+                var isValid = Version.TryParse(txtUpdateVersion.Text, out Version version);
+                if (isValid)
+                {
+                    Version.TryParse(_update.Solution.Version, out Version oldVersion);
+                    if (version != oldVersion)
+                    {
+                        _settings.Defaults.Version = version.ToString();
+                        _settings.SaveSettings();
+
+                        _update.Solution.Version = version.ToString();
+                        _update.OldVersion = oldVersion.ToString();
+                    }
+                }
+            }
+
+            if (box.Tag.Equals("description"))
+            {
+                _update.OldDescription = _update.Solution.Description;
+                _update.Solution.Description = txtUpdateDescription.Text;
+            }
 
             box.Focus();
         }

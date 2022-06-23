@@ -18,8 +18,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private readonly Logger _logger;
         public event SolutionsRetrieve OnSolutionsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
+        public event EventHandler<Operation> OnOperationRemoved;
 
         private IEnumerable<Solution> _solutions;
+        private Operation _delete;
 
         public DeleteOptions(Logger logger)
         {
@@ -101,13 +103,15 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblManagedValue.Text = solution.IsManaged.ToString();
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
 
-                var delete = new Operation
+                if (_delete != null) { OnOperationRemoved?.Invoke(this, _delete); }
+
+                _delete = new Operation
                 {
                     OperationType = OperationType.DELETE,
                     Solution = solution
                 };
 
-                OnOperationSelected?.Invoke(this, delete);
+                OnOperationSelected?.Invoke(this, _delete);
 
                 gbSolutionInfo.Enabled = true;
             }

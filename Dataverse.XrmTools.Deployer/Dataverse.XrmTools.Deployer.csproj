@@ -202,6 +202,12 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
+    <Compile Include="Controls\PublishOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PublishOptions.Designer.cs">
+      <DependentUpon>PublishOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DeleteOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -219,6 +225,12 @@
     </Compile>
     <Compile Include="Controls\UnpackOptions.Designer.cs">
       <DependentUpon>UnpackOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UpdateDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UpdateDetails.Designer.cs">
+      <DependentUpon>UpdateDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\UpdateOptions.cs">
       <SubType>UserControl</SubType>
@@ -255,6 +267,12 @@
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="External\FolderSelectDialog.cs" />
+    <Compile Include="Forms\OperationDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OperationDetails.Designer.cs">
+      <DependentUpon>OperationDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\AddOperation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -298,6 +316,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\PublishOptions.resx">
+      <DependentUpon>PublishOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\DeleteOptions.resx">
       <DependentUpon>DeleteOptions.cs</DependentUpon>
     </EmbeddedResource>
@@ -306,6 +327,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UnpackOptions.resx">
       <DependentUpon>UnpackOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UpdateDetails.resx">
+      <DependentUpon>UpdateDetails.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UpdateOptions.resx">
       <DependentUpon>UpdateOptions.cs</DependentUpon>
@@ -318,6 +342,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DeployerControl.resx">
       <DependentUpon>DeployerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OperationDetails.resx">
+      <DependentUpon>OperationDetails.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddOperation.resx">
       <DependentUpon>AddOperation.cs</DependentUpon>

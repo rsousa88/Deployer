@@ -20,6 +20,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
         private readonly Logger _logger;
         public event OperationsRetrieve OnOperationsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
+        public event EventHandler<Operation> OnOperationRemoved;
 
         private IEnumerable<Operation> _operations;
         private Settings _settings;
@@ -52,6 +53,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     lblVersionValue.Text = solution.Version;
                     lblManagedValue.Text = solution.IsManaged.ToString();
                     lblPublisherValue.Text = solution.Publisher.DisplayName;
+
+                    if (_pack != null) { OnOperationRemoved?.Invoke(this, _pack); }
 
                     _pack = new PackOperation
                     {
@@ -210,6 +213,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblVersionValue.Text = unpack.Solution.Version;
                 lblManagedValue.Text = unpack.Solution.Package.Type.Equals(PackageType.MANAGED) ? "Yes" : "No";
                 lblPublisherValue.Text = unpack.Solution.Publisher.DisplayName;
+
+                if (_pack != null) { OnOperationRemoved?.Invoke(this, _pack); }
 
                 _pack = new PackOperation
                 {

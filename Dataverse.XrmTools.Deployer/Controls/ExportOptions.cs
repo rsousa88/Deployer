@@ -128,6 +128,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblManagedValue.Text = solution.IsManaged ? "Yes" : "No";
                 lblPublisherValue.Text = solution.Publisher.DisplayName;
 
+                if (_export != null) { OnOperationRemoved?.Invoke(this, _export); }
+
                 _export = new ExportOperation
                 {
                     OperationType = OperationType.EXPORT,
@@ -186,14 +188,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             if (chbUpdateVersion.Checked)
             {
-                var version = !string.IsNullOrEmpty(_settings.Defaults.Version) ? new Version(_settings.Defaults.Version) : new Version(_export.Solution.Version).IncrementRevision();
-
-                txtQuickUpdateVersion.Text = version.ToString();
-                _export.Solution.Version = version.ToString();
-
-                _settings.Defaults.Version = version.ToString();
-                _settings.SaveSettings();
-
                 var solution = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
 
                 _update = new UpdateOperation
@@ -201,6 +195,19 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     OperationType = OperationType.UPDATE,
                     Solution = solution
                 };
+
+                var version = !string.IsNullOrEmpty(_settings.Defaults.Version) ? new Version(_settings.Defaults.Version) : new Version(_export.Solution.Version).IncrementRevision();
+
+                Version.TryParse(_export.Solution.Version, out Version oldVersion);
+                if (version != oldVersion)
+                {
+                    _update.OldVersion = oldVersion.ToString();
+                    _export.Solution.Version = version.ToString();
+                }
+
+                txtQuickUpdateVersion.Text = version.ToString();
+                _settings.Defaults.Version = version.ToString();
+                _settings.SaveSettings();
 
                 _export.QuickUpdateId = _update.OperationId;
 
@@ -231,12 +238,17 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 var isValid = Version.TryParse(txtQuickUpdateVersion.Text, out Version version);
                 if (isValid)
                 {
-                    _export.Solution.Version = version.ToString();
+                    Version.TryParse(_update.OldVersion, out Version oldVersion);
+                    if (version != oldVersion)
+                    {
+                        _export.Solution.Version = version.ToString();
 
-                    _settings.Defaults.Version = version.ToString();
-                    _settings.SaveSettings();
+                        _settings.Defaults.Version = version.ToString();
+                        _settings.SaveSettings();
 
-                    _update.Solution.Version = version.ToString();
+                        _update.Solution.Version = version.ToString();
+                        _update.OldVersion = oldVersion != null ? oldVersion.ToString() : null;
+                    }
                 }
             }
             catch (Exception ex)

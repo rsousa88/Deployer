@@ -42,6 +42,8 @@ namespace Dataverse.XrmTools.Deployer.Forms
             var radio = sender as RadioButton;
             if(radio.Checked)
             {
+                _operations.Clear();
+
                 pnlOperationDetails.Controls.Clear();
                 var export = new ExportOptions(_logger, _settings);
                 pnlOperationDetails.Controls.Add(export);
@@ -57,12 +59,15 @@ namespace Dataverse.XrmTools.Deployer.Forms
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
+                _operations.Clear();
+
                 pnlOperationDetails.Controls.Clear();
-                var update = new UpdateOptions(_logger);
+                var update = new UpdateOptions(_logger, _settings);
                 pnlOperationDetails.Controls.Add(update);
 
                 update.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
                 update.OnOperationSelected += HandleSelectedOperationEvent;
+                update.OnOperationRemoved += HandleRemoveOperationEvent;
             }
         }
 
@@ -71,6 +76,8 @@ namespace Dataverse.XrmTools.Deployer.Forms
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
+                _operations.Clear();
+
                 pnlOperationDetails.Controls.Clear();
                 var import = new ImportOptions(_logger);
                 pnlOperationDetails.Controls.Add(import);
@@ -78,6 +85,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
                 import.OnSingleSolutionRetrieveRequested += HandleRetrieveSingleSolutionEvent;
                 import.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
                 import.OnOperationSelected += HandleSelectedOperationEvent;
+                import.OnOperationRemoved += HandleRemoveOperationEvent;
             }
         }
 
@@ -86,12 +94,15 @@ namespace Dataverse.XrmTools.Deployer.Forms
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
+                _operations.Clear();
+
                 pnlOperationDetails.Controls.Clear();
                 var delete = new DeleteOptions(_logger);
                 pnlOperationDetails.Controls.Add(delete);
 
                 delete.OnSolutionsRetrieveRequested += HandleRetrieveSolutionsEvent;
                 delete.OnOperationSelected += HandleSelectedOperationEvent;
+                delete.OnOperationRemoved += HandleRemoveOperationEvent;
             }
         }
 
@@ -100,12 +111,15 @@ namespace Dataverse.XrmTools.Deployer.Forms
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
+                _operations.Clear();
+
                 pnlOperationDetails.Controls.Clear();
                 var unpack = new UnpackOptions(_logger, _settings);
                 pnlOperationDetails.Controls.Add(unpack);
 
                 unpack.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
                 unpack.OnOperationSelected += HandleSelectedOperationEvent;
+                unpack.OnOperationRemoved += HandleRemoveOperationEvent;
             }
         }
 
@@ -114,25 +128,32 @@ namespace Dataverse.XrmTools.Deployer.Forms
             var radio = sender as RadioButton;
             if (radio.Checked)
             {
+                _operations.Clear();
+
                 pnlOperationDetails.Controls.Clear();
                 var pack = new PackOptions(_logger, _settings);
                 pnlOperationDetails.Controls.Add(pack);
 
                 pack.OnOperationsRetrieveRequested += HandleRetrieveOperationsEvent;
                 pack.OnOperationSelected += HandleSelectedOperationEvent;
+                pack.OnOperationRemoved += HandleRemoveOperationEvent;
             }
         }
 
         private void rbPublish_CheckedChanged(object sender, EventArgs e)
         {
-            pnlOperationDetails.Controls.Clear();
-
-            var operation = new Operation
+            var radio = sender as RadioButton;
+            if (radio.Checked)
             {
-                OperationType = OperationType.PUBLISH
-            };
+                _operations.Clear();
 
-            HandleSelectedOperationEvent(null, operation);
+                pnlOperationDetails.Controls.Clear();
+                var publish = new PublishOptions(_logger);
+                pnlOperationDetails.Controls.Add(publish);
+
+                publish.OnOperationSelected += HandleSelectedOperationEvent;
+                publish.OnOperationRemoved += HandleRemoveOperationEvent;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -175,6 +196,11 @@ namespace Dataverse.XrmTools.Deployer.Forms
         {
             _operations.Add(operation);
             btnClose.Enabled = true;
+
+            if(operation.OperationType.Equals(OperationType.PUBLISH))
+            {
+                btnClose.PerformClick();
+            }
         }
 
         private void HandleRemoveOperationEvent(object sender, Operation operation)

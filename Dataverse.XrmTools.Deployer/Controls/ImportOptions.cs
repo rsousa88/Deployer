@@ -22,6 +22,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
         public event OperationsRetrieve OnOperationsRetrieveRequested;
         public event EventHandler<Operation> OnOperationSelected;
         public event EventHandler<Operation> OnOperationUpdated;
+        public event EventHandler<Operation> OnOperationRemoved;
 
         private IEnumerable<Operation> _operations;
         private ImportOperation _import;
@@ -52,6 +53,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     lblPublisherValue.Text = solution.Publisher.DisplayName;
 
                     var existing = OnSingleSolutionRetrieveRequested?.Invoke(solution.LogicalName, ConnectionType.TARGET);
+
+                    if (_import != null) { OnOperationRemoved?.Invoke(this, _import); }
 
                     _import = new ImportOperation
                     {
@@ -201,6 +204,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 lblPublisherValue.Text = operation.Solution.Publisher.DisplayName;
 
                 var existing = OnSingleSolutionRetrieveRequested?.Invoke(operation.Solution.LogicalName, ConnectionType.TARGET);
+
+                if (_import != null) { OnOperationRemoved?.Invoke(this, _import); }
 
                 _import = new ImportOperation
                 {

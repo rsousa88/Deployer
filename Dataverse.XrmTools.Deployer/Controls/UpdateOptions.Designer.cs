@@ -212,6 +212,7 @@
             this.txtUpdateDescription.Name = "txtUpdateDescription";
             this.txtUpdateDescription.Size = new System.Drawing.Size(595, 173);
             this.txtUpdateDescription.TabIndex = 5;
+            this.txtUpdateDescription.Tag = "description";
             this.txtUpdateDescription.TextChanged += new System.EventHandler(this.SolutionDetails_TextChanged);
             // 
             // lblSolutionIdValue
@@ -242,6 +243,7 @@
             this.txtUpdateVersion.Name = "txtUpdateVersion";
             this.txtUpdateVersion.Size = new System.Drawing.Size(186, 22);
             this.txtUpdateVersion.TabIndex = 4;
+            this.txtUpdateVersion.Tag = "version";
             this.txtUpdateVersion.TextChanged += new System.EventHandler(this.SolutionDetails_TextChanged);
             // 
             // txtUpdateName
@@ -253,6 +255,7 @@
             this.txtUpdateName.Name = "txtUpdateName";
             this.txtUpdateName.Size = new System.Drawing.Size(492, 22);
             this.txtUpdateName.TabIndex = 3;
+            this.txtUpdateName.Tag = "name";
             this.txtUpdateName.TextChanged += new System.EventHandler(this.SolutionDetails_TextChanged);
             // 
             // lblPublisherValue
