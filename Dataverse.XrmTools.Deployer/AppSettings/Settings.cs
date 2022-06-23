@@ -30,6 +30,7 @@ namespace Dataverse.XrmTools.Deployer.AppSettings
 
     public class Defaults
     {
+        public string QueuePath { get; set; }
         public string ExportPath { get; set; }
         public string UnpackPath { get; set; }
         public string PackPath { get; set; }

@@ -41,7 +41,7 @@ namespace Dataverse.XrmTools.Deployer
         // models
         private Instance _targetInstance;
         private Instance _sourceInstance;
-        private List<OperationGroup> _groups= new List<OperationGroup>();
+        private List<OperationGroup> _groups = new List<OperationGroup>();
         private List<Operation> _operations = new List<Operation>();
 
         // flags
@@ -559,10 +559,13 @@ namespace Dataverse.XrmTools.Deployer
         private void SaveQueue()
         {
             _logger.Log(LogLevel.INFO, $"Saving queue...");
-            var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
+            var dirPath = Handle.SelectDirectory(_settings.Defaults.QueuePath);
             if (string.IsNullOrEmpty(dirPath)) { return; }
 
-            var json = _operations.SerializeObject();
+            _settings.Defaults.QueuePath = dirPath;
+            _settings.SaveSettings();
+
+            var json = _groups.SerializeObject();
             var filename = $"{dirPath}\\{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
             File.WriteAllText(filename, json);
 
@@ -922,7 +925,14 @@ namespace Dataverse.XrmTools.Deployer
             if (string.IsNullOrEmpty(path)) { return; }
 
             var json = File.ReadAllText(path);
-            _operations = json.DeserializeObject<List<Operation>>();
+            _groups = json.DeserializeObject<List<OperationGroup>>();
+
+            _operations.Clear();
+
+            foreach (var grp in _groups)
+            {
+                _operations.AddRange(grp.Operations);
+            }
 
             RenderOperationsList();
 

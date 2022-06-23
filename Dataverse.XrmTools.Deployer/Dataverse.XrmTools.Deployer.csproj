@@ -232,6 +232,12 @@
     <Compile Include="Controls\ExportDetails.Designer.cs">
       <DependentUpon>ExportDetails.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DeleteDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DeleteDetails.Designer.cs">
+      <DependentUpon>DeleteDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UpdateDetails.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -336,6 +342,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExportDetails.resx">
       <DependentUpon>ExportDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DeleteDetails.resx">
+      <DependentUpon>DeleteDetails.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UpdateDetails.resx">
       <DependentUpon>UpdateDetails.cs</DependentUpon>

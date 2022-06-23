@@ -46,8 +46,9 @@ namespace Dataverse.XrmTools.Deployer.Forms
                 //case OperationType.IMPORT:
                 //    var import = operation as ImportOperation;
                 //    break;
-                //case OperationType.DELETE:
-                //    break;
+                case OperationType.DELETE:
+                    control = new DeleteDetails(_logger, _operation);
+                    break;
                 //case OperationType.UNPACK:
                 //    var unpack = operation as UnpackOperation;
                 //    break;
