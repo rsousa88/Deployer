@@ -1,6 +1,6 @@
 ﻿namespace Dataverse.XrmTools.Deployer.Controls
 {
-    partial class UpdateDetails
+    partial class ExportDetails
     {
         /// <summary> 
         /// Required designer variable.
@@ -33,11 +33,9 @@
             this.label_01 = new System.Windows.Forms.Label();
             this.lblOperationType = new System.Windows.Forms.Label();
             this.label_00 = new System.Windows.Forms.Label();
-            this.gbUpdateInfo = new System.Windows.Forms.GroupBox();
+            this.gbSolutionInfo = new System.Windows.Forms.GroupBox();
             this.lblSolutionDisplayName = new System.Windows.Forms.Label();
             this.lblSolutionVersion = new System.Windows.Forms.Label();
-            this.label_16 = new System.Windows.Forms.Label();
-            this.txtSolutionDescription = new System.Windows.Forms.TextBox();
             this.lblSolutionId = new System.Windows.Forms.Label();
             this.label_10 = new System.Windows.Forms.Label();
             this.lblSolutionPublisher = new System.Windows.Forms.Label();
@@ -48,8 +46,18 @@
             this.lblSolutionLogicalName = new System.Windows.Forms.Label();
             this.label_11 = new System.Windows.Forms.Label();
             this.label_12 = new System.Windows.Forms.Label();
+            this.lblOperationExportAs = new System.Windows.Forms.Label();
+            this.label_02 = new System.Windows.Forms.Label();
+            this.lblOperationExportTo = new System.Windows.Forms.Label();
+            this.label_03 = new System.Windows.Forms.Label();
+            this.label_04 = new System.Windows.Forms.Label();
+            this.label_05 = new System.Windows.Forms.Label();
+            this.label_06 = new System.Windows.Forms.Label();
+            this.lblOperationQuickUpdateVersion = new System.Windows.Forms.Label();
+            this.lblOperationQuickUnpack = new System.Windows.Forms.Label();
+            this.lblOperationQuickPack = new System.Windows.Forms.Label();
             this.gbOperationInfo.SuspendLayout();
-            this.gbUpdateInfo.SuspendLayout();
+            this.gbSolutionInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbOperationInfo
@@ -57,13 +65,23 @@
             this.gbOperationInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbOperationInfo.Controls.Add(this.lblOperationQuickPack);
+            this.gbOperationInfo.Controls.Add(this.lblOperationQuickUnpack);
+            this.gbOperationInfo.Controls.Add(this.lblOperationQuickUpdateVersion);
+            this.gbOperationInfo.Controls.Add(this.label_06);
+            this.gbOperationInfo.Controls.Add(this.label_05);
+            this.gbOperationInfo.Controls.Add(this.label_04);
+            this.gbOperationInfo.Controls.Add(this.lblOperationExportTo);
+            this.gbOperationInfo.Controls.Add(this.label_03);
+            this.gbOperationInfo.Controls.Add(this.lblOperationExportAs);
+            this.gbOperationInfo.Controls.Add(this.label_02);
             this.gbOperationInfo.Controls.Add(this.lblOperationDescription);
             this.gbOperationInfo.Controls.Add(this.label_01);
             this.gbOperationInfo.Controls.Add(this.lblOperationType);
             this.gbOperationInfo.Controls.Add(this.label_00);
             this.gbOperationInfo.Location = new System.Drawing.Point(0, 0);
             this.gbOperationInfo.Name = "gbOperationInfo";
-            this.gbOperationInfo.Size = new System.Drawing.Size(1372, 88);
+            this.gbOperationInfo.Size = new System.Drawing.Size(1372, 256);
             this.gbOperationInfo.TabIndex = 0;
             this.gbOperationInfo.TabStop = false;
             this.gbOperationInfo.Text = "Operation Details";
@@ -71,7 +89,7 @@
             // lblOperationDescription
             // 
             this.lblOperationDescription.AutoSize = true;
-            this.lblOperationDescription.Location = new System.Drawing.Point(157, 55);
+            this.lblOperationDescription.Location = new System.Drawing.Point(157, 60);
             this.lblOperationDescription.Name = "lblOperationDescription";
             this.lblOperationDescription.Size = new System.Drawing.Size(13, 17);
             this.lblOperationDescription.TabIndex = 9;
@@ -80,7 +98,7 @@
             // label_01
             // 
             this.label_01.AutoSize = true;
-            this.label_01.Location = new System.Drawing.Point(6, 45);
+            this.label_01.Location = new System.Drawing.Point(6, 50);
             this.label_01.Name = "label_01";
             this.label_01.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.label_01.Size = new System.Drawing.Size(83, 27);
@@ -106,31 +124,29 @@
             this.label_00.TabIndex = 7;
             this.label_00.Text = "Operation Type:";
             // 
-            // gbUpdateInfo
+            // gbSolutionInfo
             // 
-            this.gbUpdateInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gbSolutionInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbUpdateInfo.Controls.Add(this.lblSolutionDisplayName);
-            this.gbUpdateInfo.Controls.Add(this.lblSolutionVersion);
-            this.gbUpdateInfo.Controls.Add(this.label_16);
-            this.gbUpdateInfo.Controls.Add(this.txtSolutionDescription);
-            this.gbUpdateInfo.Controls.Add(this.lblSolutionId);
-            this.gbUpdateInfo.Controls.Add(this.label_10);
-            this.gbUpdateInfo.Controls.Add(this.lblSolutionPublisher);
-            this.gbUpdateInfo.Controls.Add(this.label_15);
-            this.gbUpdateInfo.Controls.Add(this.lblSolutionManaged);
-            this.gbUpdateInfo.Controls.Add(this.label_14);
-            this.gbUpdateInfo.Controls.Add(this.label_13);
-            this.gbUpdateInfo.Controls.Add(this.lblSolutionLogicalName);
-            this.gbUpdateInfo.Controls.Add(this.label_11);
-            this.gbUpdateInfo.Controls.Add(this.label_12);
-            this.gbUpdateInfo.Location = new System.Drawing.Point(3, 94);
-            this.gbUpdateInfo.Name = "gbUpdateInfo";
-            this.gbUpdateInfo.Size = new System.Drawing.Size(1369, 368);
-            this.gbUpdateInfo.TabIndex = 0;
-            this.gbUpdateInfo.TabStop = false;
-            this.gbUpdateInfo.Text = "Solution Details";
+            this.gbSolutionInfo.Controls.Add(this.lblSolutionDisplayName);
+            this.gbSolutionInfo.Controls.Add(this.lblSolutionVersion);
+            this.gbSolutionInfo.Controls.Add(this.lblSolutionId);
+            this.gbSolutionInfo.Controls.Add(this.label_10);
+            this.gbSolutionInfo.Controls.Add(this.lblSolutionPublisher);
+            this.gbSolutionInfo.Controls.Add(this.label_15);
+            this.gbSolutionInfo.Controls.Add(this.lblSolutionManaged);
+            this.gbSolutionInfo.Controls.Add(this.label_14);
+            this.gbSolutionInfo.Controls.Add(this.label_13);
+            this.gbSolutionInfo.Controls.Add(this.lblSolutionLogicalName);
+            this.gbSolutionInfo.Controls.Add(this.label_11);
+            this.gbSolutionInfo.Controls.Add(this.label_12);
+            this.gbSolutionInfo.Location = new System.Drawing.Point(3, 262);
+            this.gbSolutionInfo.Name = "gbSolutionInfo";
+            this.gbSolutionInfo.Size = new System.Drawing.Size(1643, 200);
+            this.gbSolutionInfo.TabIndex = 0;
+            this.gbSolutionInfo.TabStop = false;
+            this.gbSolutionInfo.Text = "Solution Details";
             // 
             // lblSolutionDisplayName
             // 
@@ -149,29 +165,6 @@
             this.lblSolutionVersion.Size = new System.Drawing.Size(13, 17);
             this.lblSolutionVersion.TabIndex = 6;
             this.lblSolutionVersion.Text = "-";
-            // 
-            // label_16
-            // 
-            this.label_16.AutoSize = true;
-            this.label_16.Location = new System.Drawing.Point(6, 190);
-            this.label_16.Name = "label_16";
-            this.label_16.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.label_16.Size = new System.Drawing.Size(83, 27);
-            this.label_16.TabIndex = 0;
-            this.label_16.Text = "Description:";
-            // 
-            // txtSolutionDescription
-            // 
-            this.txtSolutionDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSolutionDescription.Location = new System.Drawing.Point(9, 221);
-            this.txtSolutionDescription.Margin = new System.Windows.Forms.Padding(4);
-            this.txtSolutionDescription.Multiline = true;
-            this.txtSolutionDescription.Name = "txtSolutionDescription";
-            this.txtSolutionDescription.ReadOnly = true;
-            this.txtSolutionDescription.Size = new System.Drawing.Size(1353, 140);
-            this.txtSolutionDescription.TabIndex = 5;
             // 
             // lblSolutionId
             // 
@@ -269,26 +262,119 @@
             this.label_12.TabIndex = 0;
             this.label_12.Text = "Display Name:";
             // 
-            // UpdateDetails
+            // lblOperationExportAs
+            // 
+            this.lblOperationExportAs.AutoSize = true;
+            this.lblOperationExportAs.Location = new System.Drawing.Point(157, 92);
+            this.lblOperationExportAs.Name = "lblOperationExportAs";
+            this.lblOperationExportAs.Size = new System.Drawing.Size(13, 17);
+            this.lblOperationExportAs.TabIndex = 11;
+            this.lblOperationExportAs.Text = "-";
+            // 
+            // label_02
+            // 
+            this.label_02.AutoSize = true;
+            this.label_02.Location = new System.Drawing.Point(6, 82);
+            this.label_02.Name = "label_02";
+            this.label_02.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.label_02.Size = new System.Drawing.Size(71, 27);
+            this.label_02.TabIndex = 10;
+            this.label_02.Text = "Export as:";
+            // 
+            // lblOperationExportTo
+            // 
+            this.lblOperationExportTo.AutoSize = true;
+            this.lblOperationExportTo.Location = new System.Drawing.Point(157, 124);
+            this.lblOperationExportTo.Name = "lblOperationExportTo";
+            this.lblOperationExportTo.Size = new System.Drawing.Size(13, 17);
+            this.lblOperationExportTo.TabIndex = 13;
+            this.lblOperationExportTo.Text = "-";
+            // 
+            // label_03
+            // 
+            this.label_03.AutoSize = true;
+            this.label_03.Location = new System.Drawing.Point(6, 114);
+            this.label_03.Name = "label_03";
+            this.label_03.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.label_03.Size = new System.Drawing.Size(68, 27);
+            this.label_03.TabIndex = 12;
+            this.label_03.Text = "Export to:";
+            // 
+            // label_04
+            // 
+            this.label_04.AutoSize = true;
+            this.label_04.Location = new System.Drawing.Point(6, 146);
+            this.label_04.Name = "label_04";
+            this.label_04.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.label_04.Size = new System.Drawing.Size(146, 27);
+            this.label_04.TabIndex = 14;
+            this.label_04.Text = "Quick update version:";
+            // 
+            // label_05
+            // 
+            this.label_05.AutoSize = true;
+            this.label_05.Location = new System.Drawing.Point(6, 178);
+            this.label_05.Name = "label_05";
+            this.label_05.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.label_05.Size = new System.Drawing.Size(98, 27);
+            this.label_05.TabIndex = 15;
+            this.label_05.Text = "Quick unpack:";
+            // 
+            // label_06
+            // 
+            this.label_06.AutoSize = true;
+            this.label_06.Location = new System.Drawing.Point(6, 210);
+            this.label_06.Name = "label_06";
+            this.label_06.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.label_06.Size = new System.Drawing.Size(82, 27);
+            this.label_06.TabIndex = 16;
+            this.label_06.Text = "Quick pack:";
+            // 
+            // lblOperationQuickUpdateVersion
+            // 
+            this.lblOperationQuickUpdateVersion.AutoSize = true;
+            this.lblOperationQuickUpdateVersion.Location = new System.Drawing.Point(157, 156);
+            this.lblOperationQuickUpdateVersion.Name = "lblOperationQuickUpdateVersion";
+            this.lblOperationQuickUpdateVersion.Size = new System.Drawing.Size(13, 17);
+            this.lblOperationQuickUpdateVersion.TabIndex = 17;
+            this.lblOperationQuickUpdateVersion.Text = "-";
+            // 
+            // lblOperationQuickUnpack
+            // 
+            this.lblOperationQuickUnpack.AutoSize = true;
+            this.lblOperationQuickUnpack.Location = new System.Drawing.Point(157, 188);
+            this.lblOperationQuickUnpack.Name = "lblOperationQuickUnpack";
+            this.lblOperationQuickUnpack.Size = new System.Drawing.Size(13, 17);
+            this.lblOperationQuickUnpack.TabIndex = 18;
+            this.lblOperationQuickUnpack.Text = "-";
+            // 
+            // lblOperationQuickPack
+            // 
+            this.lblOperationQuickPack.AutoSize = true;
+            this.lblOperationQuickPack.Location = new System.Drawing.Point(157, 220);
+            this.lblOperationQuickPack.Name = "lblOperationQuickPack";
+            this.lblOperationQuickPack.Size = new System.Drawing.Size(13, 17);
+            this.lblOperationQuickPack.TabIndex = 19;
+            this.lblOperationQuickPack.Text = "-";
+            // 
+            // ExportDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbOperationInfo);
-            this.Controls.Add(this.gbUpdateInfo);
-            this.Name = "UpdateDetails";
+            this.Controls.Add(this.gbSolutionInfo);
+            this.Name = "ExportDetails";
             this.Size = new System.Drawing.Size(1375, 465);
             this.gbOperationInfo.ResumeLayout(false);
             this.gbOperationInfo.PerformLayout();
-            this.gbUpdateInfo.ResumeLayout(false);
-            this.gbUpdateInfo.PerformLayout();
+            this.gbSolutionInfo.ResumeLayout(false);
+            this.gbSolutionInfo.PerformLayout();
             this.ResumeLayout(false);
 
         }
         #endregion
         private System.Windows.Forms.GroupBox gbOperationInfo;
-        private System.Windows.Forms.TextBox txtSolutionDescription;
-        private System.Windows.Forms.GroupBox gbUpdateInfo;
-        private System.Windows.Forms.Label label_16;
+        private System.Windows.Forms.GroupBox gbSolutionInfo;
         private System.Windows.Forms.Label lblSolutionId;
         private System.Windows.Forms.Label label_10;
         private System.Windows.Forms.Label lblSolutionPublisher;
@@ -305,5 +391,15 @@
         private System.Windows.Forms.Label label_01;
         private System.Windows.Forms.Label lblSolutionDisplayName;
         private System.Windows.Forms.Label lblSolutionVersion;
+        private System.Windows.Forms.Label lblOperationExportAs;
+        private System.Windows.Forms.Label label_02;
+        private System.Windows.Forms.Label lblOperationExportTo;
+        private System.Windows.Forms.Label label_03;
+        private System.Windows.Forms.Label label_05;
+        private System.Windows.Forms.Label label_04;
+        private System.Windows.Forms.Label label_06;
+        private System.Windows.Forms.Label lblOperationQuickPack;
+        private System.Windows.Forms.Label lblOperationQuickUnpack;
+        private System.Windows.Forms.Label lblOperationQuickUpdateVersion;
     }
 }

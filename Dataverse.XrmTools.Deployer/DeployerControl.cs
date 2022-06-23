@@ -83,8 +83,6 @@ namespace Dataverse.XrmTools.Deployer
                 _logger.Log(LogLevel.DEBUG, $"Updating connections...");
                 base.UpdateConnection(newService, detail, actionName, parameter);
 
-                
-
                 var connType = actionName.Equals("AdditionalOrganization") ? "Secondary" : "Primary";
                 _logger.Log(LogLevel.DEBUG, $"Connection type: {connType}");
 

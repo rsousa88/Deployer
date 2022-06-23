@@ -226,6 +226,12 @@
     <Compile Include="Controls\UnpackOptions.Designer.cs">
       <DependentUpon>UnpackOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ExportDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExportDetails.Designer.cs">
+      <DependentUpon>ExportDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UpdateDetails.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -327,6 +333,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UnpackOptions.resx">
       <DependentUpon>UnpackOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ExportDetails.resx">
+      <DependentUpon>ExportDetails.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UpdateDetails.resx">
       <DependentUpon>UpdateDetails.cs</DependentUpon>

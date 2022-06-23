@@ -39,9 +39,10 @@ namespace Dataverse.XrmTools.Deployer.Forms
                     var update = _operation as UpdateOperation;
                     control = new UpdateDetails(_logger, update);
                     break;
-                //case OperationType.EXPORT:
-                //    var export = operation as ExportOperation;
-                //    break;
+                case OperationType.EXPORT:
+                    var export = _operation as ExportOperation;
+                    control = new ExportDetails(_logger, export);
+                    break;
                 //case OperationType.IMPORT:
                 //    var import = operation as ImportOperation;
                 //    break;
