@@ -1,7 +1,10 @@
-﻿namespace Dataverse.XrmTools.Deployer.Models
+﻿using Dataverse.XrmTools.Deployer.Enums;
+
+namespace Dataverse.XrmTools.Deployer.Models
 {
     public class UnpackOperation : Operation
     {
+        public OperationMode Mode { get; set; }
         public string WorkingDir { get; set; }
         public string Packager { get; set; }
         public string Action { get; set; }

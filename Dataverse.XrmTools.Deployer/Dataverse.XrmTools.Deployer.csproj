@@ -202,6 +202,24 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
+    <Compile Include="Controls\ImportDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ImportDetails.Designer.cs">
+      <DependentUpon>ImportDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PackDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PackDetails.Designer.cs">
+      <DependentUpon>PackDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UnpackDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UnpackDetails.Designer.cs">
+      <DependentUpon>UnpackDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PublishOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -269,6 +287,7 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enums\OperationMode.cs" />
     <Compile Include="Enums\HistoryOperation.cs" />
     <Compile Include="Enums\HistoryResult.cs" />
     <Compile Include="Enums\HistoryStatus.cs" />
@@ -328,6 +347,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ImportDetails.resx">
+      <DependentUpon>ImportDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PackDetails.resx">
+      <DependentUpon>PackDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UnpackDetails.resx">
+      <DependentUpon>UnpackDetails.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PublishOptions.resx">
       <DependentUpon>PublishOptions.cs</DependentUpon>
     </EmbeddedResource>

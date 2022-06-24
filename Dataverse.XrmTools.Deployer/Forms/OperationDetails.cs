@@ -43,20 +43,21 @@ namespace Dataverse.XrmTools.Deployer.Forms
                     var export = _operation as ExportOperation;
                     control = new ExportDetails(_logger, export);
                     break;
-                //case OperationType.IMPORT:
-                //    var import = operation as ImportOperation;
-                //    break;
+                case OperationType.IMPORT:
+                    var import = _operation as ImportOperation;
+                    control = new ImportDetails(_logger, import);
+                    break;
                 case OperationType.DELETE:
                     control = new DeleteDetails(_logger, _operation);
                     break;
-                //case OperationType.UNPACK:
-                //    var unpack = operation as UnpackOperation;
-                //    break;
-                //case OperationType.PACK:
-                //    var pack = operation as PackOperation;
-                //    break;
-                //case OperationType.PUBLISH:
-                //    break;
+                case OperationType.UNPACK:
+                    var unpack = _operation as UnpackOperation;
+                    control = new UnpackDetails(_logger, unpack);
+                    break;
+                case OperationType.PACK:
+                    var pack = _operation as PackOperation;
+                    control = new PackDetails(_logger, pack);
+                    break;
                 default:
                     break;
             }

@@ -60,6 +60,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     {
                         OperationType = OperationType.PACK,
                         Solution = solution,
+                        Mode = OperationMode.EXPLORER,
                         Action = "Pack",
                         WorkingDir = _settings.WorkingDirectory,
                         Packager = _settings.PackagerPath,
@@ -138,21 +139,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             return solution;
         }
 
-        private string GetFileDialogPath(FileDialog dialog)
-        {
-            var path = string.Empty;
-
-            using (var ofd = dialog as OpenFileDialog)
-            {
-                if (ofd.ShowDialog(this) == DialogResult.OK)
-                {
-                    path = ofd.FileName;
-                }
-            }
-
-            return path;
-        }
-
         private void rbPackFromDir_CheckedChanged(object sender, EventArgs e)
         {
             var radio = sender as RadioButton;
@@ -220,6 +206,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 {
                     OperationType = OperationType.PACK,
                     Solution = unpack.Solution,
+                    Mode = OperationMode.QUEUE,
                     Action = "Pack",
                     WorkingDir = unpack.WorkingDir,
                     Packager = _settings.PackagerPath,

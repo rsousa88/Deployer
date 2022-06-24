@@ -60,6 +60,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     {
                         OperationType = OperationType.IMPORT,
                         Solution = solution,
+                        Mode = OperationMode.EXPLORER,
+                        ZipFile = txtImportPathValue.Text,
                         HoldingSolution = existing != null ? true : false,
                         OverwriteUnmanaged = true,
                         PublishWorkflows = true
@@ -123,8 +125,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             var package = new Package
             {
                 Type = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? PackageType.MANAGED : PackageType.UNMANAGED,
-                Bytes = File.ReadAllBytes(path),
-                //ExportPath = path
+                Bytes = File.ReadAllBytes(path)
             };
 
             return new Solution
@@ -211,6 +212,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 {
                     OperationType = OperationType.IMPORT,
                     Solution = operation.Solution,
+                    Mode = OperationMode.QUEUE,
                     HoldingSolution = existing != null ? true : false,
                     OverwriteUnmanaged = true,
                     PublishWorkflows = true

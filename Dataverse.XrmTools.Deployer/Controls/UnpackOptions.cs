@@ -61,6 +61,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     {
                         OperationType = OperationType.UNPACK,
                         Solution = solution,
+                        Mode = OperationMode.EXPLORER,
                         Action = "Extract",
                         WorkingDir = _settings.WorkingDirectory,
                         Packager = _settings.PackagerPath,
@@ -217,6 +218,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 {
                     OperationType = OperationType.UNPACK,
                     Solution = export.Solution,
+                    Mode = OperationMode.QUEUE,
                     Action = "Extract",
                     WorkingDir = _settings.WorkingDirectory,
                     Packager = _settings.PackagerPath,
