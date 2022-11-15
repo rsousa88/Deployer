@@ -4,6 +4,7 @@
     {
         public string OldDisplayName { get; set; }
         public string OldVersion { get; set; }
+        public string NewVersion { get; set; }
         public string OldDescription { get; set; }
     }
 }

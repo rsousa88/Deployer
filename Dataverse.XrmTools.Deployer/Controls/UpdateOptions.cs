@@ -152,7 +152,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                         _settings.Defaults.Version = version.ToString();
                         _settings.SaveSettings();
 
-                        _update.Solution.Version = version.ToString();
+                        _update.NewVersion = version.ToString();
                         _update.OldVersion = oldVersion.ToString();
                     }
                 }

@@ -319,6 +319,28 @@ namespace Dataverse.XrmTools.Deployer.Controls
             }
         }
 
+        private void btnSetUnpackLocation_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dirPath = Handle.SelectDirectory(_settings.Defaults.UnpackPath);
+                if (string.IsNullOrEmpty(dirPath)) { return; }
+
+                txtUnpackPathValue.Text = dirPath;
+                txtUnpackPathValue.Select(txtUnpackPathValue.Text.Length, 0);
+
+                _settings.Defaults.UnpackPath = dirPath;
+                _settings.SaveSettings();
+
+                _unpack.Folder = dirPath;
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void chbPack_CheckedChanged(object sender, EventArgs e)
         {
             try
@@ -363,6 +385,28 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     if (_pack != null) { OnOperationRemoved?.Invoke(this, _pack); }
                     _export.QuickPackId = Guid.Empty;
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnSetPackLocation_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dirPath = Handle.SelectDirectory(_settings.Defaults.PackPath);
+                if (string.IsNullOrEmpty(dirPath)) { return; }
+
+                txtPackPathValue.Text = dirPath;
+                txtPackPathValue.Select(txtPackPathValue.Text.Length, 0);
+
+                _settings.Defaults.PackPath = dirPath;
+                _settings.SaveSettings();
+
+                _pack.ZipFile = $"{dirPath}\\{_pack.Solution.Package.Name}";
             }
             catch (Exception ex)
             {

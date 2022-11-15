@@ -559,14 +559,17 @@ namespace Dataverse.XrmTools.Deployer
         private void SaveQueue()
         {
             _logger.Log(LogLevel.INFO, $"Saving queue...");
-            var dirPath = Handle.SelectDirectory(_settings.Defaults.QueuePath);
+
+            var defaultFilename = $"{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
+            var filename = this.SaveFile("Json files (*.json)|*.queue.json", defaultFilename);
+
+            var dirPath = Path.GetDirectoryName(filename);
             if (string.IsNullOrEmpty(dirPath)) { return; }
 
             _settings.Defaults.QueuePath = dirPath;
             _settings.SaveSettings();
 
             var json = _groups.SerializeObject();
-            var filename = $"{dirPath}\\{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
             File.WriteAllText(filename, json);
 
             _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");

@@ -57,7 +57,11 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.btnLoadSolutions = new System.Windows.Forms.Button();
             this.gbExport = new System.Windows.Forms.GroupBox();
             this.gbQuickActions = new System.Windows.Forms.GroupBox();
+            this.btnSetPackLocation = new System.Windows.Forms.Button();
+            this.txtPackPathValue = new System.Windows.Forms.TextBox();
+            this.btnSetUnpackLocation = new System.Windows.Forms.Button();
             this.txtQuickUpdateVersion = new System.Windows.Forms.TextBox();
+            this.txtUnpackPathValue = new System.Windows.Forms.TextBox();
             this.chbPack = new System.Windows.Forms.CheckBox();
             this.chbUnpack = new System.Windows.Forms.CheckBox();
             this.chbUpdateVersion = new System.Windows.Forms.CheckBox();
@@ -69,10 +73,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbManaged = new System.Windows.Forms.RadioButton();
             this.rbUnmanaged = new System.Windows.Forms.RadioButton();
             this.lblType = new System.Windows.Forms.Label();
-            this.btnSetUnpackLocation = new System.Windows.Forms.Button();
-            this.txtUnpackPathValue = new System.Windows.Forms.TextBox();
-            this.txtPackPathValue = new System.Windows.Forms.TextBox();
-            this.btnSetPackLocation = new System.Windows.Forms.Button();
             this.gbSolutionInfo.SuspendLayout();
             this.gbSolutions.SuspendLayout();
             this.gbExport.SuspendLayout();
@@ -110,7 +110,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblSolutionIdValue.AutoSize = true;
             this.lblSolutionIdValue.Location = new System.Drawing.Point(111, 28);
             this.lblSolutionIdValue.Name = "lblSolutionIdValue";
-            this.lblSolutionIdValue.Size = new System.Drawing.Size(13, 17);
+            this.lblSolutionIdValue.Size = new System.Drawing.Size(11, 16);
             this.lblSolutionIdValue.TabIndex = 11;
             this.lblSolutionIdValue.Text = "-";
             // 
@@ -120,7 +120,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblSolutionId.Location = new System.Drawing.Point(6, 18);
             this.lblSolutionId.Name = "lblSolutionId";
             this.lblSolutionId.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblSolutionId.Size = new System.Drawing.Size(80, 27);
+            this.lblSolutionId.Size = new System.Drawing.Size(74, 26);
             this.lblSolutionId.TabIndex = 10;
             this.lblSolutionId.Text = "Solution ID:";
             // 
@@ -129,7 +129,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblPublisherValue.AutoSize = true;
             this.lblPublisherValue.Location = new System.Drawing.Point(111, 173);
             this.lblPublisherValue.Name = "lblPublisherValue";
-            this.lblPublisherValue.Size = new System.Drawing.Size(13, 17);
+            this.lblPublisherValue.Size = new System.Drawing.Size(11, 16);
             this.lblPublisherValue.TabIndex = 9;
             this.lblPublisherValue.Text = "-";
             // 
@@ -139,7 +139,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblPublisher.Location = new System.Drawing.Point(6, 163);
             this.lblPublisher.Name = "lblPublisher";
             this.lblPublisher.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblPublisher.Size = new System.Drawing.Size(71, 27);
+            this.lblPublisher.Size = new System.Drawing.Size(66, 26);
             this.lblPublisher.TabIndex = 8;
             this.lblPublisher.Text = "Publisher:";
             // 
@@ -148,7 +148,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblManagedValue.AutoSize = true;
             this.lblManagedValue.Location = new System.Drawing.Point(111, 144);
             this.lblManagedValue.Name = "lblManagedValue";
-            this.lblManagedValue.Size = new System.Drawing.Size(13, 17);
+            this.lblManagedValue.Size = new System.Drawing.Size(11, 16);
             this.lblManagedValue.TabIndex = 7;
             this.lblManagedValue.Text = "-";
             // 
@@ -158,7 +158,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblManaged.Location = new System.Drawing.Point(6, 134);
             this.lblManaged.Name = "lblManaged";
             this.lblManaged.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblManaged.Size = new System.Drawing.Size(85, 27);
+            this.lblManaged.Size = new System.Drawing.Size(81, 26);
             this.lblManaged.TabIndex = 6;
             this.lblManaged.Text = "Is Managed:";
             // 
@@ -167,7 +167,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblVersionValue.AutoSize = true;
             this.lblVersionValue.Location = new System.Drawing.Point(111, 115);
             this.lblVersionValue.Name = "lblVersionValue";
-            this.lblVersionValue.Size = new System.Drawing.Size(13, 17);
+            this.lblVersionValue.Size = new System.Drawing.Size(11, 16);
             this.lblVersionValue.TabIndex = 5;
             this.lblVersionValue.Text = "-";
             // 
@@ -177,7 +177,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblVersion.Location = new System.Drawing.Point(6, 105);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblVersion.Size = new System.Drawing.Size(60, 27);
+            this.lblVersion.Size = new System.Drawing.Size(56, 26);
             this.lblVersion.TabIndex = 4;
             this.lblVersion.Text = "Version:";
             // 
@@ -186,7 +186,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblDisplayNameValue.AutoSize = true;
             this.lblDisplayNameValue.Location = new System.Drawing.Point(111, 86);
             this.lblDisplayNameValue.Name = "lblDisplayNameValue";
-            this.lblDisplayNameValue.Size = new System.Drawing.Size(13, 17);
+            this.lblDisplayNameValue.Size = new System.Drawing.Size(11, 16);
             this.lblDisplayNameValue.TabIndex = 3;
             this.lblDisplayNameValue.Text = "-";
             // 
@@ -195,7 +195,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblLogicalNameValue.AutoSize = true;
             this.lblLogicalNameValue.Location = new System.Drawing.Point(111, 57);
             this.lblLogicalNameValue.Name = "lblLogicalNameValue";
-            this.lblLogicalNameValue.Size = new System.Drawing.Size(13, 17);
+            this.lblLogicalNameValue.Size = new System.Drawing.Size(11, 16);
             this.lblLogicalNameValue.TabIndex = 2;
             this.lblLogicalNameValue.Text = "-";
             // 
@@ -205,7 +205,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblLogicalName.Location = new System.Drawing.Point(6, 47);
             this.lblLogicalName.Name = "lblLogicalName";
             this.lblLogicalName.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblLogicalName.Size = new System.Drawing.Size(98, 27);
+            this.lblLogicalName.Size = new System.Drawing.Size(94, 26);
             this.lblLogicalName.TabIndex = 1;
             this.lblLogicalName.Text = "Logical Name:";
             // 
@@ -215,7 +215,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblDisplayName.Location = new System.Drawing.Point(6, 76);
             this.lblDisplayName.Name = "lblDisplayName";
             this.lblDisplayName.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblDisplayName.Size = new System.Drawing.Size(99, 27);
+            this.lblDisplayName.Size = new System.Drawing.Size(96, 26);
             this.lblDisplayName.TabIndex = 0;
             this.lblDisplayName.Text = "Display Name:";
             // 
@@ -253,7 +253,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblSolutionFilter.Location = new System.Drawing.Point(7, 26);
             this.lblSolutionFilter.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSolutionFilter.Name = "lblSolutionFilter";
-            this.lblSolutionFilter.Size = new System.Drawing.Size(43, 17);
+            this.lblSolutionFilter.Size = new System.Drawing.Size(39, 16);
             this.lblSolutionFilter.TabIndex = 4;
             this.lblSolutionFilter.Text = "Filter:";
             // 
@@ -361,6 +361,47 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.gbQuickActions.TabStop = false;
             this.gbQuickActions.Text = "Quick Actions";
             // 
+            // btnSetPackLocation
+            // 
+            this.btnSetPackLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetPackLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSetPackLocation.Location = new System.Drawing.Point(568, 70);
+            this.btnSetPackLocation.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetPackLocation.Name = "btnSetPackLocation";
+            this.btnSetPackLocation.Size = new System.Drawing.Size(36, 29);
+            this.btnSetPackLocation.TabIndex = 20;
+            this.btnSetPackLocation.Tag = "solution";
+            this.btnSetPackLocation.Text = "...";
+            this.btnSetPackLocation.UseVisualStyleBackColor = true;
+            this.btnSetPackLocation.Click += new System.EventHandler(this.btnSetPackLocation_Click);
+            // 
+            // txtPackPathValue
+            // 
+            this.txtPackPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPackPathValue.Location = new System.Drawing.Point(141, 73);
+            this.txtPackPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPackPathValue.Name = "txtPackPathValue";
+            this.txtPackPathValue.ReadOnly = true;
+            this.txtPackPathValue.Size = new System.Drawing.Size(419, 22);
+            this.txtPackPathValue.TabIndex = 19;
+            // 
+            // btnSetUnpackLocation
+            // 
+            this.btnSetUnpackLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetUnpackLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnSetUnpackLocation.Location = new System.Drawing.Point(568, 42);
+            this.btnSetUnpackLocation.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetUnpackLocation.Name = "btnSetUnpackLocation";
+            this.btnSetUnpackLocation.Size = new System.Drawing.Size(36, 29);
+            this.btnSetUnpackLocation.TabIndex = 18;
+            this.btnSetUnpackLocation.Tag = "solution";
+            this.btnSetUnpackLocation.Text = "...";
+            this.btnSetUnpackLocation.UseVisualStyleBackColor = true;
+            this.btnSetUnpackLocation.Click += new System.EventHandler(this.btnSetUnpackLocation_Click);
+            // 
             // txtQuickUpdateVersion
             // 
             this.txtQuickUpdateVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -373,13 +414,24 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.txtQuickUpdateVersion.TabIndex = 5;
             this.txtQuickUpdateVersion.TextChanged += new System.EventHandler(this.txtQuickUpdateVersion_TextChanged);
             // 
+            // txtUnpackPathValue
+            // 
+            this.txtUnpackPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUnpackPathValue.Location = new System.Drawing.Point(141, 46);
+            this.txtUnpackPathValue.Margin = new System.Windows.Forms.Padding(4);
+            this.txtUnpackPathValue.Name = "txtUnpackPathValue";
+            this.txtUnpackPathValue.ReadOnly = true;
+            this.txtUnpackPathValue.Size = new System.Drawing.Size(419, 22);
+            this.txtUnpackPathValue.TabIndex = 17;
+            // 
             // chbPack
             // 
             this.chbPack.AutoSize = true;
             this.chbPack.Enabled = false;
             this.chbPack.Location = new System.Drawing.Point(6, 75);
             this.chbPack.Name = "chbPack";
-            this.chbPack.Size = new System.Drawing.Size(61, 21);
+            this.chbPack.Size = new System.Drawing.Size(60, 20);
             this.chbPack.TabIndex = 2;
             this.chbPack.Tag = "";
             this.chbPack.Text = "Pack";
@@ -391,7 +443,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.chbUnpack.AutoSize = true;
             this.chbUnpack.Location = new System.Drawing.Point(6, 48);
             this.chbUnpack.Name = "chbUnpack";
-            this.chbUnpack.Size = new System.Drawing.Size(78, 21);
+            this.chbUnpack.Size = new System.Drawing.Size(76, 20);
             this.chbUnpack.TabIndex = 1;
             this.chbUnpack.Tag = "";
             this.chbUnpack.Text = "Unpack";
@@ -403,7 +455,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.chbUpdateVersion.AutoSize = true;
             this.chbUpdateVersion.Location = new System.Drawing.Point(6, 21);
             this.chbUpdateVersion.Name = "chbUpdateVersion";
-            this.chbUpdateVersion.Size = new System.Drawing.Size(128, 21);
+            this.chbUpdateVersion.Size = new System.Drawing.Size(123, 20);
             this.chbUpdateVersion.TabIndex = 0;
             this.chbUpdateVersion.Text = "Update Version";
             this.chbUpdateVersion.UseVisualStyleBackColor = true;
@@ -446,7 +498,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblSolutionPath.Location = new System.Drawing.Point(6, 55);
             this.lblSolutionPath.Name = "lblSolutionPath";
             this.lblSolutionPath.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblSolutionPath.Size = new System.Drawing.Size(121, 27);
+            this.lblSolutionPath.Size = new System.Drawing.Size(112, 26);
             this.lblSolutionPath.TabIndex = 15;
             this.lblSolutionPath.Text = "Solution Location:";
             // 
@@ -478,7 +530,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbManaged.Checked = true;
             this.rbManaged.Location = new System.Drawing.Point(3, 3);
             this.rbManaged.Name = "rbManaged";
-            this.rbManaged.Size = new System.Drawing.Size(88, 21);
+            this.rbManaged.Size = new System.Drawing.Size(86, 20);
             this.rbManaged.TabIndex = 11;
             this.rbManaged.TabStop = true;
             this.rbManaged.Text = "Managed";
@@ -490,7 +542,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.rbUnmanaged.AutoSize = true;
             this.rbUnmanaged.Location = new System.Drawing.Point(113, 3);
             this.rbUnmanaged.Name = "rbUnmanaged";
-            this.rbUnmanaged.Size = new System.Drawing.Size(106, 21);
+            this.rbUnmanaged.Size = new System.Drawing.Size(103, 20);
             this.rbUnmanaged.TabIndex = 12;
             this.rbUnmanaged.Text = "Unmanaged";
             this.rbUnmanaged.UseVisualStyleBackColor = true;
@@ -502,59 +554,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
             this.lblType.Location = new System.Drawing.Point(6, 17);
             this.lblType.Name = "lblType";
             this.lblType.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblType.Size = new System.Drawing.Size(71, 27);
+            this.lblType.Size = new System.Drawing.Size(66, 26);
             this.lblType.TabIndex = 10;
             this.lblType.Text = "Export as:";
-            // 
-            // btnSetUnpackLocation
-            // 
-            this.btnSetUnpackLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSetUnpackLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnSetUnpackLocation.Location = new System.Drawing.Point(568, 42);
-            this.btnSetUnpackLocation.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSetUnpackLocation.Name = "btnSetUnpackLocation";
-            this.btnSetUnpackLocation.Size = new System.Drawing.Size(36, 29);
-            this.btnSetUnpackLocation.TabIndex = 18;
-            this.btnSetUnpackLocation.Tag = "solution";
-            this.btnSetUnpackLocation.Text = "...";
-            this.btnSetUnpackLocation.UseVisualStyleBackColor = true;
-            // 
-            // txtUnpackPathValue
-            // 
-            this.txtUnpackPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUnpackPathValue.Location = new System.Drawing.Point(141, 46);
-            this.txtUnpackPathValue.Margin = new System.Windows.Forms.Padding(4);
-            this.txtUnpackPathValue.Name = "txtUnpackPathValue";
-            this.txtUnpackPathValue.ReadOnly = true;
-            this.txtUnpackPathValue.Size = new System.Drawing.Size(419, 22);
-            this.txtUnpackPathValue.TabIndex = 17;
-            // 
-            // txtPackPathValue
-            // 
-            this.txtPackPathValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPackPathValue.Location = new System.Drawing.Point(141, 73);
-            this.txtPackPathValue.Margin = new System.Windows.Forms.Padding(4);
-            this.txtPackPathValue.Name = "txtPackPathValue";
-            this.txtPackPathValue.ReadOnly = true;
-            this.txtPackPathValue.Size = new System.Drawing.Size(419, 22);
-            this.txtPackPathValue.TabIndex = 19;
-            // 
-            // btnSetPackLocation
-            // 
-            this.btnSetPackLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSetPackLocation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnSetPackLocation.Location = new System.Drawing.Point(568, 70);
-            this.btnSetPackLocation.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSetPackLocation.Name = "btnSetPackLocation";
-            this.btnSetPackLocation.Size = new System.Drawing.Size(36, 29);
-            this.btnSetPackLocation.TabIndex = 20;
-            this.btnSetPackLocation.Tag = "solution";
-            this.btnSetPackLocation.Text = "...";
-            this.btnSetPackLocation.UseVisualStyleBackColor = true;
             // 
             // ExportOptions
             // 

@@ -178,5 +178,22 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 
             return filePath;
         }
+
+        public static string SaveFile(this IWin32Window owner, string filter, string filename = null)
+        {
+            var filePath = string.Empty;
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.Title = "Save file...";
+                dialog.Filter = filter;
+                dialog.FilterIndex = 2;
+                dialog.RestoreDirectory = true;
+                if (!string.IsNullOrEmpty(filename)) { dialog.FileName = filename; }
+
+                if (dialog.ShowDialog(owner).Equals(DialogResult.OK)) { filePath = dialog.FileName; }
+            }
+
+            return filePath;
+        }
     }
 }
