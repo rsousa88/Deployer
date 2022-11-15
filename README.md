@@ -1,2 +1,2 @@
 # Deployer
-Plugin for XrmToolBox to deploy dataverse solutions to a target environment
+XrmToolbox plugin used to managed and deploy dataverse solutions

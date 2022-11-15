@@ -25,6 +25,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tsMain = new System.Windows.Forms.ToolStrip();
+            this.tsbAddOperation = new System.Windows.Forms.ToolStripDropDownButton();
+            this.tsmiUpdateSolutionVersion = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbCancel = new System.Windows.Forms.ToolStripButton();
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
@@ -65,6 +68,10 @@
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.txtLogs = new System.Windows.Forms.TextBox();
+            this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiPublish = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.pnlSettings.SuspendLayout();
@@ -83,13 +90,42 @@
             this.tsMain.AutoSize = false;
             this.tsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbAddOperation,
+            this.tsSeparator1,
             this.tsbExecute,
             this.tsbCancel});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(1816, 24);
+            this.tsMain.Size = new System.Drawing.Size(2421, 30);
             this.tsMain.TabIndex = 9;
             this.tsMain.Text = "Queue Toolstrip";
+            // 
+            // tsbAddOperation
+            // 
+            this.tsbAddOperation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbAddOperation.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiUpdateSolutionVersion,
+            this.tsmiExport,
+            this.tsmiImport,
+            this.tsmiDelete,
+            this.tsmiPublish});
+            this.tsbAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbAddOperation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbAddOperation.Name = "tsbAddOperation";
+            this.tsbAddOperation.Size = new System.Drawing.Size(114, 27);
+            this.tsbAddOperation.Text = "Add Operation";
+            // 
+            // tsmiUpdateSolutionVersion
+            // 
+            this.tsmiUpdateSolutionVersion.Name = "tsmiUpdateSolutionVersion";
+            this.tsmiUpdateSolutionVersion.Size = new System.Drawing.Size(224, 26);
+            this.tsmiUpdateSolutionVersion.Text = "Update Versions";
+            this.tsmiUpdateSolutionVersion.Click += new System.EventHandler(this.tsmiUpdateSolutionVersion_Click);
+            // 
+            // tsSeparator1
+            // 
+            this.tsSeparator1.Name = "tsSeparator1";
+            this.tsSeparator1.Size = new System.Drawing.Size(6, 30);
             // 
             // tsbExecute
             // 
@@ -97,7 +133,7 @@
             this.tsbExecute.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsbExecute.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbExecute.Name = "tsbExecute";
-            this.tsbExecute.Size = new System.Drawing.Size(50, 21);
+            this.tsbExecute.Size = new System.Drawing.Size(59, 27);
             this.tsbExecute.Text = "Execute";
             this.tsbExecute.Click += new System.EventHandler(this.tsbDeploy_Click);
             // 
@@ -107,7 +143,7 @@
             this.tsbCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsbCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbCancel.Name = "tsbCancel";
-            this.tsbCancel.Size = new System.Drawing.Size(45, 21);
+            this.tsbCancel.Size = new System.Drawing.Size(53, 27);
             this.tsbCancel.Text = "Cancel";
             this.tsbCancel.Visible = false;
             this.tsbCancel.Click += new System.EventHandler(this.tsbCancel_Click);
@@ -120,12 +156,12 @@
             this.pnlMain.Controls.Add(this.pnlSettings, 0, 0);
             this.pnlMain.Controls.Add(this.pnlBody, 1, 0);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 24);
-            this.pnlMain.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pnlMain.Location = new System.Drawing.Point(0, 30);
+            this.pnlMain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.RowCount = 1;
             this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlMain.Size = new System.Drawing.Size(1816, 734);
+            this.pnlMain.Size = new System.Drawing.Size(2421, 903);
             this.pnlMain.TabIndex = 91;
             // 
             // pnlSettings
@@ -135,13 +171,13 @@
             this.pnlSettings.Controls.Add(this.gbSolutionHistory, 0, 1);
             this.pnlSettings.Controls.Add(this.gbEnvironments, 0, 0);
             this.pnlSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSettings.Location = new System.Drawing.Point(2, 2);
-            this.pnlSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pnlSettings.Location = new System.Drawing.Point(3, 2);
+            this.pnlSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlSettings.Name = "pnlSettings";
             this.pnlSettings.RowCount = 2;
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 75F));
-            this.pnlSettings.Size = new System.Drawing.Size(359, 730);
+            this.pnlSettings.Size = new System.Drawing.Size(478, 899);
             this.pnlSettings.TabIndex = 0;
             // 
             // gbSolutionHistory
@@ -149,11 +185,11 @@
             this.gbSolutionHistory.Controls.Add(this.lvSolutionHistory);
             this.gbSolutionHistory.Controls.Add(this.btnRefreshHistory);
             this.gbSolutionHistory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSolutionHistory.Location = new System.Drawing.Point(2, 123);
-            this.gbSolutionHistory.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbSolutionHistory.Location = new System.Drawing.Point(3, 151);
+            this.gbSolutionHistory.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSolutionHistory.Name = "gbSolutionHistory";
-            this.gbSolutionHistory.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.gbSolutionHistory.Size = new System.Drawing.Size(355, 605);
+            this.gbSolutionHistory.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbSolutionHistory.Size = new System.Drawing.Size(472, 746);
             this.gbSolutionHistory.TabIndex = 1;
             this.gbSolutionHistory.TabStop = false;
             this.gbSolutionHistory.Text = "Solution History";
@@ -170,10 +206,10 @@
             this.lvSolutionHistory.Enabled = false;
             this.lvSolutionHistory.FullRowSelect = true;
             this.lvSolutionHistory.HideSelection = false;
-            this.lvSolutionHistory.Location = new System.Drawing.Point(4, 46);
-            this.lvSolutionHistory.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lvSolutionHistory.Location = new System.Drawing.Point(5, 57);
+            this.lvSolutionHistory.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lvSolutionHistory.Name = "lvSolutionHistory";
-            this.lvSolutionHistory.Size = new System.Drawing.Size(347, 554);
+            this.lvSolutionHistory.Size = new System.Drawing.Size(460, 682);
             this.lvSolutionHistory.TabIndex = 0;
             this.lvSolutionHistory.UseCompatibleStateImageBehavior = false;
             this.lvSolutionHistory.View = System.Windows.Forms.View.Details;
@@ -200,9 +236,10 @@
             this.btnRefreshHistory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshHistory.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnRefreshHistory.Location = new System.Drawing.Point(5, 17);
+            this.btnRefreshHistory.Location = new System.Drawing.Point(7, 21);
+            this.btnRefreshHistory.Margin = new System.Windows.Forms.Padding(4);
             this.btnRefreshHistory.Name = "btnRefreshHistory";
-            this.btnRefreshHistory.Size = new System.Drawing.Size(345, 24);
+            this.btnRefreshHistory.Size = new System.Drawing.Size(459, 30);
             this.btnRefreshHistory.TabIndex = 10;
             this.btnRefreshHistory.Text = "Refresh";
             this.btnRefreshHistory.UseVisualStyleBackColor = true;
@@ -216,11 +253,11 @@
             this.gbEnvironments.Controls.Add(this.lblTarget);
             this.gbEnvironments.Controls.Add(this.lblTargetValue);
             this.gbEnvironments.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbEnvironments.Location = new System.Drawing.Point(2, 2);
-            this.gbEnvironments.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbEnvironments.Location = new System.Drawing.Point(3, 2);
+            this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
-            this.gbEnvironments.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(355, 117);
+            this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbEnvironments.Size = new System.Drawing.Size(472, 145);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -230,9 +267,10 @@
             this.btnConnectSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnectSource.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnConnectSource.Location = new System.Drawing.Point(5, 75);
+            this.btnConnectSource.Location = new System.Drawing.Point(7, 92);
+            this.btnConnectSource.Margin = new System.Windows.Forms.Padding(4);
             this.btnConnectSource.Name = "btnConnectSource";
-            this.btnConnectSource.Size = new System.Drawing.Size(345, 24);
+            this.btnConnectSource.Size = new System.Drawing.Size(459, 30);
             this.btnConnectSource.TabIndex = 9;
             this.btnConnectSource.Text = "Add Source";
             this.btnConnectSource.UseVisualStyleBackColor = true;
@@ -241,10 +279,9 @@
             // lblSource
             // 
             this.lblSource.AutoSize = true;
-            this.lblSource.Location = new System.Drawing.Point(4, 50);
-            this.lblSource.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblSource.Location = new System.Drawing.Point(5, 62);
             this.lblSource.Name = "lblSource";
-            this.lblSource.Size = new System.Drawing.Size(41, 13);
+            this.lblSource.Size = new System.Drawing.Size(50, 16);
             this.lblSource.TabIndex = 2;
             this.lblSource.Text = "Source";
             // 
@@ -253,20 +290,18 @@
             this.lblSourceValue.AutoSize = true;
             this.lblSourceValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.lblSourceValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblSourceValue.Location = new System.Drawing.Point(49, 50);
-            this.lblSourceValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblSourceValue.Location = new System.Drawing.Point(65, 62);
             this.lblSourceValue.Name = "lblSourceValue";
-            this.lblSourceValue.Size = new System.Drawing.Size(77, 13);
+            this.lblSourceValue.Size = new System.Drawing.Size(91, 19);
             this.lblSourceValue.TabIndex = 3;
             this.lblSourceValue.Text = "Disconnected";
             // 
             // lblTarget
             // 
             this.lblTarget.AutoSize = true;
-            this.lblTarget.Location = new System.Drawing.Point(4, 24);
-            this.lblTarget.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTarget.Location = new System.Drawing.Point(5, 30);
             this.lblTarget.Name = "lblTarget";
-            this.lblTarget.Size = new System.Drawing.Size(38, 13);
+            this.lblTarget.Size = new System.Drawing.Size(47, 16);
             this.lblTarget.TabIndex = 0;
             this.lblTarget.Text = "Target";
             // 
@@ -275,10 +310,9 @@
             this.lblTargetValue.AutoSize = true;
             this.lblTargetValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.lblTargetValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblTargetValue.Location = new System.Drawing.Point(49, 24);
-            this.lblTargetValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTargetValue.Location = new System.Drawing.Point(65, 30);
             this.lblTargetValue.Name = "lblTargetValue";
-            this.lblTargetValue.Size = new System.Drawing.Size(77, 13);
+            this.lblTargetValue.Size = new System.Drawing.Size(91, 19);
             this.lblTargetValue.TabIndex = 1;
             this.lblTargetValue.Text = "Disconnected";
             // 
@@ -291,13 +325,13 @@
             this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
             this.pnlBody.Controls.Add(this.gbLogs, 7, 0);
             this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlBody.Location = new System.Drawing.Point(365, 2);
-            this.pnlBody.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pnlBody.Location = new System.Drawing.Point(487, 2);
+            this.pnlBody.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.Name = "pnlBody";
             this.pnlBody.RowCount = 2;
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlBody.Size = new System.Drawing.Size(1449, 730);
+            this.pnlBody.Size = new System.Drawing.Size(1931, 899);
             this.pnlBody.TabIndex = 1;
             // 
             // gbSolutionPackager
@@ -306,11 +340,11 @@
             this.gbSolutionPackager.Controls.Add(this.lblPackagerVersionValue);
             this.gbSolutionPackager.Controls.Add(this.txtOutput);
             this.gbSolutionPackager.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSolutionPackager.Location = new System.Drawing.Point(1016, 367);
-            this.gbSolutionPackager.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbSolutionPackager.Location = new System.Drawing.Point(1354, 451);
+            this.gbSolutionPackager.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSolutionPackager.Name = "gbSolutionPackager";
-            this.gbSolutionPackager.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.gbSolutionPackager.Size = new System.Drawing.Size(431, 361);
+            this.gbSolutionPackager.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbSolutionPackager.Size = new System.Drawing.Size(574, 446);
             this.gbSolutionPackager.TabIndex = 3;
             this.gbSolutionPackager.TabStop = false;
             this.gbSolutionPackager.Text = "Solution Packager";
@@ -318,10 +352,9 @@
             // lblPackagerVersion
             // 
             this.lblPackagerVersion.AutoSize = true;
-            this.lblPackagerVersion.Location = new System.Drawing.Point(4, 23);
-            this.lblPackagerVersion.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPackagerVersion.Location = new System.Drawing.Point(5, 28);
             this.lblPackagerVersion.Name = "lblPackagerVersion";
-            this.lblPackagerVersion.Size = new System.Drawing.Size(45, 13);
+            this.lblPackagerVersion.Size = new System.Drawing.Size(56, 16);
             this.lblPackagerVersion.TabIndex = 4;
             this.lblPackagerVersion.Text = "Version:";
             // 
@@ -330,10 +363,9 @@
             this.lblPackagerVersionValue.AutoSize = true;
             this.lblPackagerVersionValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.lblPackagerVersionValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblPackagerVersionValue.Location = new System.Drawing.Point(54, 22);
-            this.lblPackagerVersionValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPackagerVersionValue.Location = new System.Drawing.Point(72, 27);
             this.lblPackagerVersionValue.Name = "lblPackagerVersionValue";
-            this.lblPackagerVersionValue.Size = new System.Drawing.Size(73, 13);
+            this.lblPackagerVersionValue.Size = new System.Drawing.Size(86, 19);
             this.lblPackagerVersionValue.TabIndex = 5;
             this.lblPackagerVersionValue.Text = "Not installed";
             // 
@@ -344,11 +376,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutput.BackColor = System.Drawing.Color.Black;
             this.txtOutput.ForeColor = System.Drawing.Color.White;
-            this.txtOutput.Location = new System.Drawing.Point(2, 46);
-            this.txtOutput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtOutput.Location = new System.Drawing.Point(3, 57);
+            this.txtOutput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(427, 314);
+            this.txtOutput.Size = new System.Drawing.Size(567, 388);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
             this.txtOutput.TextChanged += new System.EventHandler(this.txtOutput_TextChanged);
@@ -362,12 +394,12 @@
             this.gbQueue.Controls.Add(this.btnAddOperation);
             this.gbQueue.Controls.Add(this.lvOperations);
             this.gbQueue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbQueue.Location = new System.Drawing.Point(2, 2);
-            this.gbQueue.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbQueue.Location = new System.Drawing.Point(3, 2);
+            this.gbQueue.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbQueue.Name = "gbQueue";
-            this.gbQueue.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbQueue.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlBody.SetRowSpan(this.gbQueue, 2);
-            this.gbQueue.Size = new System.Drawing.Size(1010, 726);
+            this.gbQueue.Size = new System.Drawing.Size(1345, 895);
             this.gbQueue.TabIndex = 1;
             this.gbQueue.TabStop = false;
             this.gbQueue.Text = "Queue";
@@ -376,9 +408,10 @@
             // 
             this.btnSaveQueue.Enabled = false;
             this.btnSaveQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnSaveQueue.Location = new System.Drawing.Point(124, 17);
+            this.btnSaveQueue.Location = new System.Drawing.Point(165, 21);
+            this.btnSaveQueue.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveQueue.Name = "btnSaveQueue";
-            this.btnSaveQueue.Size = new System.Drawing.Size(112, 24);
+            this.btnSaveQueue.Size = new System.Drawing.Size(149, 30);
             this.btnSaveQueue.TabIndex = 11;
             this.btnSaveQueue.Text = "Save Queue";
             this.btnSaveQueue.UseVisualStyleBackColor = true;
@@ -387,9 +420,10 @@
             // btnLoadQueue
             // 
             this.btnLoadQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnLoadQueue.Location = new System.Drawing.Point(5, 17);
+            this.btnLoadQueue.Location = new System.Drawing.Point(7, 21);
+            this.btnLoadQueue.Margin = new System.Windows.Forms.Padding(4);
             this.btnLoadQueue.Name = "btnLoadQueue";
-            this.btnLoadQueue.Size = new System.Drawing.Size(112, 24);
+            this.btnLoadQueue.Size = new System.Drawing.Size(149, 30);
             this.btnLoadQueue.TabIndex = 10;
             this.btnLoadQueue.Text = "Load Queue";
             this.btnLoadQueue.UseVisualStyleBackColor = true;
@@ -400,10 +434,10 @@
             this.pnlOperationButtons.BackColor = System.Drawing.SystemColors.Window;
             this.pnlOperationButtons.Controls.Add(this.btnDown);
             this.pnlOperationButtons.Controls.Add(this.btnUp);
-            this.pnlOperationButtons.Location = new System.Drawing.Point(4, 47);
-            this.pnlOperationButtons.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pnlOperationButtons.Location = new System.Drawing.Point(5, 58);
+            this.pnlOperationButtons.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlOperationButtons.Name = "pnlOperationButtons";
-            this.pnlOperationButtons.Size = new System.Drawing.Size(34, 882);
+            this.pnlOperationButtons.Size = new System.Drawing.Size(45, 1086);
             this.pnlOperationButtons.TabIndex = 9;
             // 
             // btnDown
@@ -413,10 +447,10 @@
             this.btnDown.Enabled = false;
             this.btnDown.FlatAppearance.BorderSize = 0;
             this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDown.Location = new System.Drawing.Point(2, 40);
-            this.btnDown.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDown.Location = new System.Drawing.Point(3, 49);
+            this.btnDown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(28, 31);
+            this.btnDown.Size = new System.Drawing.Size(37, 38);
             this.btnDown.TabIndex = 1;
             this.btnDown.UseVisualStyleBackColor = false;
             this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
@@ -428,10 +462,10 @@
             this.btnUp.Enabled = false;
             this.btnUp.FlatAppearance.BorderSize = 0;
             this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUp.Location = new System.Drawing.Point(2, 2);
-            this.btnUp.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnUp.Location = new System.Drawing.Point(3, 2);
+            this.btnUp.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(28, 31);
+            this.btnUp.Size = new System.Drawing.Size(37, 38);
             this.btnUp.TabIndex = 0;
             this.btnUp.UseVisualStyleBackColor = false;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
@@ -441,9 +475,10 @@
             this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClearQueue.Enabled = false;
             this.btnClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnClearQueue.Location = new System.Drawing.Point(892, 17);
+            this.btnClearQueue.Location = new System.Drawing.Point(1187, 21);
+            this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearQueue.Name = "btnClearQueue";
-            this.btnClearQueue.Size = new System.Drawing.Size(112, 24);
+            this.btnClearQueue.Size = new System.Drawing.Size(149, 30);
             this.btnClearQueue.TabIndex = 8;
             this.btnClearQueue.Text = "Clear Queue";
             this.btnClearQueue.UseVisualStyleBackColor = true;
@@ -455,9 +490,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddOperation.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnAddOperation.Location = new System.Drawing.Point(242, 17);
+            this.btnAddOperation.Location = new System.Drawing.Point(323, 21);
+            this.btnAddOperation.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddOperation.Name = "btnAddOperation";
-            this.btnAddOperation.Size = new System.Drawing.Size(644, 24);
+            this.btnAddOperation.Size = new System.Drawing.Size(857, 30);
             this.btnAddOperation.TabIndex = 7;
             this.btnAddOperation.Text = "Add Operation to Queue";
             this.btnAddOperation.UseVisualStyleBackColor = true;
@@ -477,10 +513,11 @@
             this.lvOperations.ContextMenuStrip = this.cmsContextMenu;
             this.lvOperations.FullRowSelect = true;
             this.lvOperations.HideSelection = false;
-            this.lvOperations.Location = new System.Drawing.Point(44, 47);
+            this.lvOperations.Location = new System.Drawing.Point(59, 58);
+            this.lvOperations.Margin = new System.Windows.Forms.Padding(4);
             this.lvOperations.MultiSelect = false;
             this.lvOperations.Name = "lvOperations";
-            this.lvOperations.Size = new System.Drawing.Size(961, 675);
+            this.lvOperations.Size = new System.Drawing.Size(1278, 831);
             this.lvOperations.TabIndex = 2;
             this.lvOperations.UseCompatibleStateImageBehavior = false;
             this.lvOperations.View = System.Windows.Forms.View.Details;
@@ -519,12 +556,12 @@
             this.cmsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmsiRemove});
             this.cmsContextMenu.Name = "cms_ContextMenu";
-            this.cmsContextMenu.Size = new System.Drawing.Size(118, 26);
+            this.cmsContextMenu.Size = new System.Drawing.Size(138, 30);
             // 
             // cmsiRemove
             // 
             this.cmsiRemove.Name = "cmsiRemove";
-            this.cmsiRemove.Size = new System.Drawing.Size(117, 22);
+            this.cmsiRemove.Size = new System.Drawing.Size(137, 26);
             this.cmsiRemove.Text = "Remove";
             this.cmsiRemove.Click += new System.EventHandler(this.cmsiRemove_Click);
             // 
@@ -533,11 +570,11 @@
             this.gbLogs.Controls.Add(this.btnClearLogs);
             this.gbLogs.Controls.Add(this.txtLogs);
             this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLogs.Location = new System.Drawing.Point(1016, 2);
-            this.gbLogs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbLogs.Location = new System.Drawing.Point(1354, 2);
+            this.gbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbLogs.Name = "gbLogs";
-            this.gbLogs.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.gbLogs.Size = new System.Drawing.Size(431, 361);
+            this.gbLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbLogs.Size = new System.Drawing.Size(574, 445);
             this.gbLogs.TabIndex = 2;
             this.gbLogs.TabStop = false;
             this.gbLogs.Text = "Logs";
@@ -547,9 +584,10 @@
             this.btnClearLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClearLogs.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnClearLogs.Location = new System.Drawing.Point(5, 17);
+            this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
+            this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearLogs.Name = "btnClearLogs";
-            this.btnClearLogs.Size = new System.Drawing.Size(421, 24);
+            this.btnClearLogs.Size = new System.Drawing.Size(560, 30);
             this.btnClearLogs.TabIndex = 9;
             this.btnClearLogs.Text = "Clear Logs";
             this.btnClearLogs.UseVisualStyleBackColor = true;
@@ -560,27 +598,55 @@
             this.txtLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLogs.Location = new System.Drawing.Point(4, 47);
-            this.txtLogs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtLogs.Location = new System.Drawing.Point(5, 58);
+            this.txtLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtLogs.Multiline = true;
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(423, 310);
+            this.txtLogs.Size = new System.Drawing.Size(562, 382);
             this.txtLogs.TabIndex = 2;
             this.txtLogs.TextChanged += new System.EventHandler(this.txtLogs_TextChanged);
             // 
+            // tsmiExport
+            // 
+            this.tsmiExport.Name = "tsmiExport";
+            this.tsmiExport.Size = new System.Drawing.Size(224, 26);
+            this.tsmiExport.Text = "Export";
+            this.tsmiExport.Click += new System.EventHandler(this.tsmiExport_Click);
+            // 
+            // tsmiImport
+            // 
+            this.tsmiImport.Name = "tsmiImport";
+            this.tsmiImport.Size = new System.Drawing.Size(224, 26);
+            this.tsmiImport.Text = "Import";
+            this.tsmiImport.Click += new System.EventHandler(this.tsmiImport_Click);
+            // 
+            // tsmiDelete
+            // 
+            this.tsmiDelete.Name = "tsmiDelete";
+            this.tsmiDelete.Size = new System.Drawing.Size(224, 26);
+            this.tsmiDelete.Text = "Delete";
+            this.tsmiDelete.Click += new System.EventHandler(this.tsmiDelete_Click);
+            // 
+            // tsmiPublish
+            // 
+            this.tsmiPublish.Name = "tsmiPublish";
+            this.tsmiPublish.Size = new System.Drawing.Size(224, 26);
+            this.tsmiPublish.Text = "Publish";
+            this.tsmiPublish.Click += new System.EventHandler(this.tsmiPublish_Click);
+            // 
             // DeployerControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.tsMain);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.MinimumSize = new System.Drawing.Size(600, 325);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "DeployerControl";
-            this.Size = new System.Drawing.Size(1816, 758);
+            this.Size = new System.Drawing.Size(2421, 933);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
             this.tsMain.ResumeLayout(false);
             this.tsMain.PerformLayout();
@@ -654,5 +720,14 @@
         private System.Windows.Forms.ColumnHeader chSolHistStatus;
         private System.Windows.Forms.Label lblPackagerVersion;
         private System.Windows.Forms.Label lblPackagerVersionValue;
+        private System.Windows.Forms.ToolStripDropDownButton tsbAddOperation;
+        private System.Windows.Forms.ToolStripMenuItem tsmiUpdateSolutionVersion;
+        private System.Windows.Forms.ToolStripSeparator tsSeparator1;
+        private WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender visualStudioToolStripExtender1;
+        private WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender visualStudioToolStripExtender2;
+        private System.Windows.Forms.ToolStripMenuItem tsmiExport;
+        private System.Windows.Forms.ToolStripMenuItem tsmiImport;
+        private System.Windows.Forms.ToolStripMenuItem tsmiDelete;
+        private System.Windows.Forms.ToolStripMenuItem tsmiPublish;
     }
 }

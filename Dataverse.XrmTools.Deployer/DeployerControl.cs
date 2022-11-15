@@ -1021,5 +1021,30 @@ namespace Dataverse.XrmTools.Deployer
 
             return packager;
         }
+
+        private void tsmiUpdateSolutionVersion_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tsmiExport_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tsmiImport_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tsmiDelete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tsmiPublish_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
