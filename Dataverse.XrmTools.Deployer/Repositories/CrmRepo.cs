@@ -50,32 +50,6 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         #endregion Constructors
 
         #region Interface Methods
-        public IEnumerable<SolutionHistory> GetSolutionHistory(ConnectionType connType = ConnectionType.TARGET)
-        {
-            try
-            {
-                var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
-                var orgContext = new OrganizationServiceContext(connection);
-
-                var query = orgContext.CreateQuery("msdyn_solutionhistory")
-                    .Select(sh => new SolutionHistory
-                    {
-                        LogicalName = sh.GetAttributeValue<string>("msdyn_name"),
-                        Operation = (HistoryOperation)sh.GetAttributeValue<OptionSetValue>("msdyn_operation").Value,
-                        Status = (HistoryStatus)sh.GetAttributeValue<OptionSetValue>("msdyn_status").Value,
-                        Result = sh.GetAttributeValue<bool>("msdyn_result") ? HistoryResult.SUCCESS : HistoryResult.FAILURE,
-                        StartTime = sh.GetAttributeValue<DateTime>("msdyn_starttime"),
-                        Message = sh.GetAttributeValue<string>("msdyn_exceptionmessage")
-                    }).AsEnumerable().OrderByDescending(sh => sh.StartTime).Take(100);
-
-                return query;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
         public IEnumerable<JointRecord> GetAllSolutions(ConnectionType connType = ConnectionType.TARGET)
         {
             try
@@ -159,7 +133,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Updating solution {update.Solution.DisplayName}...");
+                _logger.Log(LogLevel.INFO, $"Updating solution {update.Solution.DisplayName} to verion {update.Version}...");
                 var request = new UpdateRequest
                 {
                     Target = new Entity("solution")
@@ -167,9 +141,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                         Attributes =
                         {
                             { "solutionid", update.Solution.SolutionId },
-                            { "friendlyname", update.Solution.DisplayName },
-                            { "version", update.Solution.Version },
-                            { "description", update.Solution.Description }
+                            { "version", update.Solution.Version }
                         }
                     }
                 };
@@ -182,272 +154,272 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void ExportSolution(ExportOperation export)
-        {
-            try
-            {
-                _logger.Log(LogLevel.INFO, $"Exporting solution {export.Solution.DisplayName}...");
-                var exportReq = new OrganizationRequest("ExportSolutionAsync")
-                {
-                    Parameters =
-                    {
-                        { "SolutionName", export.Solution.LogicalName },
-                        { "Managed", export.Solution.Package.Type.Equals(PackageType.MANAGED) }
-                    }
-                };
+        //public void ExportSolution(ExportOperation export)
+        //{
+        //    try
+        //    {
+        //        _logger.Log(LogLevel.INFO, $"Exporting solution {export.Solution.DisplayName}...");
+        //        var exportReq = new OrganizationRequest("ExportSolutionAsync")
+        //        {
+        //            Parameters =
+        //            {
+        //                { "SolutionName", export.Solution.LogicalName },
+        //                { "Managed", export.Solution.Package.Type.Equals(PackageType.MANAGED) }
+        //            }
+        //        };
 
-                var exportResp = _source.Execute(exportReq);
+        //        var exportResp = _source.Execute(exportReq);
 
-                _logger.Log(LogLevel.INFO, $"Waiting for export operation...");
-                var result = CheckProgress(ConnectionType.SOURCE, Guid.Parse(exportResp["AsyncOperationId"].ToString()));
-                if(result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+        //        _logger.Log(LogLevel.INFO, $"Waiting for export operation...");
+        //        var result = CheckProgress(ConnectionType.SOURCE, Guid.Parse(exportResp["AsyncOperationId"].ToString()));
+        //        if(result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
 
-                if (!result.Success)
-                {
-                    throw new Exception($"Error on Export operation:\n{result.Message}");
-                }
+        //        if (!result.Success)
+        //        {
+        //            throw new Exception($"Error on Export operation:\n{result.Message}");
+        //        }
 
-                _logger.Log(LogLevel.INFO, $"Downloading solution {export.Solution.DisplayName}...");
-                var downloadReq = new OrganizationRequest("DownloadSolutionExportData")
-                {
-                    Parameters =
-                    {
-                        { "ExportJobId", Guid.Parse(exportResp["ExportJobId"].ToString()) }
-                    }
-                };
+        //        _logger.Log(LogLevel.INFO, $"Downloading solution {export.Solution.DisplayName}...");
+        //        var downloadReq = new OrganizationRequest("DownloadSolutionExportData")
+        //        {
+        //            Parameters =
+        //            {
+        //                { "ExportJobId", Guid.Parse(exportResp["ExportJobId"].ToString()) }
+        //            }
+        //        };
 
-                var downloadResp = _source.Execute(downloadReq);
+        //        var downloadResp = _source.Execute(downloadReq);
 
-                var package = export.Solution.Package;
-                package.Bytes = downloadResp["ExportSolutionFile"] as byte[];
+        //        var package = export.Solution.Package;
+        //        package.Bytes = downloadResp["ExportSolutionFile"] as byte[];
 
-                using (var writer = new BinaryWriter(File.OpenWrite(package.Path)))
-                {
-                    writer.Write(package.Bytes);
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //        using (var writer = new BinaryWriter(File.OpenWrite(package.Path)))
+        //        {
+        //            writer.Write(package.Bytes);
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
-        public void ImportSolution(ImportOperation import, string progressMessage)
-        {
-            try
-            {
-                _logger.Log(LogLevel.INFO, $"Importing solution {import.Solution.DisplayName}...");
-                var request = new ImportSolutionAsyncRequest
-                {
-                    CustomizationFile = import.Solution.Package.Bytes,
-                    HoldingSolution = import.HoldingSolution,
-                    OverwriteUnmanagedCustomizations = import.OverwriteUnmanaged,
-                    PublishWorkflows = import.PublishWorkflows
-                };
+        //public void ImportSolution(ImportOperation import, string progressMessage)
+        //{
+        //    try
+        //    {
+        //        _logger.Log(LogLevel.INFO, $"Importing solution {import.Solution.DisplayName}...");
+        //        var request = new ImportSolutionAsyncRequest
+        //        {
+        //            CustomizationFile = import.Solution.Package.Bytes,
+        //            HoldingSolution = import.HoldingSolution,
+        //            OverwriteUnmanagedCustomizations = import.OverwriteUnmanaged,
+        //            PublishWorkflows = import.PublishWorkflows
+        //        };
 
-                var response = _target.Execute(request) as ImportSolutionAsyncResponse;
+        //        var response = _target.Execute(request) as ImportSolutionAsyncResponse;
 
-                _logger.Log(LogLevel.INFO, $"Waiting for import operation...");
-                var result = CheckProgress(ConnectionType.TARGET, response.AsyncOperationId, Guid.Parse(response.ImportJobKey), progressMessage);
-                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+        //        _logger.Log(LogLevel.INFO, $"Waiting for import operation...");
+        //        var result = CheckProgress(ConnectionType.TARGET, response.AsyncOperationId, Guid.Parse(response.ImportJobKey), progressMessage);
+        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
 
-                if (!result.Success)
-                {
-                    throw new Exception($"Error on Import operation:\n{result.Message}");
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //        if (!result.Success)
+        //        {
+        //            throw new Exception($"Error on Import operation:\n{result.Message}");
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
-        public void UpgradeSolution(Solution solution)
-        {
-            try
-            {
-                _logger.Log(LogLevel.INFO, $"Upgrading solution {solution.DisplayName}...");
-                var operationId = _target.DeleteAndPromoteSolutionAsync(solution.LogicalName);
+        //public void UpgradeSolution(Solution solution)
+        //{
+        //    try
+        //    {
+        //        _logger.Log(LogLevel.INFO, $"Upgrading solution {solution.DisplayName}...");
+        //        var operationId = _target.DeleteAndPromoteSolutionAsync(solution.LogicalName);
 
-                _logger.Log(LogLevel.INFO, $"Waiting for upgrade operation...");
-                var result = CheckProgress(ConnectionType.TARGET, operationId);
-                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+        //        _logger.Log(LogLevel.INFO, $"Waiting for upgrade operation...");
+        //        var result = CheckProgress(ConnectionType.TARGET, operationId);
+        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
 
-                if (!result.Success)
-                {
-                    throw new Exception($"Error on Upgrade operation:\n{result.Message}");
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //        if (!result.Success)
+        //        {
+        //            throw new Exception($"Error on Upgrade operation:\n{result.Message}");
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
-        public void DeleteSolution(Solution solution)
-        {
-            try
-            {
-                _logger.Log(LogLevel.INFO, $"Deleting solution {solution.DisplayName}...");
+        //public void DeleteSolution(Solution solution)
+        //{
+        //    try
+        //    {
+        //        _logger.Log(LogLevel.INFO, $"Deleting solution {solution.DisplayName}...");
 
-                var filter = new FilterExpression(LogicalOperator.And)
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression("solutionid", ConditionOperator.Equal, solution.SolutionId)
-                    }
-                };
+        //        var filter = new FilterExpression(LogicalOperator.And)
+        //        {
+        //            Conditions =
+        //            {
+        //                new ConditionExpression("solutionid", ConditionOperator.Equal, solution.SolutionId)
+        //            }
+        //        };
 
-                var request = new BulkDeleteRequest
-                {
-                    JobName = $"Solution {solution.DisplayName} Delete",
-                    QuerySet = new QueryExpression[]
-                    {
-                        new QueryExpression("solution")
-                        {
-                            ColumnSet = new ColumnSet("solutionid"),
-                            Criteria = filter
-                        }
-                    },
-                    ToRecipients = new Guid[] { },
-                    CCRecipients = new Guid[] { },
-                    RecurrencePattern = string.Empty
-                };
+        //        var request = new BulkDeleteRequest
+        //        {
+        //            JobName = $"Solution {solution.DisplayName} Delete",
+        //            QuerySet = new QueryExpression[]
+        //            {
+        //                new QueryExpression("solution")
+        //                {
+        //                    ColumnSet = new ColumnSet("solutionid"),
+        //                    Criteria = filter
+        //                }
+        //            },
+        //            ToRecipients = new Guid[] { },
+        //            CCRecipients = new Guid[] { },
+        //            RecurrencePattern = string.Empty
+        //        };
 
-                var response = _target.Execute(request) as BulkDeleteResponse;
+        //        var response = _target.Execute(request) as BulkDeleteResponse;
 
-                _logger.Log(LogLevel.INFO, $"Waiting for delete operation...");
-                var result = CheckProgress(ConnectionType.TARGET, response.JobId);
-                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+        //        _logger.Log(LogLevel.INFO, $"Waiting for delete operation...");
+        //        var result = CheckProgress(ConnectionType.TARGET, response.JobId);
+        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
 
-                if (!result.Success)
-                {
-                    throw new Exception($"Error on Delete operation:\n{result.Message}");
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //        if (!result.Success)
+        //        {
+        //            throw new Exception($"Error on Delete operation:\n{result.Message}");
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
-        public void UnpackSolution(UnpackOperation unpack)
-        {
-            try
-            {
-                _logger.Log(LogLevel.INFO, $"Checking requirements...");
-                if(!File.Exists(unpack.Packager))
-                {
-                    throw new Exception($"Solution Packager not found - Please download Solution Packager before executing an Unpack operation");
-                }
+        //public void UnpackSolution(UnpackOperation unpack)
+        //{
+        //    try
+        //    {
+        //        _logger.Log(LogLevel.INFO, $"Checking requirements...");
+        //        if(!File.Exists(unpack.Packager))
+        //        {
+        //            throw new Exception($"Solution Packager not found - Please download Solution Packager before executing an Unpack operation");
+        //        }
 
-                _logger.Log(LogLevel.INFO, $"Cleaning output directory...");
-                if (Directory.Exists(unpack.Folder))
-                {
-                    var dirInfo = new DirectoryInfo(unpack.Folder);
-                    foreach (var file in dirInfo.GetFiles()) { file.Delete(); }
-                    foreach (var dir in dirInfo.GetDirectories()) { dir.Delete(true); }
-                }
+        //        _logger.Log(LogLevel.INFO, $"Cleaning output directory...");
+        //        if (Directory.Exists(unpack.Folder))
+        //        {
+        //            var dirInfo = new DirectoryInfo(unpack.Folder);
+        //            foreach (var file in dirInfo.GetFiles()) { file.Delete(); }
+        //            foreach (var dir in dirInfo.GetDirectories()) { dir.Delete(true); }
+        //        }
 
-                _logger.Log(LogLevel.INFO, $"Unpacking solution {unpack.Solution.DisplayName}...");
-                var process = new Process
-                {
-                    StartInfo =
-                {
-                    FileName = unpack.Packager,
-                    Arguments = $"/action:{unpack.Action} /zipfile:\"{unpack.ZipFile}\" /folder:\"{unpack.Folder}\" /packagetype:\"{unpack.PackageType}\" /allowDelete:\"No\"",
-                    WorkingDirectory = unpack.WorkingDir,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                },
-                    EnableRaisingEvents = true
-                };
+        //        _logger.Log(LogLevel.INFO, $"Unpacking solution {unpack.Solution.DisplayName}...");
+        //        var process = new Process
+        //        {
+        //            StartInfo =
+        //        {
+        //            FileName = unpack.Packager,
+        //            Arguments = $"/action:{unpack.Action} /zipfile:\"{unpack.ZipFile}\" /folder:\"{unpack.Folder}\" /packagetype:\"{unpack.PackageType}\" /allowDelete:\"No\"",
+        //            WorkingDirectory = unpack.WorkingDir,
+        //            UseShellExecute = false,
+        //            CreateNoWindow = true,
+        //            RedirectStandardOutput = true,
+        //            RedirectStandardError = true
+        //        },
+        //            EnableRaisingEvents = true
+        //        };
 
-                _logger.Output(LogLevel.PACKAGER, "Process starting...");
+        //        _logger.Output(LogLevel.PACKAGER, "Process starting...");
 
-                process.Start();
+        //        process.Start();
 
-                while (!process.StandardOutput.EndOfStream)
-                {
-                    var output = process.StandardOutput.ReadLine();
-                    _logger.Output(LogLevel.PACKAGER, output);
-                }
+        //        while (!process.StandardOutput.EndOfStream)
+        //        {
+        //            var output = process.StandardOutput.ReadLine();
+        //            _logger.Output(LogLevel.PACKAGER, output);
+        //        }
 
-                while (!process.StandardError.EndOfStream)
-                {
-                    var errors = process.StandardError.ReadLine();
-                    _logger.Output(LogLevel.PACKAGER, errors);
-                }
+        //        while (!process.StandardError.EndOfStream)
+        //        {
+        //            var errors = process.StandardError.ReadLine();
+        //            _logger.Output(LogLevel.PACKAGER, errors);
+        //        }
 
-                process.WaitForExit(30000);
+        //        process.WaitForExit(30000);
 
-                if (process.ExitCode != 0)
-                {
-                    throw new Exception("An error occurred while executing Solution Packager");
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //        if (process.ExitCode != 0)
+        //        {
+        //            throw new Exception("An error occurred while executing Solution Packager");
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
-        public void PackSolution(PackOperation pack)
-        {
-            try
-            {
-                _logger.Log(LogLevel.INFO, $"Checking requirements...");
-                if (!File.Exists(pack.Packager))
-                {
-                    throw new Exception($"Solution Packager not found - Please download Solution Packager before executing a Pack operation");
-                }
+        //public void PackSolution(PackOperation pack)
+        //{
+        //    try
+        //    {
+        //        _logger.Log(LogLevel.INFO, $"Checking requirements...");
+        //        if (!File.Exists(pack.Packager))
+        //        {
+        //            throw new Exception($"Solution Packager not found - Please download Solution Packager before executing a Pack operation");
+        //        }
 
-                _logger.Log(LogLevel.INFO, $"Packing solution {pack.Solution.DisplayName}...");
-                var process = new Process
-                {
-                    StartInfo =
-                    {
-                        FileName = pack.Packager,
-                        Arguments = $"/action:{pack.Action} /zipfile:\"{pack.ZipFile}\" /folder:\"{pack.Folder}\" /packagetype:\"{pack.PackageType}\" /allowDelete:\"No\"",
-                        WorkingDirectory = pack.WorkingDir,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true
-                    },
-                    EnableRaisingEvents = true
-                };
+        //        _logger.Log(LogLevel.INFO, $"Packing solution {pack.Solution.DisplayName}...");
+        //        var process = new Process
+        //        {
+        //            StartInfo =
+        //            {
+        //                FileName = pack.Packager,
+        //                Arguments = $"/action:{pack.Action} /zipfile:\"{pack.ZipFile}\" /folder:\"{pack.Folder}\" /packagetype:\"{pack.PackageType}\" /allowDelete:\"No\"",
+        //                WorkingDirectory = pack.WorkingDir,
+        //                UseShellExecute = false,
+        //                CreateNoWindow = true,
+        //                RedirectStandardOutput = true,
+        //                RedirectStandardError = true
+        //            },
+        //            EnableRaisingEvents = true
+        //        };
 
-                _logger.Output(LogLevel.PACKAGER, "Process starting...");
+        //        _logger.Output(LogLevel.PACKAGER, "Process starting...");
 
-                process.Start();
+        //        process.Start();
 
-                while (!process.StandardOutput.EndOfStream)
-                {
-                    var output = process.StandardOutput.ReadLine();
-                    _logger.Output(LogLevel.PACKAGER, output);
-                }
+        //        while (!process.StandardOutput.EndOfStream)
+        //        {
+        //            var output = process.StandardOutput.ReadLine();
+        //            _logger.Output(LogLevel.PACKAGER, output);
+        //        }
 
-                while (!process.StandardError.EndOfStream)
-                {
-                    var errors = process.StandardError.ReadLine();
-                    _logger.Output(LogLevel.PACKAGER, errors);
-                }
+        //        while (!process.StandardError.EndOfStream)
+        //        {
+        //            var errors = process.StandardError.ReadLine();
+        //            _logger.Output(LogLevel.PACKAGER, errors);
+        //        }
 
-                process.WaitForExit(30000);
+        //        process.WaitForExit(30000);
 
-                if (process.ExitCode != 0)
-                {
-                    throw new Exception("An error occurred while executing Solution Packager");
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //        if (process.ExitCode != 0)
+        //        {
+        //            throw new Exception("An error occurred while executing Solution Packager");
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
         public void PublishCustomizations()
         {

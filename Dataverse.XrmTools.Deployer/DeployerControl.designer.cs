@@ -23,331 +23,107 @@
         #region Code généré par le Concepteur de composants
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tsMain = new System.Windows.Forms.ToolStrip();
-            this.tsbAddOperation = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tsmiUpdateSolutionVersion = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbExecute = new System.Windows.Forms.ToolStripButton();
-            this.tsbCancel = new System.Windows.Forms.ToolStripButton();
-            this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployerControl));
+            this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
-            this.gbSolutionHistory = new System.Windows.Forms.GroupBox();
-            this.lvSolutionHistory = new System.Windows.Forms.ListView();
-            this.chSolHistName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolHistOperation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSolHistStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btnRefreshHistory = new System.Windows.Forms.Button();
-            this.gbEnvironments = new System.Windows.Forms.GroupBox();
-            this.btnConnectSource = new System.Windows.Forms.Button();
-            this.lblSource = new System.Windows.Forms.Label();
-            this.lblSourceValue = new System.Windows.Forms.Label();
-            this.lblTarget = new System.Windows.Forms.Label();
-            this.lblTargetValue = new System.Windows.Forms.Label();
-            this.pnlBody = new System.Windows.Forms.TableLayoutPanel();
-            this.gbSolutionPackager = new System.Windows.Forms.GroupBox();
+            this.gbSolutionPackagerLogs = new System.Windows.Forms.GroupBox();
             this.lblPackagerVersion = new System.Windows.Forms.Label();
             this.lblPackagerVersionValue = new System.Windows.Forms.Label();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
-            this.gbQueue = new System.Windows.Forms.GroupBox();
-            this.btnSaveQueue = new System.Windows.Forms.Button();
-            this.btnLoadQueue = new System.Windows.Forms.Button();
-            this.pnlOperationButtons = new System.Windows.Forms.Panel();
-            this.btnDown = new System.Windows.Forms.Button();
-            this.btnUp = new System.Windows.Forms.Button();
-            this.btnClearQueue = new System.Windows.Forms.Button();
-            this.btnAddOperation = new System.Windows.Forms.Button();
-            this.lvOperations = new System.Windows.Forms.ListView();
-            this.chOpIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chOpDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
-            this.gbLogs = new System.Windows.Forms.GroupBox();
-            this.btnClearLogs = new System.Windows.Forms.Button();
+            this.gbEnvironments = new System.Windows.Forms.GroupBox();
+            this.btnConnectTarget = new System.Windows.Forms.Button();
+            this.lblTarget = new System.Windows.Forms.Label();
+            this.lblTargetValue = new System.Windows.Forms.Label();
+            this.lblSource = new System.Windows.Forms.Label();
+            this.lblSourceValue = new System.Windows.Forms.Label();
+            this.gbDeployerLogs = new System.Windows.Forms.GroupBox();
             this.txtLogs = new System.Windows.Forms.TextBox();
+            this.btnClearLogs = new System.Windows.Forms.Button();
+            this.bodyContainer = new System.Windows.Forms.SplitContainer();
+            this.pnlAddOperation = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.tsAddOperation = new System.Windows.Forms.ToolStrip();
+            this.tsbAddOperation = new System.Windows.Forms.ToolStripDropDownButton();
+            this.tsmiUpdate = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiPublish = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsMain.SuspendLayout();
-            this.pnlMain.SuspendLayout();
+            this.tssOperation1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbOperationCancel = new System.Windows.Forms.ToolStripButton();
+            this.pnlQueue = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.tsQueue = new System.Windows.Forms.ToolStrip();
+            this.tsbManageQueue = new System.Windows.Forms.ToolStripDropDownButton();
+            this.tsmiLoadQueue = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSaveQueue = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiClearQueue = new System.Windows.Forms.ToolStripMenuItem();
+            this.tssQueue1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbQueueExecute = new System.Windows.Forms.ToolStripButton();
+            this.tsbQueueCancel = new System.Windows.Forms.ToolStripButton();
+            ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
+            this.mainContainer.Panel1.SuspendLayout();
+            this.mainContainer.Panel2.SuspendLayout();
+            this.mainContainer.SuspendLayout();
             this.pnlSettings.SuspendLayout();
-            this.gbSolutionHistory.SuspendLayout();
+            this.gbSolutionPackagerLogs.SuspendLayout();
             this.gbEnvironments.SuspendLayout();
-            this.pnlBody.SuspendLayout();
-            this.gbSolutionPackager.SuspendLayout();
-            this.gbQueue.SuspendLayout();
-            this.pnlOperationButtons.SuspendLayout();
-            this.cmsContextMenu.SuspendLayout();
-            this.gbLogs.SuspendLayout();
+            this.gbDeployerLogs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyContainer)).BeginInit();
+            this.bodyContainer.Panel1.SuspendLayout();
+            this.bodyContainer.Panel2.SuspendLayout();
+            this.bodyContainer.SuspendLayout();
+            this.tsAddOperation.SuspendLayout();
+            this.tsQueue.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tsMain
+            // mainContainer
             // 
-            this.tsMain.AutoSize = false;
-            this.tsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbAddOperation,
-            this.tsSeparator1,
-            this.tsbExecute,
-            this.tsbCancel});
-            this.tsMain.Location = new System.Drawing.Point(0, 0);
-            this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(2421, 30);
-            this.tsMain.TabIndex = 9;
-            this.tsMain.Text = "Queue Toolstrip";
+            this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainContainer.Location = new System.Drawing.Point(0, 0);
+            this.mainContainer.Name = "mainContainer";
             // 
-            // tsbAddOperation
+            // mainContainer.Panel1
             // 
-            this.tsbAddOperation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbAddOperation.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiUpdateSolutionVersion,
-            this.tsmiExport,
-            this.tsmiImport,
-            this.tsmiDelete,
-            this.tsmiPublish});
-            this.tsbAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbAddOperation.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbAddOperation.Name = "tsbAddOperation";
-            this.tsbAddOperation.Size = new System.Drawing.Size(114, 27);
-            this.tsbAddOperation.Text = "Add Operation";
+            this.mainContainer.Panel1.Controls.Add(this.pnlSettings);
             // 
-            // tsmiUpdateSolutionVersion
+            // mainContainer.Panel2
             // 
-            this.tsmiUpdateSolutionVersion.Name = "tsmiUpdateSolutionVersion";
-            this.tsmiUpdateSolutionVersion.Size = new System.Drawing.Size(224, 26);
-            this.tsmiUpdateSolutionVersion.Text = "Update Versions";
-            this.tsmiUpdateSolutionVersion.Click += new System.EventHandler(this.tsmiUpdateSolutionVersion_Click);
-            // 
-            // tsSeparator1
-            // 
-            this.tsSeparator1.Name = "tsSeparator1";
-            this.tsSeparator1.Size = new System.Drawing.Size(6, 30);
-            // 
-            // tsbExecute
-            // 
-            this.tsbExecute.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbExecute.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbExecute.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbExecute.Name = "tsbExecute";
-            this.tsbExecute.Size = new System.Drawing.Size(59, 27);
-            this.tsbExecute.Text = "Execute";
-            this.tsbExecute.Click += new System.EventHandler(this.tsbDeploy_Click);
-            // 
-            // tsbCancel
-            // 
-            this.tsbCancel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbCancel.Name = "tsbCancel";
-            this.tsbCancel.Size = new System.Drawing.Size(53, 27);
-            this.tsbCancel.Text = "Cancel";
-            this.tsbCancel.Visible = false;
-            this.tsbCancel.Click += new System.EventHandler(this.tsbCancel_Click);
-            // 
-            // pnlMain
-            // 
-            this.pnlMain.ColumnCount = 2;
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.pnlMain.Controls.Add(this.pnlSettings, 0, 0);
-            this.pnlMain.Controls.Add(this.pnlBody, 1, 0);
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 30);
-            this.pnlMain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.RowCount = 1;
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlMain.Size = new System.Drawing.Size(2421, 903);
-            this.pnlMain.TabIndex = 91;
+            this.mainContainer.Panel2.Controls.Add(this.bodyContainer);
+            this.mainContainer.Size = new System.Drawing.Size(2197, 933);
+            this.mainContainer.SplitterDistance = 472;
+            this.mainContainer.TabIndex = 0;
             // 
             // pnlSettings
             // 
             this.pnlSettings.ColumnCount = 1;
             this.pnlSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.pnlSettings.Controls.Add(this.gbSolutionHistory, 0, 1);
+            this.pnlSettings.Controls.Add(this.gbSolutionPackagerLogs, 0, 2);
             this.pnlSettings.Controls.Add(this.gbEnvironments, 0, 0);
+            this.pnlSettings.Controls.Add(this.gbDeployerLogs, 0, 1);
             this.pnlSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSettings.Location = new System.Drawing.Point(3, 2);
+            this.pnlSettings.Location = new System.Drawing.Point(0, 0);
             this.pnlSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlSettings.Name = "pnlSettings";
-            this.pnlSettings.RowCount = 2;
+            this.pnlSettings.RowCount = 3;
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
-            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 75F));
-            this.pnlSettings.Size = new System.Drawing.Size(478, 899);
-            this.pnlSettings.TabIndex = 0;
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
+            this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
+            this.pnlSettings.Size = new System.Drawing.Size(472, 933);
+            this.pnlSettings.TabIndex = 1;
             // 
-            // gbSolutionHistory
+            // gbSolutionPackagerLogs
             // 
-            this.gbSolutionHistory.Controls.Add(this.lvSolutionHistory);
-            this.gbSolutionHistory.Controls.Add(this.btnRefreshHistory);
-            this.gbSolutionHistory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSolutionHistory.Location = new System.Drawing.Point(3, 151);
-            this.gbSolutionHistory.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSolutionHistory.Name = "gbSolutionHistory";
-            this.gbSolutionHistory.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSolutionHistory.Size = new System.Drawing.Size(472, 746);
-            this.gbSolutionHistory.TabIndex = 1;
-            this.gbSolutionHistory.TabStop = false;
-            this.gbSolutionHistory.Text = "Solution History";
-            // 
-            // lvSolutionHistory
-            // 
-            this.lvSolutionHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvSolutionHistory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chSolHistName,
-            this.chSolHistOperation,
-            this.chSolHistStatus});
-            this.lvSolutionHistory.Enabled = false;
-            this.lvSolutionHistory.FullRowSelect = true;
-            this.lvSolutionHistory.HideSelection = false;
-            this.lvSolutionHistory.Location = new System.Drawing.Point(5, 57);
-            this.lvSolutionHistory.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.lvSolutionHistory.Name = "lvSolutionHistory";
-            this.lvSolutionHistory.Size = new System.Drawing.Size(460, 682);
-            this.lvSolutionHistory.TabIndex = 0;
-            this.lvSolutionHistory.UseCompatibleStateImageBehavior = false;
-            this.lvSolutionHistory.View = System.Windows.Forms.View.Details;
-            this.lvSolutionHistory.DoubleClick += new System.EventHandler(this.lvSolutionHistory_DoubleClick);
-            this.lvSolutionHistory.Resize += new System.EventHandler(this.lvSolutionHistory_Resize);
-            // 
-            // chSolHistName
-            // 
-            this.chSolHistName.Text = "Name";
-            this.chSolHistName.Width = 150;
-            // 
-            // chSolHistOperation
-            // 
-            this.chSolHistOperation.Text = "Operation";
-            this.chSolHistOperation.Width = 100;
-            // 
-            // chSolHistStatus
-            // 
-            this.chSolHistStatus.Text = "Status";
-            this.chSolHistStatus.Width = 100;
-            // 
-            // btnRefreshHistory
-            // 
-            this.btnRefreshHistory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshHistory.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnRefreshHistory.Location = new System.Drawing.Point(7, 21);
-            this.btnRefreshHistory.Margin = new System.Windows.Forms.Padding(4);
-            this.btnRefreshHistory.Name = "btnRefreshHistory";
-            this.btnRefreshHistory.Size = new System.Drawing.Size(459, 30);
-            this.btnRefreshHistory.TabIndex = 10;
-            this.btnRefreshHistory.Text = "Refresh";
-            this.btnRefreshHistory.UseVisualStyleBackColor = true;
-            this.btnRefreshHistory.Click += new System.EventHandler(this.btnRefreshHistory_Click);
-            // 
-            // gbEnvironments
-            // 
-            this.gbEnvironments.Controls.Add(this.btnConnectSource);
-            this.gbEnvironments.Controls.Add(this.lblSource);
-            this.gbEnvironments.Controls.Add(this.lblSourceValue);
-            this.gbEnvironments.Controls.Add(this.lblTarget);
-            this.gbEnvironments.Controls.Add(this.lblTargetValue);
-            this.gbEnvironments.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbEnvironments.Location = new System.Drawing.Point(3, 2);
-            this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Name = "gbEnvironments";
-            this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(472, 145);
-            this.gbEnvironments.TabIndex = 0;
-            this.gbEnvironments.TabStop = false;
-            this.gbEnvironments.Text = "Environments";
-            // 
-            // btnConnectSource
-            // 
-            this.btnConnectSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnectSource.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnConnectSource.Location = new System.Drawing.Point(7, 92);
-            this.btnConnectSource.Margin = new System.Windows.Forms.Padding(4);
-            this.btnConnectSource.Name = "btnConnectSource";
-            this.btnConnectSource.Size = new System.Drawing.Size(459, 30);
-            this.btnConnectSource.TabIndex = 9;
-            this.btnConnectSource.Text = "Add Source";
-            this.btnConnectSource.UseVisualStyleBackColor = true;
-            this.btnConnectSource.Click += new System.EventHandler(this.btnConnectSource_Click);
-            // 
-            // lblSource
-            // 
-            this.lblSource.AutoSize = true;
-            this.lblSource.Location = new System.Drawing.Point(5, 62);
-            this.lblSource.Name = "lblSource";
-            this.lblSource.Size = new System.Drawing.Size(50, 16);
-            this.lblSource.TabIndex = 2;
-            this.lblSource.Text = "Source";
-            // 
-            // lblSourceValue
-            // 
-            this.lblSourceValue.AutoSize = true;
-            this.lblSourceValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.lblSourceValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblSourceValue.Location = new System.Drawing.Point(65, 62);
-            this.lblSourceValue.Name = "lblSourceValue";
-            this.lblSourceValue.Size = new System.Drawing.Size(91, 19);
-            this.lblSourceValue.TabIndex = 3;
-            this.lblSourceValue.Text = "Disconnected";
-            // 
-            // lblTarget
-            // 
-            this.lblTarget.AutoSize = true;
-            this.lblTarget.Location = new System.Drawing.Point(5, 30);
-            this.lblTarget.Name = "lblTarget";
-            this.lblTarget.Size = new System.Drawing.Size(47, 16);
-            this.lblTarget.TabIndex = 0;
-            this.lblTarget.Text = "Target";
-            // 
-            // lblTargetValue
-            // 
-            this.lblTargetValue.AutoSize = true;
-            this.lblTargetValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.lblTargetValue.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblTargetValue.Location = new System.Drawing.Point(65, 30);
-            this.lblTargetValue.Name = "lblTargetValue";
-            this.lblTargetValue.Size = new System.Drawing.Size(91, 19);
-            this.lblTargetValue.TabIndex = 1;
-            this.lblTargetValue.Text = "Disconnected";
-            // 
-            // pnlBody
-            // 
-            this.pnlBody.ColumnCount = 2;
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
-            this.pnlBody.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.pnlBody.Controls.Add(this.gbSolutionPackager, 0, 1);
-            this.pnlBody.Controls.Add(this.gbQueue, 0, 0);
-            this.pnlBody.Controls.Add(this.gbLogs, 7, 0);
-            this.pnlBody.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlBody.Location = new System.Drawing.Point(487, 2);
-            this.pnlBody.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pnlBody.Name = "pnlBody";
-            this.pnlBody.RowCount = 2;
-            this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlBody.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlBody.Size = new System.Drawing.Size(1931, 899);
-            this.pnlBody.TabIndex = 1;
-            // 
-            // gbSolutionPackager
-            // 
-            this.gbSolutionPackager.Controls.Add(this.lblPackagerVersion);
-            this.gbSolutionPackager.Controls.Add(this.lblPackagerVersionValue);
-            this.gbSolutionPackager.Controls.Add(this.txtOutput);
-            this.gbSolutionPackager.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSolutionPackager.Location = new System.Drawing.Point(1354, 451);
-            this.gbSolutionPackager.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSolutionPackager.Name = "gbSolutionPackager";
-            this.gbSolutionPackager.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSolutionPackager.Size = new System.Drawing.Size(574, 446);
-            this.gbSolutionPackager.TabIndex = 3;
-            this.gbSolutionPackager.TabStop = false;
-            this.gbSolutionPackager.Text = "Solution Packager";
+            this.gbSolutionPackagerLogs.Controls.Add(this.lblPackagerVersion);
+            this.gbSolutionPackagerLogs.Controls.Add(this.lblPackagerVersionValue);
+            this.gbSolutionPackagerLogs.Controls.Add(this.txtOutput);
+            this.gbSolutionPackagerLogs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbSolutionPackagerLogs.Location = new System.Drawing.Point(3, 545);
+            this.gbSolutionPackagerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbSolutionPackagerLogs.Name = "gbSolutionPackagerLogs";
+            this.gbSolutionPackagerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbSolutionPackagerLogs.Size = new System.Drawing.Size(466, 386);
+            this.gbSolutionPackagerLogs.TabIndex = 4;
+            this.gbSolutionPackagerLogs.TabStop = false;
+            this.gbSolutionPackagerLogs.Text = "Solution Packager Logs";
             // 
             // lblPackagerVersion
             // 
@@ -380,204 +156,107 @@
             this.txtOutput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(567, 388);
+            this.txtOutput.Size = new System.Drawing.Size(459, 328);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
-            this.txtOutput.TextChanged += new System.EventHandler(this.txtOutput_TextChanged);
             // 
-            // gbQueue
+            // gbEnvironments
             // 
-            this.gbQueue.Controls.Add(this.btnSaveQueue);
-            this.gbQueue.Controls.Add(this.btnLoadQueue);
-            this.gbQueue.Controls.Add(this.pnlOperationButtons);
-            this.gbQueue.Controls.Add(this.btnClearQueue);
-            this.gbQueue.Controls.Add(this.btnAddOperation);
-            this.gbQueue.Controls.Add(this.lvOperations);
-            this.gbQueue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbQueue.Location = new System.Drawing.Point(3, 2);
-            this.gbQueue.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbQueue.Name = "gbQueue";
-            this.gbQueue.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pnlBody.SetRowSpan(this.gbQueue, 2);
-            this.gbQueue.Size = new System.Drawing.Size(1345, 895);
-            this.gbQueue.TabIndex = 1;
-            this.gbQueue.TabStop = false;
-            this.gbQueue.Text = "Queue";
+            this.gbEnvironments.Controls.Add(this.btnConnectTarget);
+            this.gbEnvironments.Controls.Add(this.lblTarget);
+            this.gbEnvironments.Controls.Add(this.lblTargetValue);
+            this.gbEnvironments.Controls.Add(this.lblSource);
+            this.gbEnvironments.Controls.Add(this.lblSourceValue);
+            this.gbEnvironments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbEnvironments.Location = new System.Drawing.Point(3, 2);
+            this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbEnvironments.Name = "gbEnvironments";
+            this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbEnvironments.Size = new System.Drawing.Size(466, 151);
+            this.gbEnvironments.TabIndex = 0;
+            this.gbEnvironments.TabStop = false;
+            this.gbEnvironments.Text = "Environments";
             // 
-            // btnSaveQueue
+            // btnConnectTarget
             // 
-            this.btnSaveQueue.Enabled = false;
-            this.btnSaveQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnSaveQueue.Location = new System.Drawing.Point(165, 21);
-            this.btnSaveQueue.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSaveQueue.Name = "btnSaveQueue";
-            this.btnSaveQueue.Size = new System.Drawing.Size(149, 30);
-            this.btnSaveQueue.TabIndex = 11;
-            this.btnSaveQueue.Text = "Save Queue";
-            this.btnSaveQueue.UseVisualStyleBackColor = true;
-            this.btnSaveQueue.Click += new System.EventHandler(this.btnSaveQueue_Click);
-            // 
-            // btnLoadQueue
-            // 
-            this.btnLoadQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnLoadQueue.Location = new System.Drawing.Point(7, 21);
-            this.btnLoadQueue.Margin = new System.Windows.Forms.Padding(4);
-            this.btnLoadQueue.Name = "btnLoadQueue";
-            this.btnLoadQueue.Size = new System.Drawing.Size(149, 30);
-            this.btnLoadQueue.TabIndex = 10;
-            this.btnLoadQueue.Text = "Load Queue";
-            this.btnLoadQueue.UseVisualStyleBackColor = true;
-            this.btnLoadQueue.Click += new System.EventHandler(this.btnLoadQueue_Click);
-            // 
-            // pnlOperationButtons
-            // 
-            this.pnlOperationButtons.BackColor = System.Drawing.SystemColors.Window;
-            this.pnlOperationButtons.Controls.Add(this.btnDown);
-            this.pnlOperationButtons.Controls.Add(this.btnUp);
-            this.pnlOperationButtons.Location = new System.Drawing.Point(5, 58);
-            this.pnlOperationButtons.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pnlOperationButtons.Name = "pnlOperationButtons";
-            this.pnlOperationButtons.Size = new System.Drawing.Size(45, 1086);
-            this.pnlOperationButtons.TabIndex = 9;
-            // 
-            // btnDown
-            // 
-            this.btnDown.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_down_disabled_35px;
-            this.btnDown.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnDown.Enabled = false;
-            this.btnDown.FlatAppearance.BorderSize = 0;
-            this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDown.Location = new System.Drawing.Point(3, 49);
-            this.btnDown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(37, 38);
-            this.btnDown.TabIndex = 1;
-            this.btnDown.UseVisualStyleBackColor = false;
-            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
-            // 
-            // btnUp
-            // 
-            this.btnUp.BackgroundImage = global::Dataverse.XrmTools.Deployer.Properties.Resources.arrow_up_disabled_35px;
-            this.btnUp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnUp.Enabled = false;
-            this.btnUp.FlatAppearance.BorderSize = 0;
-            this.btnUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUp.Location = new System.Drawing.Point(3, 2);
-            this.btnUp.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(37, 38);
-            this.btnUp.TabIndex = 0;
-            this.btnUp.UseVisualStyleBackColor = false;
-            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
-            // 
-            // btnClearQueue
-            // 
-            this.btnClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearQueue.Enabled = false;
-            this.btnClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnClearQueue.Location = new System.Drawing.Point(1187, 21);
-            this.btnClearQueue.Margin = new System.Windows.Forms.Padding(4);
-            this.btnClearQueue.Name = "btnClearQueue";
-            this.btnClearQueue.Size = new System.Drawing.Size(149, 30);
-            this.btnClearQueue.TabIndex = 8;
-            this.btnClearQueue.Text = "Clear Queue";
-            this.btnClearQueue.UseVisualStyleBackColor = true;
-            this.btnClearQueue.Click += new System.EventHandler(this.btnClearQueue_Click);
-            // 
-            // btnAddOperation
-            // 
-            this.btnAddOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnConnectTarget.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddOperation.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnAddOperation.Location = new System.Drawing.Point(323, 21);
-            this.btnAddOperation.Margin = new System.Windows.Forms.Padding(4);
-            this.btnAddOperation.Name = "btnAddOperation";
-            this.btnAddOperation.Size = new System.Drawing.Size(857, 30);
-            this.btnAddOperation.TabIndex = 7;
-            this.btnAddOperation.Text = "Add Operation to Queue";
-            this.btnAddOperation.UseVisualStyleBackColor = true;
-            this.btnAddOperation.Click += new System.EventHandler(this.btnAddOperation_Click);
+            this.btnConnectTarget.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.btnConnectTarget.Location = new System.Drawing.Point(7, 92);
+            this.btnConnectTarget.Margin = new System.Windows.Forms.Padding(4);
+            this.btnConnectTarget.Name = "btnConnectTarget";
+            this.btnConnectTarget.Size = new System.Drawing.Size(453, 30);
+            this.btnConnectTarget.TabIndex = 9;
+            this.btnConnectTarget.Text = "Add Target";
+            this.btnConnectTarget.UseVisualStyleBackColor = true;
             // 
-            // lvOperations
+            // lblTarget
             // 
-            this.lvOperations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lblTarget.AutoSize = true;
+            this.lblTarget.Location = new System.Drawing.Point(5, 62);
+            this.lblTarget.Name = "lblTarget";
+            this.lblTarget.Size = new System.Drawing.Size(47, 16);
+            this.lblTarget.TabIndex = 2;
+            this.lblTarget.Text = "Target";
+            // 
+            // lblTargetValue
+            // 
+            this.lblTargetValue.AutoSize = true;
+            this.lblTargetValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.lblTargetValue.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblTargetValue.Location = new System.Drawing.Point(65, 62);
+            this.lblTargetValue.Name = "lblTargetValue";
+            this.lblTargetValue.Size = new System.Drawing.Size(91, 19);
+            this.lblTargetValue.TabIndex = 3;
+            this.lblTargetValue.Text = "Disconnected";
+            // 
+            // lblSource
+            // 
+            this.lblSource.AutoSize = true;
+            this.lblSource.Location = new System.Drawing.Point(5, 30);
+            this.lblSource.Name = "lblSource";
+            this.lblSource.Size = new System.Drawing.Size(50, 16);
+            this.lblSource.TabIndex = 0;
+            this.lblSource.Text = "Source";
+            // 
+            // lblSourceValue
+            // 
+            this.lblSourceValue.AutoSize = true;
+            this.lblSourceValue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.lblSourceValue.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblSourceValue.Location = new System.Drawing.Point(65, 30);
+            this.lblSourceValue.Name = "lblSourceValue";
+            this.lblSourceValue.Size = new System.Drawing.Size(91, 19);
+            this.lblSourceValue.TabIndex = 1;
+            this.lblSourceValue.Text = "Disconnected";
+            // 
+            // gbDeployerLogs
+            // 
+            this.gbDeployerLogs.Controls.Add(this.txtLogs);
+            this.gbDeployerLogs.Controls.Add(this.btnClearLogs);
+            this.gbDeployerLogs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbDeployerLogs.Location = new System.Drawing.Point(3, 157);
+            this.gbDeployerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbDeployerLogs.Name = "gbDeployerLogs";
+            this.gbDeployerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.gbDeployerLogs.Size = new System.Drawing.Size(466, 384);
+            this.gbDeployerLogs.TabIndex = 1;
+            this.gbDeployerLogs.TabStop = false;
+            this.gbDeployerLogs.Text = "Deployer Logs";
+            // 
+            // txtLogs
+            // 
+            this.txtLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvOperations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chOpIndex,
-            this.chOpType,
-            this.chOpDisplayName,
-            this.chOpPublisher,
-            this.chOpDescription});
-            this.lvOperations.ContextMenuStrip = this.cmsContextMenu;
-            this.lvOperations.FullRowSelect = true;
-            this.lvOperations.HideSelection = false;
-            this.lvOperations.Location = new System.Drawing.Point(59, 58);
-            this.lvOperations.Margin = new System.Windows.Forms.Padding(4);
-            this.lvOperations.MultiSelect = false;
-            this.lvOperations.Name = "lvOperations";
-            this.lvOperations.Size = new System.Drawing.Size(1278, 831);
-            this.lvOperations.TabIndex = 2;
-            this.lvOperations.UseCompatibleStateImageBehavior = false;
-            this.lvOperations.View = System.Windows.Forms.View.Details;
-            this.lvOperations.SelectedIndexChanged += new System.EventHandler(this.lvOperations_SelectedIndexChanged);
-            this.lvOperations.DoubleClick += new System.EventHandler(this.lvOperations_DoubleClick);
-            this.lvOperations.Resize += new System.EventHandler(this.lvOperations_Resize);
-            // 
-            // chOpIndex
-            // 
-            this.chOpIndex.Text = "#";
-            this.chOpIndex.Width = 30;
-            // 
-            // chOpType
-            // 
-            this.chOpType.Text = "Type";
-            this.chOpType.Width = 100;
-            // 
-            // chOpDisplayName
-            // 
-            this.chOpDisplayName.Text = "Display Name";
-            this.chOpDisplayName.Width = 300;
-            // 
-            // chOpPublisher
-            // 
-            this.chOpPublisher.Text = "Publisher";
-            this.chOpPublisher.Width = 250;
-            // 
-            // chOpDescription
-            // 
-            this.chOpDescription.Text = "Description";
-            this.chOpDescription.Width = 270;
-            // 
-            // cmsContextMenu
-            // 
-            this.cmsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.cmsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cmsiRemove});
-            this.cmsContextMenu.Name = "cms_ContextMenu";
-            this.cmsContextMenu.Size = new System.Drawing.Size(138, 30);
-            // 
-            // cmsiRemove
-            // 
-            this.cmsiRemove.Name = "cmsiRemove";
-            this.cmsiRemove.Size = new System.Drawing.Size(137, 26);
-            this.cmsiRemove.Text = "Remove";
-            this.cmsiRemove.Click += new System.EventHandler(this.cmsiRemove_Click);
-            // 
-            // gbLogs
-            // 
-            this.gbLogs.Controls.Add(this.btnClearLogs);
-            this.gbLogs.Controls.Add(this.txtLogs);
-            this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLogs.Location = new System.Drawing.Point(1354, 2);
-            this.gbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbLogs.Name = "gbLogs";
-            this.gbLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbLogs.Size = new System.Drawing.Size(574, 445);
-            this.gbLogs.TabIndex = 2;
-            this.gbLogs.TabStop = false;
-            this.gbLogs.Text = "Logs";
+            this.txtLogs.Location = new System.Drawing.Point(6, 57);
+            this.txtLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtLogs.Multiline = true;
+            this.txtLogs.Name = "txtLogs";
+            this.txtLogs.ReadOnly = true;
+            this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtLogs.Size = new System.Drawing.Size(454, 323);
+            this.txtLogs.TabIndex = 2;
             // 
             // btnClearLogs
             // 
@@ -587,147 +266,266 @@
             this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
             this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearLogs.Name = "btnClearLogs";
-            this.btnClearLogs.Size = new System.Drawing.Size(560, 30);
+            this.btnClearLogs.Size = new System.Drawing.Size(452, 30);
             this.btnClearLogs.TabIndex = 9;
             this.btnClearLogs.Text = "Clear Logs";
             this.btnClearLogs.UseVisualStyleBackColor = true;
-            this.btnClearLogs.Click += new System.EventHandler(this.btnClearLogs_Click);
             // 
-            // txtLogs
+            // bodyContainer
             // 
-            this.txtLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLogs.Location = new System.Drawing.Point(5, 58);
-            this.txtLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtLogs.Multiline = true;
-            this.txtLogs.Name = "txtLogs";
-            this.txtLogs.ReadOnly = true;
-            this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(562, 382);
-            this.txtLogs.TabIndex = 2;
-            this.txtLogs.TextChanged += new System.EventHandler(this.txtLogs_TextChanged);
+            this.bodyContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bodyContainer.Location = new System.Drawing.Point(0, 0);
+            this.bodyContainer.Name = "bodyContainer";
+            this.bodyContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // bodyContainer.Panel1
+            // 
+            this.bodyContainer.Panel1.Controls.Add(this.pnlAddOperation);
+            this.bodyContainer.Panel1.Controls.Add(this.tsAddOperation);
+            // 
+            // bodyContainer.Panel2
+            // 
+            this.bodyContainer.Panel2.Controls.Add(this.pnlQueue);
+            this.bodyContainer.Panel2.Controls.Add(this.tsQueue);
+            this.bodyContainer.Size = new System.Drawing.Size(1721, 933);
+            this.bodyContainer.SplitterDistance = 422;
+            this.bodyContainer.TabIndex = 0;
+            // 
+            // pnlAddOperation
+            // 
+            this.pnlAddOperation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlAddOperation.Location = new System.Drawing.Point(0, 26);
+            this.pnlAddOperation.Name = "pnlAddOperation";
+            this.pnlAddOperation.Size = new System.Drawing.Size(1721, 396);
+            this.pnlAddOperation.TabIndex = 14;
+            // 
+            // tsAddOperation
+            // 
+            this.tsAddOperation.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsAddOperation.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.tsAddOperation.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbAddOperation,
+            this.tssOperation1,
+            this.tsbOperationCancel});
+            this.tsAddOperation.Location = new System.Drawing.Point(0, 0);
+            this.tsAddOperation.Name = "tsAddOperation";
+            this.tsAddOperation.Size = new System.Drawing.Size(1721, 26);
+            this.tsAddOperation.TabIndex = 13;
+            this.tsAddOperation.Text = "Add Operation Toolstrip";
+            // 
+            // tsbAddOperation
+            // 
+            this.tsbAddOperation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbAddOperation.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiUpdate,
+            this.tsmiExport,
+            this.tsmiImport,
+            this.tsmiDelete,
+            this.tsmiPublish});
+            this.tsbAddOperation.Image = ((System.Drawing.Image)(resources.GetObject("tsbAddOperation.Image")));
+            this.tsbAddOperation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbAddOperation.Name = "tsbAddOperation";
+            this.tsbAddOperation.Size = new System.Drawing.Size(114, 23);
+            this.tsbAddOperation.Text = "Add Operation";
+            // 
+            // tsmiUpdate
+            // 
+            this.tsmiUpdate.Name = "tsmiUpdate";
+            this.tsmiUpdate.Size = new System.Drawing.Size(234, 26);
+            this.tsmiUpdate.Text = "Update versions";
+            this.tsmiUpdate.Click += new System.EventHandler(this.tsmiUpdate_Click);
             // 
             // tsmiExport
             // 
             this.tsmiExport.Name = "tsmiExport";
-            this.tsmiExport.Size = new System.Drawing.Size(224, 26);
-            this.tsmiExport.Text = "Export";
-            this.tsmiExport.Click += new System.EventHandler(this.tsmiExport_Click);
+            this.tsmiExport.Size = new System.Drawing.Size(234, 26);
+            this.tsmiExport.Text = "Export solutions";
             // 
             // tsmiImport
             // 
             this.tsmiImport.Name = "tsmiImport";
-            this.tsmiImport.Size = new System.Drawing.Size(224, 26);
-            this.tsmiImport.Text = "Import";
-            this.tsmiImport.Click += new System.EventHandler(this.tsmiImport_Click);
+            this.tsmiImport.Size = new System.Drawing.Size(234, 26);
+            this.tsmiImport.Text = "Import solutions";
             // 
             // tsmiDelete
             // 
             this.tsmiDelete.Name = "tsmiDelete";
-            this.tsmiDelete.Size = new System.Drawing.Size(224, 26);
-            this.tsmiDelete.Text = "Delete";
-            this.tsmiDelete.Click += new System.EventHandler(this.tsmiDelete_Click);
+            this.tsmiDelete.Size = new System.Drawing.Size(234, 26);
+            this.tsmiDelete.Text = "Delete solutions";
             // 
             // tsmiPublish
             // 
             this.tsmiPublish.Name = "tsmiPublish";
-            this.tsmiPublish.Size = new System.Drawing.Size(224, 26);
-            this.tsmiPublish.Text = "Publish";
-            this.tsmiPublish.Click += new System.EventHandler(this.tsmiPublish_Click);
+            this.tsmiPublish.Size = new System.Drawing.Size(234, 26);
+            this.tsmiPublish.Text = "Publish Customizations";
+            // 
+            // tssOperation1
+            // 
+            this.tssOperation1.Name = "tssOperation1";
+            this.tssOperation1.Size = new System.Drawing.Size(6, 26);
+            // 
+            // tsbOperationCancel
+            // 
+            this.tsbOperationCancel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbOperationCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbOperationCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbOperationCancel.Name = "tsbOperationCancel";
+            this.tsbOperationCancel.Size = new System.Drawing.Size(53, 23);
+            this.tsbOperationCancel.Text = "Cancel";
+            this.tsbOperationCancel.Visible = false;
+            // 
+            // pnlQueue
+            // 
+            this.pnlQueue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlQueue.Location = new System.Drawing.Point(0, 26);
+            this.pnlQueue.Name = "pnlQueue";
+            this.pnlQueue.Size = new System.Drawing.Size(1721, 481);
+            this.pnlQueue.TabIndex = 13;
+            // 
+            // tsQueue
+            // 
+            this.tsQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsQueue.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.tsQueue.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbManageQueue,
+            this.tssQueue1,
+            this.tsbQueueExecute,
+            this.tsbQueueCancel});
+            this.tsQueue.Location = new System.Drawing.Point(0, 0);
+            this.tsQueue.Name = "tsQueue";
+            this.tsQueue.Size = new System.Drawing.Size(1721, 26);
+            this.tsQueue.TabIndex = 12;
+            this.tsQueue.Text = "Queue Toolstrip";
+            // 
+            // tsbManageQueue
+            // 
+            this.tsbManageQueue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbManageQueue.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiLoadQueue,
+            this.tsmiSaveQueue,
+            this.tsmiClearQueue});
+            this.tsbManageQueue.Image = ((System.Drawing.Image)(resources.GetObject("tsbManageQueue.Image")));
+            this.tsbManageQueue.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbManageQueue.Name = "tsbManageQueue";
+            this.tsbManageQueue.Size = new System.Drawing.Size(118, 23);
+            this.tsbManageQueue.Text = "Manage Queue";
+            // 
+            // tsmiLoadQueue
+            // 
+            this.tsmiLoadQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsmiLoadQueue.Name = "tsmiLoadQueue";
+            this.tsmiLoadQueue.Size = new System.Drawing.Size(168, 26);
+            this.tsmiLoadQueue.Text = "Load Queue";
+            // 
+            // tsmiSaveQueue
+            // 
+            this.tsmiSaveQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsmiSaveQueue.Name = "tsmiSaveQueue";
+            this.tsmiSaveQueue.Size = new System.Drawing.Size(168, 26);
+            this.tsmiSaveQueue.Text = "Save Queue";
+            // 
+            // tsmiClearQueue
+            // 
+            this.tsmiClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsmiClearQueue.Name = "tsmiClearQueue";
+            this.tsmiClearQueue.Size = new System.Drawing.Size(168, 26);
+            this.tsmiClearQueue.Text = "Clear Queue";
+            // 
+            // tssQueue1
+            // 
+            this.tssQueue1.Name = "tssQueue1";
+            this.tssQueue1.Size = new System.Drawing.Size(6, 26);
+            // 
+            // tsbQueueExecute
+            // 
+            this.tsbQueueExecute.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbQueueExecute.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbQueueExecute.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbQueueExecute.Name = "tsbQueueExecute";
+            this.tsbQueueExecute.Size = new System.Drawing.Size(59, 23);
+            this.tsbQueueExecute.Text = "Execute";
+            // 
+            // tsbQueueCancel
+            // 
+            this.tsbQueueCancel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbQueueCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbQueueCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbQueueCancel.Name = "tsbQueueCancel";
+            this.tsbQueueCancel.Size = new System.Drawing.Size(53, 23);
+            this.tsbQueueCancel.Text = "Cancel";
+            this.tsbQueueCancel.Visible = false;
             // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.Controls.Add(this.pnlMain);
-            this.Controls.Add(this.tsMain);
+            this.Controls.Add(this.mainContainer);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "DeployerControl";
-            this.Size = new System.Drawing.Size(2421, 933);
+            this.Size = new System.Drawing.Size(2197, 933);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
-            this.tsMain.ResumeLayout(false);
-            this.tsMain.PerformLayout();
-            this.pnlMain.ResumeLayout(false);
+            this.mainContainer.Panel1.ResumeLayout(false);
+            this.mainContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
+            this.mainContainer.ResumeLayout(false);
             this.pnlSettings.ResumeLayout(false);
-            this.gbSolutionHistory.ResumeLayout(false);
+            this.gbSolutionPackagerLogs.ResumeLayout(false);
+            this.gbSolutionPackagerLogs.PerformLayout();
             this.gbEnvironments.ResumeLayout(false);
             this.gbEnvironments.PerformLayout();
-            this.pnlBody.ResumeLayout(false);
-            this.gbSolutionPackager.ResumeLayout(false);
-            this.gbSolutionPackager.PerformLayout();
-            this.gbQueue.ResumeLayout(false);
-            this.pnlOperationButtons.ResumeLayout(false);
-            this.cmsContextMenu.ResumeLayout(false);
-            this.gbLogs.ResumeLayout(false);
-            this.gbLogs.PerformLayout();
+            this.gbDeployerLogs.ResumeLayout(false);
+            this.gbDeployerLogs.PerformLayout();
+            this.bodyContainer.Panel1.ResumeLayout(false);
+            this.bodyContainer.Panel1.PerformLayout();
+            this.bodyContainer.Panel2.ResumeLayout(false);
+            this.bodyContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bodyContainer)).EndInit();
+            this.bodyContainer.ResumeLayout(false);
+            this.tsAddOperation.ResumeLayout(false);
+            this.tsAddOperation.PerformLayout();
+            this.tsQueue.ResumeLayout(false);
+            this.tsQueue.PerformLayout();
             this.ResumeLayout(false);
 
         }
         #endregion
 
-        // Main components
-        private System.Windows.Forms.ToolStrip tsMain;
-        private System.Windows.Forms.TableLayoutPanel pnlMain;
-
-        // Environments group
-        private System.Windows.Forms.GroupBox gbEnvironments;
-        private System.Windows.Forms.Label lblTarget;
-        private System.Windows.Forms.Label lblTargetValue;
-
-        // Settings
+        private System.Windows.Forms.SplitContainer mainContainer;
+        private System.Windows.Forms.SplitContainer bodyContainer;
         private System.Windows.Forms.TableLayoutPanel pnlSettings;
-
-        // Body
-        private System.Windows.Forms.TableLayoutPanel pnlBody;
-
-        // Queue Group
-        private System.Windows.Forms.GroupBox gbQueue;
-        private System.Windows.Forms.ToolStripButton tsbExecute;
-        private System.Windows.Forms.ToolStripButton tsbCancel;
-        private System.Windows.Forms.Button btnAddOperation;
-        private System.Windows.Forms.ListView lvOperations;
-        private System.Windows.Forms.ColumnHeader chOpIndex;
-        private System.Windows.Forms.ColumnHeader chOpType;
-        private System.Windows.Forms.ColumnHeader chOpDisplayName;
-        private System.Windows.Forms.ColumnHeader chOpPublisher;
-        private System.Windows.Forms.ColumnHeader chOpDescription;
-        private System.Windows.Forms.ContextMenuStrip cmsContextMenu;
-        private System.Windows.Forms.ToolStripMenuItem cmsiRemove;
-
-        // Layers Group
-        private System.Windows.Forms.GroupBox gbLogs;
-        private System.Windows.Forms.TextBox txtLogs;
-        private System.Windows.Forms.Button btnClearQueue;
-        private System.Windows.Forms.Label lblSource;
-        private System.Windows.Forms.Label lblSourceValue;
-        private System.Windows.Forms.Button btnConnectSource;
-        private System.Windows.Forms.Button btnClearLogs;
-        private System.Windows.Forms.Button btnUp;
-        private System.Windows.Forms.Panel pnlOperationButtons;
-        private System.Windows.Forms.Button btnDown;
-        private System.Windows.Forms.GroupBox gbSolutionPackager;
-        private System.Windows.Forms.RichTextBox txtOutput;
-        private System.Windows.Forms.Button btnSaveQueue;
-        private System.Windows.Forms.Button btnLoadQueue;
-        private System.Windows.Forms.GroupBox gbSolutionHistory;
-        private System.Windows.Forms.Button btnRefreshHistory;
-        private System.Windows.Forms.ListView lvSolutionHistory;
-        private System.Windows.Forms.ColumnHeader chSolHistName;
-        private System.Windows.Forms.ColumnHeader chSolHistOperation;
-        private System.Windows.Forms.ColumnHeader chSolHistStatus;
+        private System.Windows.Forms.GroupBox gbSolutionPackagerLogs;
         private System.Windows.Forms.Label lblPackagerVersion;
         private System.Windows.Forms.Label lblPackagerVersionValue;
+        private System.Windows.Forms.RichTextBox txtOutput;
+        private System.Windows.Forms.GroupBox gbEnvironments;
+        private System.Windows.Forms.Button btnConnectTarget;
+        private System.Windows.Forms.Label lblTarget;
+        private System.Windows.Forms.Label lblTargetValue;
+        private System.Windows.Forms.Label lblSource;
+        private System.Windows.Forms.Label lblSourceValue;
+        private System.Windows.Forms.GroupBox gbDeployerLogs;
+        private System.Windows.Forms.TextBox txtLogs;
+        private System.Windows.Forms.Button btnClearLogs;
+        private System.Windows.Forms.ToolStrip tsAddOperation;
         private System.Windows.Forms.ToolStripDropDownButton tsbAddOperation;
-        private System.Windows.Forms.ToolStripMenuItem tsmiUpdateSolutionVersion;
-        private System.Windows.Forms.ToolStripSeparator tsSeparator1;
-        private WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender visualStudioToolStripExtender1;
-        private WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender visualStudioToolStripExtender2;
+        private System.Windows.Forms.ToolStripMenuItem tsmiUpdate;
         private System.Windows.Forms.ToolStripMenuItem tsmiExport;
         private System.Windows.Forms.ToolStripMenuItem tsmiImport;
         private System.Windows.Forms.ToolStripMenuItem tsmiDelete;
         private System.Windows.Forms.ToolStripMenuItem tsmiPublish;
+        private System.Windows.Forms.ToolStripSeparator tssOperation1;
+        private System.Windows.Forms.ToolStripButton tsbOperationCancel;
+        private WeifenLuo.WinFormsUI.Docking.DockPanel pnlAddOperation;
+        private System.Windows.Forms.ToolStrip tsQueue;
+        private System.Windows.Forms.ToolStripDropDownButton tsbManageQueue;
+        private System.Windows.Forms.ToolStripMenuItem tsmiLoadQueue;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSaveQueue;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearQueue;
+        private System.Windows.Forms.ToolStripSeparator tssQueue1;
+        private System.Windows.Forms.ToolStripButton tsbQueueExecute;
+        private System.Windows.Forms.ToolStripButton tsbQueueCancel;
+        private WeifenLuo.WinFormsUI.Docking.DockPanel pnlQueue;
     }
 }

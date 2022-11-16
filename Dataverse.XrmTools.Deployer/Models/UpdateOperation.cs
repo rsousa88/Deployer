@@ -2,9 +2,7 @@
 {
     public class UpdateOperation : Operation
     {
-        public string OldDisplayName { get; set; }
-        public string OldVersion { get; set; }
-        public string NewVersion { get; set; }
-        public string OldDescription { get; set; }
+        public Solution Solution { get; set; }
+        public string Version { get; set; }
     }
 }

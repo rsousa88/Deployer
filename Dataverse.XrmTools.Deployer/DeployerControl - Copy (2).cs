@@ -29,7 +29,7 @@ using Dataverse.XrmTools.Deployer.Controls;
 
 namespace Dataverse.XrmTools.Deployer
 {
-    public partial class DeployerControl : MultipleConnectionsPluginControlBase
+    public partial class DeployerControlCopy3 : MultipleConnectionsPluginControlBase
     {
         #region Variables
         // settings
@@ -52,7 +52,7 @@ namespace Dataverse.XrmTools.Deployer
         private Logger _logger;
         #endregion Variables
 
-        public DeployerControl()
+        public DeployerControlCopy3()
         {
             LogInfo("----- Starting Deployer -----");
 
@@ -264,152 +264,152 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        //private void DeployQueue()
-        //{
-        //    var count = _operations.Count;
-        //    if (DialogResult.No == MessageBox.Show(this, $@"{count} operations will be executed sequentially in the presented order. Are you sure you want to continue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
+        private void DeployQueue()
+        {
+            var count = _operations.Count;
+            if (DialogResult.No == MessageBox.Show(this, $@"{count} operations will be executed sequentially in the presented order. Are you sure you want to continue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
 
-        //    _logger.Log(LogLevel.INFO, $"Executing queued operations...");
-        //    if (_working) { return; }
-        //    ManageWorkingState(true);
+            _logger.Log(LogLevel.INFO, $"Executing queued operations...");
+            if (_working) { return; }
+            ManageWorkingState(true);
 
-        //    WorkAsync(new WorkAsyncInfo
-        //    {
-        //        Message = $"Executing queued operations...",
-        //        IsCancelable = true,
-        //        Work = (worker, args) =>
-        //        {
-        //            var startTotalTime = DateTime.UtcNow;
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = $"Executing queued operations...",
+                IsCancelable = true,
+                Work = (worker, args) =>
+                {
+                    var startTotalTime = DateTime.UtcNow;
 
-        //            var repo = new CrmRepo(_primary, _logger, _secondary, worker);
+                    var repo = new CrmRepo(_primary, _logger, _secondary, worker);
 
-        //            var index = 1;
-        //            foreach (var operation in _operations)
-        //            {
-        //                if (worker.CancellationPending) { return; }
+                    var index = 1;
+                    foreach (var operation in _operations)
+                    {
+                        if (worker.CancellationPending) { return; }
 
-        //                var startPartialTime = DateTime.UtcNow;
+                        var startPartialTime = DateTime.UtcNow;
 
-        //                var progress = 100 * (index -1) / count;
+                        var progress = 100 * (index -1) / count;
 
-        //                switch (operation.OperationType)
-        //                {
-        //                    case OperationType.UPDATE:
-        //                        var update = operation as UpdateOperation;
-        //                        worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpdating '{update.Solution.DisplayName}'");
-        //                        repo.UpdateSolution(update);
+                        switch (operation.OperationType)
+                        {
+                            case OperationType.UPDATE:
+                                var update = operation as UpdateOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpdating '{update.Solution.DisplayName}'");
+                                repo.UpdateSolution(update);
 
-        //                        var updateTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                        _logger.Log(LogLevel.INFO, $"Solution {update.Solution.DisplayName} successfully updated in {updateTime}");
-        //                        break;
-        //                    //case OperationType.EXPORT:
-        //                    //    var export = operation as ExportOperation;
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nExporting '{export.Solution.DisplayName}'");
-        //                    //    repo.ExportSolution(export);
+                                var updateTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {update.Solution.DisplayName} successfully updated in {updateTime}");
+                                break;
+                            //case OperationType.EXPORT:
+                            //    var export = operation as ExportOperation;
+                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nExporting '{export.Solution.DisplayName}'");
+                            //    repo.ExportSolution(export);
 
-        //                    //    var exportTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {export.Solution.DisplayName} successfully exported in {exportTime}");
-        //                    //    break;
-        //                    //case OperationType.IMPORT:
-        //                    //    var import = operation as ImportOperation;
-        //                    //    var message = $"Queue execution: {index}/{count} ({progress}%)\nImporting '{import.Solution.DisplayName}'";
-        //                    //    worker.ReportProgress(progress, message);
-        //                    //    repo.ImportSolution(import, message);
+                            //    var exportTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //    _logger.Log(LogLevel.INFO, $"Solution {export.Solution.DisplayName} successfully exported in {exportTime}");
+                            //    break;
+                            //case OperationType.IMPORT:
+                            //    var import = operation as ImportOperation;
+                            //    var message = $"Queue execution: {index}/{count} ({progress}%)\nImporting '{import.Solution.DisplayName}'";
+                            //    worker.ReportProgress(progress, message);
+                            //    repo.ImportSolution(import, message);
 
-        //                    //    var importTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully imported in {importTime}");
+                            //    var importTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully imported in {importTime}");
 
-        //                    //    if (import.HoldingSolution)
-        //                    //    {
-        //                    //        startPartialTime = DateTime.UtcNow;
+                            //    if (import.HoldingSolution)
+                            //    {
+                            //        startPartialTime = DateTime.UtcNow;
 
-        //                    //        worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpgrading '{import.Solution.DisplayName}'");
-        //                    //        repo.UpgradeSolution(import.Solution);
+                            //        worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpgrading '{import.Solution.DisplayName}'");
+                            //        repo.UpgradeSolution(import.Solution);
 
-        //                    //        var upgradeTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //        _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully upgraded in {upgradeTime}");
-        //                    //    }
-        //                    //    break;
-        //                    //case OperationType.DELETE:
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nDeleting '{operation.Solution.DisplayName}'");
-        //                    //    repo.DeleteSolution(operation.Solution);
+                            //        var upgradeTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //        _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully upgraded in {upgradeTime}");
+                            //    }
+                            //    break;
+                            //case OperationType.DELETE:
+                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nDeleting '{operation.Solution.DisplayName}'");
+                            //    repo.DeleteSolution(operation.Solution);
 
-        //                    //    var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
-        //                    //    break;
-        //                    //case OperationType.UNPACK:
-        //                    //    var unpack = operation as UnpackOperation;
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUnpacking '{unpack.Solution.DisplayName}'");
-        //                    //    repo.UnpackSolution(unpack);
+                            //    var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
+                            //    break;
+                            //case OperationType.UNPACK:
+                            //    var unpack = operation as UnpackOperation;
+                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUnpacking '{unpack.Solution.DisplayName}'");
+                            //    repo.UnpackSolution(unpack);
 
-        //                    //    var unpackTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {unpack.Solution.DisplayName} successfully unpacked in {unpackTime}");
-        //                    //    break;
-        //                    //case OperationType.PACK:
-        //                    //    var pack = operation as PackOperation;
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPacking '{pack.Solution.DisplayName}'");
-        //                    //    repo.PackSolution(pack);
+                            //    var unpackTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //    _logger.Log(LogLevel.INFO, $"Solution {unpack.Solution.DisplayName} successfully unpacked in {unpackTime}");
+                            //    break;
+                            //case OperationType.PACK:
+                            //    var pack = operation as PackOperation;
+                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPacking '{pack.Solution.DisplayName}'");
+                            //    repo.PackSolution(pack);
 
-        //                    //    var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
-        //                    //    break;
-        //                    case OperationType.PUBLISH:
-        //                        worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPublishing all customizations");
-        //                        repo.PublishCustomizations();
+                            //    var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //    _logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
+                            //    break;
+                            case OperationType.PUBLISH:
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPublishing all customizations");
+                                repo.PublishCustomizations();
 
-        //                        var publishTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                        _logger.Log(LogLevel.INFO, $"All customizations were successfully published in {publishTime}");
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
+                                var publishTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"All customizations were successfully published in {publishTime}");
+                                break;
+                            default:
+                                break;
+                        }
 
-        //                index++;
-        //            }
+                        index++;
+                    }
 
-        //            var totalTime = (DateTime.UtcNow - startTotalTime).ToString(@"hh\:mm\:ss");
-        //            _logger.Log(LogLevel.INFO, $"Total execution time: {totalTime}");
-        //        },
-        //        PostWorkCallBack = args =>
-        //        {
-        //            ManageWorkingState(false);
+                    var totalTime = (DateTime.UtcNow - startTotalTime).ToString(@"hh\:mm\:ss");
+                    _logger.Log(LogLevel.INFO, $"Total execution time: {totalTime}");
+                },
+                PostWorkCallBack = args =>
+                {
+                    ManageWorkingState(false);
 
-        //            if(args.Cancelled)
-        //            {
-        //                _logger.Log(LogLevel.INFO, $"Operation canceled by user");
-        //                MessageBox.Show(this, "Operation canceled by user", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
+                    if(args.Cancelled)
+                    {
+                        _logger.Log(LogLevel.INFO, $"Operation canceled by user");
+                        MessageBox.Show(this, "Operation canceled by user", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
 
-        //            if (args.Error != null)
-        //            {
-        //                _logger.Log(LogLevel.ERROR, args.Error.Message);
-        //                MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            else
-        //            {
-        //                _logger.Log(LogLevel.INFO, $"All operations were successfully executed");
-        //                if (DialogResult.Yes == MessageBox.Show(this, "All operations were successfully executed.\n\nDo you want to save current queue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { SaveQueue(); }
+                    if (args.Error != null)
+                    {
+                        _logger.Log(LogLevel.ERROR, args.Error.Message);
+                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        _logger.Log(LogLevel.INFO, $"All operations were successfully executed");
+                        if (DialogResult.Yes == MessageBox.Show(this, "All operations were successfully executed.\n\nDo you want to save current queue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { SaveQueue(); }
 
-        //                // clear queue
-        //                lvQueue.Items.Clear();
-        //                _operations.Clear();
+                        // clear queue
+                        lvQueue.Items.Clear();
+                        _operations.Clear();
 
-        //                tsbQueueExecute.Enabled = false;
+                        tsbQueueExecute.Enabled = false;
 
-        //                //btnUp.Enabled = false;
-        //                //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+                        //btnUp.Enabled = false;
+                        //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
 
-        //                //btnDown.Enabled = false;
-        //                //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
-        //            }
-        //        },
-        //        ProgressChanged = args =>
-        //        {
-        //            SetWorkingMessage(args.UserState.ToString());
-        //        }
-        //    });
-        //}
+                        //btnDown.Enabled = false;
+                        //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+                    }
+                },
+                ProgressChanged = args =>
+                {
+                    SetWorkingMessage(args.UserState.ToString());
+                }
+            });
+        }
         #endregion Private Main Methods
 
         #region Private Helper Methods
@@ -487,7 +487,7 @@ namespace Dataverse.XrmTools.Deployer
 
         private void ManageWorkingState(bool working)
         {
-            mainContainer.Enabled = !working;
+            pnlMain.Enabled = !working;
 
             _working = working;
             Cursor = working ? Cursors.WaitCursor : Cursors.Default;
@@ -504,30 +504,30 @@ namespace Dataverse.XrmTools.Deployer
             tsbQueueExecute.Enabled = false;
         }
 
-        //private void RenderOperationsList(int? selectedIndex = null)
-        //{
-        //    lvQueue.Items.Clear();
+        private void RenderOperationsList(int? selectedIndex = null)
+        {
+            lvQueue.Items.Clear();
 
-        //    _groups = _groups.OrderBy(grp => grp.Index).ToList();
+            _groups = _groups.OrderBy(grp => grp.Index).ToList();
 
-        //    var index = 1;
-        //    foreach (var grp in _groups)
-        //    {
-        //        var grpOps = grp.Operations.OrderBy(op => op.Index).ToList();
-        //        foreach (var op in grpOps)
-        //        {
-        //            op.Index = index++;
-        //        }
+            var index = 1;
+            foreach (var grp in _groups)
+            {
+                var grpOps = grp.Operations.OrderBy(op => op.Index).ToList();
+                foreach (var op in grpOps)
+                {
+                    op.Index = index++;
+                }
 
-        //        lvQueue.Items.AddRange(grpOps.Select(op => op.ToListViewItem()).ToArray());
-        //    }
+                lvQueue.Items.AddRange(grpOps.Select(op => op.ToListViewItem()).ToArray());
+            }
 
-        //    if (selectedIndex.HasValue)
-        //    {
-        //        var operation = _groups.SingleOrDefault(grp => grp.Index.Equals(selectedIndex)).Operations.First();
-        //        lvQueue.Items.Cast<ListViewItem>().FirstOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(operation.OperationId)).Selected = true;
-        //    }
-        //}
+            if (selectedIndex.HasValue)
+            {
+                var operation = _groups.SingleOrDefault(grp => grp.Index.Equals(selectedIndex)).Operations.First();
+                lvQueue.Items.Cast<ListViewItem>().FirstOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(operation.OperationId)).Selected = true;
+            }
+        }
 
         private string GetOperationDescription(Operation operation)
         {
@@ -577,99 +577,99 @@ namespace Dataverse.XrmTools.Deployer
             MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        //private void MarkAllFromGroup()
-        //{
-        //    var lvItems = lvQueue.Items.Cast<ListViewItem>().Where(lvi => lvi.Selected);
-        //    var selected = lvItems.LastOrDefault().Tag as Operation;
+        private void MarkAllFromGroup()
+        {
+            var lvItems = lvQueue.Items.Cast<ListViewItem>().Where(lvi => lvi.Selected);
+            var selected = lvItems.LastOrDefault().Tag as Operation;
 
-        //    var operations = _operations.Where(op => op.GroupId.Equals(selected.GroupId));
+            var operations = _operations.Where(op => op.GroupId.Equals(selected.GroupId));
 
-        //    foreach (var op in operations)
-        //    {
-        //        var grpItem = lvQueue.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(op.OperationId));
-        //        grpItem.BackColor = Color.LightGray;
-        //    }
-        //}
+            foreach (var op in operations)
+            {
+                var grpItem = lvQueue.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(op.OperationId));
+                grpItem.BackColor = Color.LightGray;
+            }
+        }
 
-        //private void MoveOperationItem(Operation selected, string action)
-        //{
-        //    var group = _groups.FirstOrDefault(grp => grp.GroupId.Equals(selected.GroupId));
+        private void MoveOperationItem(Operation selected, string action)
+        {
+            var group = _groups.FirstOrDefault(grp => grp.GroupId.Equals(selected.GroupId));
 
-        //    if (action.Equals("up"))
-        //    {
-        //        var oldIndex = group.Index;
-        //        if (oldIndex > 1)
-        //        {
-        //            var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(_groups.FindIndex(grp2 => grp2.Index.Equals(oldIndex))));
-        //            var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
+            if (action.Equals("up"))
+            {
+                var oldIndex = group.Index;
+                if (oldIndex > 1)
+                {
+                    var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(_groups.FindIndex(grp2 => grp2.Index.Equals(oldIndex))));
+                    var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
 
-        //            oldGrp.Index++;
-        //            newGrp.Index--;
+                    oldGrp.Index++;
+                    newGrp.Index--;
 
-        //            RenderOperationsList(oldIndex - 1);
-        //        }
-        //    }
+                    RenderOperationsList(oldIndex - 1);
+                }
+            }
 
-        //    if (action.Equals("down"))
-        //    {
-        //        var oldIndex = group.Index;
-        //        if (oldIndex < _groups.Count)
-        //        {
-        //            var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(oldIndex + 1));
-        //            var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
+            if (action.Equals("down"))
+            {
+                var oldIndex = group.Index;
+                if (oldIndex < _groups.Count)
+                {
+                    var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(oldIndex + 1));
+                    var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
 
-        //            oldGrp.Index--;
-        //            newGrp.Index++;
+                    oldGrp.Index--;
+                    newGrp.Index++;
 
-        //            RenderOperationsList(oldIndex + 1);
-        //        }
-        //    }
-        //}
+                    RenderOperationsList(oldIndex + 1);
+                }
+            }
+        }
         #endregion Private Helper Methods
 
         #region Custom Handler Events
-        //private void HandleOperationsEvent(object sender, List<Operation> opsList)
-        //{
-        //    var group = new OperationGroup(opsList, _groups.Count + 1);
-        //    _groups.Add(group);
+        private void HandleOperationsEvent(object sender, List<Operation> opsList)
+        {
+            var group = new OperationGroup(opsList, _groups.Count + 1);
+            _groups.Add(group);
 
-        //    var operations = group.Operations;
-        //    foreach (var operation in operations)
-        //    {
-        //        if (!operation.OperationType.Equals(OperationType.PUBLISH))
-        //        {
-        //            //if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
-        //            //{
-        //            //    throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
-        //            //}
+            var operations = group.Operations;
+            foreach (var operation in operations)
+            {
+                if (!operation.OperationType.Equals(OperationType.PUBLISH))
+                {
+                    //if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
+                    //{
+                    //    throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
+                    //}
 
-        //            var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) /*&& op.Solution.LogicalName.Equals(operation.Solution.LogicalName)*/);
-        //            if (updated != null)
-        //            {
-        //                // found an update operation -> also update queued operations
-        //                //operation.Solution.DisplayName = updated.Solution.DisplayName;
-        //                //operation.Solution.Version = updated.Solution.Version;
-        //                //operation.Solution.Description = updated.Solution.Description;
-        //            }
-        //        }
+                    var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) /*&& op.Solution.LogicalName.Equals(operation.Solution.LogicalName)*/);
+                    if (updated != null)
+                    {
+                        // found an update operation -> also update queued operations
+                        //operation.Solution.DisplayName = updated.Solution.DisplayName;
+                        //operation.Solution.Version = updated.Solution.Version;
+                        //operation.Solution.Description = updated.Solution.Description;
+                    }
+                }
 
-        //        operation.Index = lvQueue.Items.Count + 1;
+                operation.Index = lvQueue.Items.Count + 1;
 
-        //        operation.Description = GetOperationDescription(operation);
+                operation.Description = GetOperationDescription(operation);
 
-        //        _operations.Add(operation);
-        //        var lvItem = operation.ToListViewItem();
-        //        lvQueue.Items.Add(lvItem);
+                _operations.Add(operation);
+                var lvItem = operation.ToListViewItem();
+                lvQueue.Items.Add(lvItem);
 
-        //        var message = $"Added '{operation.OperationType}' operation to queue";
-        //        //if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
-        //        _logger.Log(LogLevel.INFO, message);
+                var message = $"Added '{operation.OperationType}' operation to queue";
+                //if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
+                _logger.Log(LogLevel.INFO, message);
 
-        //        tsbQueueExecute.Enabled = true;
-        //        tsmiSaveQueue.Enabled = true;
-        //        tsmiClearQueue.Enabled = true;
-        //    }
-        //}
+                tsbQueueExecute.Enabled = true;
+                tsmiSaveQueue.Enabled = true;
+                tsmiClearQueue.Enabled = true;
+            }
+        }
 
         private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
         {
@@ -702,15 +702,15 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        //private void lvOperations_Resize(object sender, EventArgs e)
-        //{
-        //    var maxWidth = lvQueue.Width >= 741 ? lvQueue.Width : 741;
-        //    chOpIndex.Width = (int)Math.Floor(maxWidth * 0.03);
-        //    chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
-        //    chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.29);
-        //    chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.24);
-        //    chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.27);
-        //}
+        private void lvOperations_Resize(object sender, EventArgs e)
+        {
+            var maxWidth = lvQueue.Width >= 741 ? lvQueue.Width : 741;
+            chOpIndex.Width = (int)Math.Floor(maxWidth * 0.03);
+            chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
+            chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.29);
+            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.24);
+            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.27);
+        }
 
         private void btnAddOperation_Click(object sender, EventArgs e)
         {
@@ -744,40 +744,40 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        //private void btnClearQueue_Click(object sender, EventArgs e)
-        //{
-        //    lvQueue.Items.Clear();
-        //    _operations.Clear();
+        private void btnClearQueue_Click(object sender, EventArgs e)
+        {
+            lvQueue.Items.Clear();
+            _operations.Clear();
 
-        //    tsbQueueExecute.Enabled = false;
+            tsbQueueExecute.Enabled = false;
 
-        //    //btnUp.Enabled = false;
-        //    //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+            //btnUp.Enabled = false;
+            //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
 
-        //    //btnDown.Enabled = false;
-        //    //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+            //btnDown.Enabled = false;
+            //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
 
-        //    tsmiSaveQueue.Enabled = false;
-        //    tsmiClearQueue.Enabled = false;
-        //}
+            tsmiSaveQueue.Enabled = false;
+            tsmiClearQueue.Enabled = false;
+        }
 
-        //private async void tsbDeploy_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        txtLogs.Clear();
-        //        txtOutput.Clear();
+        private async void tsbDeploy_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                txtLogs.Clear();
+                txtOutput.Clear();
 
-        //        await CheckRequirements();
-        //        DeployQueue();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ManageWorkingState(false);
-        //        _logger.Log(LogLevel.ERROR, ex.Message);
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
+                await CheckRequirements();
+                DeployQueue();
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void tsbCancel_Click(object sender, EventArgs e)
         {
@@ -837,76 +837,76 @@ namespace Dataverse.XrmTools.Deployer
             txtOutput.Clear();
         }
 
-        //private void lvOperations_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    var count = lvQueue.SelectedItems.Count;
-        //    if (count > 0)
-        //    {
-        //        //btnUp.Enabled = true;
-        //        //btnUp.BackgroundImage = Properties.Resources.arrow_up_35px;
+        private void lvOperations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var count = lvQueue.SelectedItems.Count;
+            if (count > 0)
+            {
+                //btnUp.Enabled = true;
+                //btnUp.BackgroundImage = Properties.Resources.arrow_up_35px;
 
-        //        //btnDown.Enabled = true;
-        //        //btnDown.BackgroundImage = Properties.Resources.arrow_down_35px;
+                //btnDown.Enabled = true;
+                //btnDown.BackgroundImage = Properties.Resources.arrow_down_35px;
 
-        //        MarkAllFromGroup();
-        //    }
-        //    else
-        //    {
-        //        //btnUp.Enabled = false;
-        //        //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+                MarkAllFromGroup();
+            }
+            else
+            {
+                //btnUp.Enabled = false;
+                //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
 
-        //        //btnDown.Enabled = false;
-        //        //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+                //btnDown.Enabled = false;
+                //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
 
-        //        var marked = lvQueue.Items.Cast<ListViewItem>().Where(lvi => lvi.BackColor.Equals(Color.LightGray));
-        //        foreach (var lvi in marked)
-        //        {
-        //            lvi.BackColor = SystemColors.Window;
-        //        }
-        //    }
-        //}
+                var marked = lvQueue.Items.Cast<ListViewItem>().Where(lvi => lvi.BackColor.Equals(Color.LightGray));
+                foreach (var lvi in marked)
+                {
+                    lvi.BackColor = SystemColors.Window;
+                }
+            }
+        }
 
-        //private void lvOperations_DoubleClick(object sender, EventArgs e)
-        //{
-        //    var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-        //    if (selected != null)
-        //    {
-        //        try
-        //        {
-        //            var operation = selected.Tag as Operation;
-        //            if(operation.OperationType.Equals(OperationType.PUBLISH)) { return; }
+        private void lvOperations_DoubleClick(object sender, EventArgs e)
+        {
+            var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+            if (selected != null)
+            {
+                try
+                {
+                    var operation = selected.Tag as Operation;
+                    if(operation.OperationType.Equals(OperationType.PUBLISH)) { return; }
 
-        //            using (var form = new OperationDetails(_logger, operation))
-        //            {
-        //                form.ShowDialog();
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ManageWorkingState(false);
-        //            LogError(ex.Message);
-        //            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //    }
-        //}
+                    using (var form = new OperationDetails(_logger, operation))
+                    {
+                        form.ShowDialog();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ManageWorkingState(false);
+                    LogError(ex.Message);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
-        //private void btnUp_Click(object sender, EventArgs e)
-        //{
-        //    var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-        //    if (selected != null)
-        //    {
-        //        MoveOperationItem(selected.Tag as Operation, "up");
-        //    }
-        //}
+        private void btnUp_Click(object sender, EventArgs e)
+        {
+            var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+            if (selected != null)
+            {
+                MoveOperationItem(selected.Tag as Operation, "up");
+            }
+        }
 
-        //private void btnDown_Click(object sender, EventArgs e)
-        //{
-        //    var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-        //    if (selected != null)
-        //    {
-        //        MoveOperationItem(selected.Tag as Operation, "down");
-        //    }
-        //}
+        private void btnDown_Click(object sender, EventArgs e)
+        {
+            var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+            if (selected != null)
+            {
+                MoveOperationItem(selected.Tag as Operation, "down");
+            }
+        }
 
         private void txtLogs_TextChanged(object sender, EventArgs e)
         {
@@ -924,33 +924,33 @@ namespace Dataverse.XrmTools.Deployer
             SaveQueue();
         }
 
-        //private void btnLoadQueue_Click(object sender, EventArgs e)
-        //{
-        //    _logger.Log(LogLevel.INFO, $"Loading queue...");
-        //    var path = this.SelectFile("Json files (*.json)|*.queue.json");
-        //    if (string.IsNullOrEmpty(path)) { return; }
+        private void btnLoadQueue_Click(object sender, EventArgs e)
+        {
+            _logger.Log(LogLevel.INFO, $"Loading queue...");
+            var path = this.SelectFile("Json files (*.json)|*.queue.json");
+            if (string.IsNullOrEmpty(path)) { return; }
 
-        //    var json = File.ReadAllText(path);
-        //    _groups = json.DeserializeObject<List<OperationGroup>>();
+            var json = File.ReadAllText(path);
+            _groups = json.DeserializeObject<List<OperationGroup>>();
 
-        //    _operations.Clear();
+            _operations.Clear();
 
-        //    foreach (var grp in _groups)
-        //    {
-        //        _operations.AddRange(grp.Operations);
-        //    }
+            foreach (var grp in _groups)
+            {
+                _operations.AddRange(grp.Operations);
+            }
 
-        //    RenderOperationsList();
+            RenderOperationsList();
 
-        //    _logger.Log(LogLevel.INFO, $"Queue loaded from file {path}");
+            _logger.Log(LogLevel.INFO, $"Queue loaded from file {path}");
 
-        //    if (lvQueue.Items.Count > 0)
-        //    {
-        //        tsmiSaveQueue.Enabled = true;
-        //        tsmiClearQueue.Enabled = true;
-        //        tsbQueueExecute.Enabled = true;
-        //    }
-        //}
+            if (lvQueue.Items.Count > 0)
+            {
+                tsmiSaveQueue.Enabled = true;
+                tsmiClearQueue.Enabled = true;
+                tsbQueueExecute.Enabled = true;
+            }
+        }
 
         private async Task<Dictionary<string, string>> InstallSolutionPackager()
         {
@@ -981,8 +981,8 @@ namespace Dataverse.XrmTools.Deployer
         private void tsmiUpdate_Click(object sender, EventArgs e)
         {
             pnlAddOperation.Controls.Clear();
-            var update = new UpdateControl();
-            pnlAddOperation.Controls.Add(update);
+            //var update = new UpdateControl(_logger, _settings);
+            //pnlAddOperation.Controls.Add(update);
         }
     }
 }

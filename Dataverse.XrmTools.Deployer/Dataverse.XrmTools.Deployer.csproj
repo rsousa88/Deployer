@@ -202,85 +202,31 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
-    <Compile Include="Controls\ImportDetails.cs">
+    <Compile Include="Controls\UpdateControl - Copy.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ImportDetails.Designer.cs">
-      <DependentUpon>ImportDetails.cs</DependentUpon>
+    <Compile Include="Controls\UpdateControl - Copy.Designer.cs">
+      <DependentUpon>UpdateControl - Copy.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PackDetails.cs">
+    <Compile Include="Controls\UpdateControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\PackDetails.Designer.cs">
-      <DependentUpon>PackDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\UnpackDetails.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\UnpackDetails.Designer.cs">
-      <DependentUpon>UnpackDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PublishOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\PublishOptions.Designer.cs">
-      <DependentUpon>PublishOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DeleteOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DeleteOptions.Designer.cs">
-      <DependentUpon>DeleteOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PackOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\PackOptions.Designer.cs">
-      <DependentUpon>PackOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\UnpackOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\UnpackOptions.Designer.cs">
-      <DependentUpon>UnpackOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ExportDetails.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ExportDetails.Designer.cs">
-      <DependentUpon>ExportDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DeleteDetails.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DeleteDetails.Designer.cs">
-      <DependentUpon>DeleteDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\UpdateDetails.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\UpdateDetails.Designer.cs">
-      <DependentUpon>UpdateDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\UpdateOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\UpdateOptions.Designer.cs">
-      <DependentUpon>UpdateOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ImportOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ImportOptions.Designer.cs">
-      <DependentUpon>ImportOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ExportOptions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ExportOptions.Designer.cs">
-      <DependentUpon>ExportOptions.cs</DependentUpon>
+    <Compile Include="Controls\UpdateControl.Designer.cs">
+      <DependentUpon>UpdateControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Deployer.cs" />
+    <Compile Include="DeployerControl - Copy %282%29.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DeployerControl - Copy %282%29.designer.cs">
+      <DependentUpon>DeployerControl - Copy %282%29.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeployerControl - Copy.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DeployerControl - Copy.designer.cs">
+      <DependentUpon>DeployerControl - Copy.cs</DependentUpon>
+    </Compile>
     <Compile Include="DeployerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -303,12 +249,6 @@
     </Compile>
     <Compile Include="Forms\OperationDetails.Designer.cs">
       <DependentUpon>OperationDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\AddOperation.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AddOperation.Designer.cs">
-      <DependentUpon>AddOperation.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Helpers\Logger.cs" />
@@ -347,53 +287,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\ImportDetails.resx">
-      <DependentUpon>ImportDetails.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\UpdateControl - Copy.resx">
+      <DependentUpon>UpdateControl - Copy.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PackDetails.resx">
-      <DependentUpon>PackDetails.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\UpdateControl.resx">
+      <DependentUpon>UpdateControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\UnpackDetails.resx">
-      <DependentUpon>UnpackDetails.cs</DependentUpon>
+    <EmbeddedResource Include="DeployerControl - Copy %282%29.resx">
+      <DependentUpon>DeployerControl - Copy %282%29.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PublishOptions.resx">
-      <DependentUpon>PublishOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DeleteOptions.resx">
-      <DependentUpon>DeleteOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PackOptions.resx">
-      <DependentUpon>PackOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\UnpackOptions.resx">
-      <DependentUpon>UnpackOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ExportDetails.resx">
-      <DependentUpon>ExportDetails.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DeleteDetails.resx">
-      <DependentUpon>DeleteDetails.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\UpdateDetails.resx">
-      <DependentUpon>UpdateDetails.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\UpdateOptions.resx">
-      <DependentUpon>UpdateOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ImportOptions.resx">
-      <DependentUpon>ImportOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ExportOptions.resx">
-      <DependentUpon>ExportOptions.cs</DependentUpon>
+    <EmbeddedResource Include="DeployerControl - Copy.resx">
+      <DependentUpon>DeployerControl - Copy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DeployerControl.resx">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\OperationDetails.resx">
       <DependentUpon>OperationDetails.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AddOperation.resx">
-      <DependentUpon>AddOperation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -407,7 +317,6 @@
     <Resource Include="Resources\arrow-up-35px.png" />
     <Content Include="Resources\arrow-down-disabled-35px.png" />
     <Content Include="Resources\arrow-up-disabled-35px.png" />
-    <None Include="Resources\download.png" />
     <None Include="Resources\download-arrow.png" />
     <Content Include="Resources\icon.png" />
     <Content Include="Resources\icon32.png" />

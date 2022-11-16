@@ -33,34 +33,34 @@ namespace Dataverse.XrmTools.Deployer.Forms
             pnlBody.Controls.Clear();
 
             var control = new UserControl();
-            switch (_operation.OperationType)
-            {
-                case OperationType.UPDATE:
-                    var update = _operation as UpdateOperation;
-                    control = new UpdateDetails(_logger, update);
-                    break;
-                case OperationType.EXPORT:
-                    var export = _operation as ExportOperation;
-                    control = new ExportDetails(_logger, export);
-                    break;
-                case OperationType.IMPORT:
-                    var import = _operation as ImportOperation;
-                    control = new ImportDetails(_logger, import);
-                    break;
-                case OperationType.DELETE:
-                    control = new DeleteDetails(_logger, _operation);
-                    break;
-                case OperationType.UNPACK:
-                    var unpack = _operation as UnpackOperation;
-                    control = new UnpackDetails(_logger, unpack);
-                    break;
-                case OperationType.PACK:
-                    var pack = _operation as PackOperation;
-                    control = new PackDetails(_logger, pack);
-                    break;
-                default:
-                    break;
-            }
+            //switch (_operation.OperationType)
+            //{
+            //    case OperationType.UPDATE:
+            //        var update = _operation as UpdateOperation;
+            //        control = new UpdateDetails(_logger, update);
+            //        break;
+            //    case OperationType.EXPORT:
+            //        var export = _operation as ExportOperation;
+            //        control = new ExportDetails(_logger, export);
+            //        break;
+            //    case OperationType.IMPORT:
+            //        var import = _operation as ImportOperation;
+            //        control = new ImportDetails(_logger, import);
+            //        break;
+            //    case OperationType.DELETE:
+            //        control = new DeleteDetails(_logger, _operation);
+            //        break;
+            //    case OperationType.UNPACK:
+            //        var unpack = _operation as UnpackOperation;
+            //        control = new UnpackDetails(_logger, unpack);
+            //        break;
+            //    case OperationType.PACK:
+            //        var pack = _operation as PackOperation;
+            //        control = new PackDetails(_logger, pack);
+            //        break;
+            //    default:
+            //        break;
+            //}
 
             pnlBody.Controls.Add(control);
         }
