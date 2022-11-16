@@ -30,15 +30,15 @@
         {
             this.btnLoadSolutions = new System.Windows.Forms.Button();
             this.gbUpdateOperation = new System.Windows.Forms.GroupBox();
-            this.lblVersion = new System.Windows.Forms.Label();
-            this.txtUpdateVersion = new System.Windows.Forms.TextBox();
-            this.lblSolutionFilter = new System.Windows.Forms.Label();
-            this.txtSolutionFilter = new System.Windows.Forms.TextBox();
             this.lvSolutions = new System.Windows.Forms.ListView();
             this.chSolDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lblSolutionFilter = new System.Windows.Forms.Label();
+            this.txtSolutionFilter = new System.Windows.Forms.TextBox();
+            this.lblVersion = new System.Windows.Forms.Label();
+            this.txtUpdateVersion = new System.Windows.Forms.TextBox();
             this.gbUpdateOperation.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,47 +70,6 @@
             this.gbUpdateOperation.TabIndex = 3;
             this.gbUpdateOperation.TabStop = false;
             this.gbUpdateOperation.Text = "Update Operation";
-            // 
-            // lblVersion
-            // 
-            this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(744, 71);
-            this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.lblVersion.Size = new System.Drawing.Size(56, 26);
-            this.lblVersion.TabIndex = 5;
-            this.lblVersion.Text = "Version:";
-            // 
-            // txtUpdateVersion
-            // 
-            this.txtUpdateVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUpdateVersion.Location = new System.Drawing.Point(807, 75);
-            this.txtUpdateVersion.Margin = new System.Windows.Forms.Padding(4);
-            this.txtUpdateVersion.Name = "txtUpdateVersion";
-            this.txtUpdateVersion.Size = new System.Drawing.Size(186, 22);
-            this.txtUpdateVersion.TabIndex = 6;
-            this.txtUpdateVersion.Tag = "";
-            // 
-            // lblSolutionFilter
-            // 
-            this.lblSolutionFilter.AutoSize = true;
-            this.lblSolutionFilter.Location = new System.Drawing.Point(7, 78);
-            this.lblSolutionFilter.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblSolutionFilter.Name = "lblSolutionFilter";
-            this.lblSolutionFilter.Size = new System.Drawing.Size(39, 16);
-            this.lblSolutionFilter.TabIndex = 7;
-            this.lblSolutionFilter.Text = "Filter:";
-            // 
-            // txtSolutionFilter
-            // 
-            this.txtSolutionFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSolutionFilter.Location = new System.Drawing.Point(54, 75);
-            this.txtSolutionFilter.Margin = new System.Windows.Forms.Padding(4);
-            this.txtSolutionFilter.Name = "txtSolutionFilter";
-            this.txtSolutionFilter.Size = new System.Drawing.Size(683, 22);
-            this.txtSolutionFilter.TabIndex = 8;
             // 
             // lvSolutions
             // 
@@ -152,6 +111,47 @@
             // 
             this.chSolPublisher.Text = "Publisher";
             this.chSolPublisher.Width = 150;
+            // 
+            // lblSolutionFilter
+            // 
+            this.lblSolutionFilter.AutoSize = true;
+            this.lblSolutionFilter.Location = new System.Drawing.Point(7, 78);
+            this.lblSolutionFilter.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSolutionFilter.Name = "lblSolutionFilter";
+            this.lblSolutionFilter.Size = new System.Drawing.Size(39, 16);
+            this.lblSolutionFilter.TabIndex = 7;
+            this.lblSolutionFilter.Text = "Filter:";
+            // 
+            // txtSolutionFilter
+            // 
+            this.txtSolutionFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSolutionFilter.Location = new System.Drawing.Point(54, 75);
+            this.txtSolutionFilter.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSolutionFilter.Name = "txtSolutionFilter";
+            this.txtSolutionFilter.Size = new System.Drawing.Size(683, 22);
+            this.txtSolutionFilter.TabIndex = 8;
+            // 
+            // lblVersion
+            // 
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Location = new System.Drawing.Point(744, 71);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+            this.lblVersion.Size = new System.Drawing.Size(56, 26);
+            this.lblVersion.TabIndex = 5;
+            this.lblVersion.Text = "Version:";
+            // 
+            // txtUpdateVersion
+            // 
+            this.txtUpdateVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUpdateVersion.Location = new System.Drawing.Point(807, 75);
+            this.txtUpdateVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.txtUpdateVersion.Name = "txtUpdateVersion";
+            this.txtUpdateVersion.Size = new System.Drawing.Size(186, 22);
+            this.txtUpdateVersion.TabIndex = 6;
+            this.txtUpdateVersion.Tag = "";
             // 
             // UpdateControl
             // 
