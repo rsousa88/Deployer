@@ -42,6 +42,7 @@ namespace Dataverse.XrmTools.Deployer
         // models
         private Instance _targetInstance;
         private Instance _sourceInstance;
+        private Workspace _workspace;
         private List<Operation> _operations = new List<Operation>();
 
         // flags
@@ -933,7 +934,7 @@ namespace Dataverse.XrmTools.Deployer
 
                 var solutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
 
-                var update = new UpdateControl(_logger, solutions);
+                var update = new UpdateControl(_logger, solutions, _workspace.Version);
                 update.OnAddToQueue += HandleAddToQueueEvent;
 
                 pnlAddOperation.Controls.Add(update);
@@ -972,6 +973,14 @@ namespace Dataverse.XrmTools.Deployer
                     var message = $"Added '{operation.OperationType}' operation to queue";
                     if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
                     _logger.Log(LogLevel.INFO, message);
+                }
+
+                // update workspace version if there is at least one update operation
+                var anyUpdate = operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE));
+                if (anyUpdate != null)
+                {
+                    _workspace.Version = (anyUpdate as UpdateOperation).Version;
+                    SaveWorkspaceFile();
                 }
             }
             catch (Exception ex)
@@ -1139,17 +1148,7 @@ namespace Dataverse.XrmTools.Deployer
                     if (workspace != null)
                     {
                         CreateWorkspace(workspace);
-
-                        // create workspace file and save it to path
-                        _logger.Log(LogLevel.INFO, $"Creating project workspace...");
-
-                        var filename = Path.Combine(workspace.RootPath, $"{workspace.ProjectLogicalName}.workspace");
-
-                        var json = workspace.SerializeObject();
-                        File.WriteAllText(filename, json);
-
-                        _logger.Log(LogLevel.INFO, $"Project workspace created and saved to {filename}");
-                        MessageBox.Show(this, "Project workspace created", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        SaveWorkspaceFile();
                     }
                 }
             }
@@ -1177,7 +1176,21 @@ namespace Dataverse.XrmTools.Deployer
                 Directory.CreateDirectory(Path.Combine(solutionDir, "dist"));
             }
 
+            _workspace = workspace;
             mainContainer.Enabled = true;
+        }
+
+        private void SaveWorkspaceFile()
+        {
+            _logger.Log(LogLevel.INFO, $"Creating project workspace...");
+
+            var filename = Path.Combine(_workspace.RootPath, $"{_workspace.ProjectLogicalName}.workspace");
+
+            var json = _workspace.SerializeObject();
+            File.WriteAllText(filename, json);
+
+            _logger.Log(LogLevel.INFO, $"Project workspace created and saved to {filename}");
+            MessageBox.Show(this, "Project workspace created", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void tsbLoadProject_Click(object sender, EventArgs e)

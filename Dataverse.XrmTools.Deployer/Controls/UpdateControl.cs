@@ -24,7 +24,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
         // events
         public event EventHandler<IEnumerable<Operation>> OnAddToQueue;
 
-        public UpdateControl(Logger logger, IEnumerable<Solution> solutions)
+        public UpdateControl(Logger logger, IEnumerable<Solution> solutions, string baseVersion)
         {
             _logger = logger;
             _solutions = solutions;
@@ -34,10 +34,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
             LoadSolutionsList();
 
-            var today = DateTime.Today;
-            var version = new Version(today.Year, today.Month, today.Day, 1);
-            txtUpdateVersion.Text = version.ToString();
-            _version = version.ToString();
+            txtUpdateVersion.Text = baseVersion;
         }
 
         private void LoadSolutionsList()
@@ -105,7 +102,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             var isValid = Version.TryParse(box.Text, out Version version);
             if (isValid)
             {
-                _version = box.Text;
+                _version = version.ToString();
 
                 if(_updates != null && _updates.Count > 0)
                 {
@@ -132,7 +129,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 var update = new UpdateOperation
                 {
                     OperationType = OperationType.UPDATE,
-                    Version = _version != null ? _version : solution.Version,
+                    Version = _version,
                     Solution = new Solution
                     {
                         SolutionId = solution.SolutionId,
