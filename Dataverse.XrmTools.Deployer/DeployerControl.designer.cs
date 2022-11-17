@@ -51,6 +51,12 @@
             this.tssOperation1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbOperationCancel = new System.Windows.Forms.ToolStripButton();
             this.pnlQueue = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.lvQueue = new System.Windows.Forms.ListView();
+            this.chOpIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chOpDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tsQueue = new System.Windows.Forms.ToolStrip();
             this.tsbManageQueue = new System.Windows.Forms.ToolStripDropDownButton();
             this.tsmiLoadQueue = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,6 +78,7 @@
             this.bodyContainer.Panel2.SuspendLayout();
             this.bodyContainer.SuspendLayout();
             this.tsAddOperation.SuspendLayout();
+            this.pnlQueue.SuspendLayout();
             this.tsQueue.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,8 +95,8 @@
             // mainContainer.Panel2
             // 
             this.mainContainer.Panel2.Controls.Add(this.bodyContainer);
-            this.mainContainer.Size = new System.Drawing.Size(2197, 933);
-            this.mainContainer.SplitterDistance = 472;
+            this.mainContainer.Size = new System.Drawing.Size(2196, 933);
+            this.mainContainer.SplitterDistance = 471;
             this.mainContainer.TabIndex = 0;
             // 
             // pnlSettings
@@ -107,7 +114,7 @@
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
-            this.pnlSettings.Size = new System.Drawing.Size(472, 933);
+            this.pnlSettings.Size = new System.Drawing.Size(471, 933);
             this.pnlSettings.TabIndex = 1;
             // 
             // gbSolutionPackagerLogs
@@ -120,7 +127,7 @@
             this.gbSolutionPackagerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSolutionPackagerLogs.Name = "gbSolutionPackagerLogs";
             this.gbSolutionPackagerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSolutionPackagerLogs.Size = new System.Drawing.Size(466, 386);
+            this.gbSolutionPackagerLogs.Size = new System.Drawing.Size(465, 386);
             this.gbSolutionPackagerLogs.TabIndex = 4;
             this.gbSolutionPackagerLogs.TabStop = false;
             this.gbSolutionPackagerLogs.Text = "Solution Packager Logs";
@@ -156,7 +163,7 @@
             this.txtOutput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(459, 328);
+            this.txtOutput.Size = new System.Drawing.Size(458, 328);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
             // 
@@ -172,7 +179,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(466, 151);
+            this.gbEnvironments.Size = new System.Drawing.Size(465, 151);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -185,10 +192,11 @@
             this.btnConnectTarget.Location = new System.Drawing.Point(7, 92);
             this.btnConnectTarget.Margin = new System.Windows.Forms.Padding(4);
             this.btnConnectTarget.Name = "btnConnectTarget";
-            this.btnConnectTarget.Size = new System.Drawing.Size(453, 30);
+            this.btnConnectTarget.Size = new System.Drawing.Size(452, 30);
             this.btnConnectTarget.TabIndex = 9;
             this.btnConnectTarget.Text = "Add Target";
             this.btnConnectTarget.UseVisualStyleBackColor = true;
+            this.btnConnectTarget.Click += new System.EventHandler(this.btnConnectTarget_Click);
             // 
             // lblTarget
             // 
@@ -239,7 +247,7 @@
             this.gbDeployerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbDeployerLogs.Name = "gbDeployerLogs";
             this.gbDeployerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbDeployerLogs.Size = new System.Drawing.Size(466, 384);
+            this.gbDeployerLogs.Size = new System.Drawing.Size(465, 384);
             this.gbDeployerLogs.TabIndex = 1;
             this.gbDeployerLogs.TabStop = false;
             this.gbDeployerLogs.Text = "Deployer Logs";
@@ -255,7 +263,7 @@
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(454, 323);
+            this.txtLogs.Size = new System.Drawing.Size(453, 323);
             this.txtLogs.TabIndex = 2;
             // 
             // btnClearLogs
@@ -266,7 +274,7 @@
             this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
             this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearLogs.Name = "btnClearLogs";
-            this.btnClearLogs.Size = new System.Drawing.Size(452, 30);
+            this.btnClearLogs.Size = new System.Drawing.Size(451, 30);
             this.btnClearLogs.TabIndex = 9;
             this.btnClearLogs.Text = "Clear Logs";
             this.btnClearLogs.UseVisualStyleBackColor = true;
@@ -376,11 +384,57 @@
             // 
             // pnlQueue
             // 
+            this.pnlQueue.Controls.Add(this.lvQueue);
             this.pnlQueue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlQueue.Location = new System.Drawing.Point(0, 26);
             this.pnlQueue.Name = "pnlQueue";
             this.pnlQueue.Size = new System.Drawing.Size(1721, 481);
             this.pnlQueue.TabIndex = 13;
+            // 
+            // lvQueue
+            // 
+            this.lvQueue.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chOpIndex,
+            this.chOpType,
+            this.chOpDisplayName,
+            this.chOpPublisher,
+            this.chOpDescription});
+            this.lvQueue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvQueue.FullRowSelect = true;
+            this.lvQueue.HideSelection = false;
+            this.lvQueue.Location = new System.Drawing.Point(0, 0);
+            this.lvQueue.Margin = new System.Windows.Forms.Padding(4);
+            this.lvQueue.MultiSelect = false;
+            this.lvQueue.Name = "lvQueue";
+            this.lvQueue.Size = new System.Drawing.Size(1721, 481);
+            this.lvQueue.TabIndex = 2;
+            this.lvQueue.UseCompatibleStateImageBehavior = false;
+            this.lvQueue.View = System.Windows.Forms.View.Details;
+            // 
+            // chOpIndex
+            // 
+            this.chOpIndex.Text = "#";
+            this.chOpIndex.Width = 30;
+            // 
+            // chOpType
+            // 
+            this.chOpType.Text = "Type";
+            this.chOpType.Width = 100;
+            // 
+            // chOpDisplayName
+            // 
+            this.chOpDisplayName.Text = "Display Name";
+            this.chOpDisplayName.Width = 300;
+            // 
+            // chOpPublisher
+            // 
+            this.chOpPublisher.Text = "Publisher";
+            this.chOpPublisher.Width = 250;
+            // 
+            // chOpDescription
+            // 
+            this.chOpDescription.Text = "Description";
+            this.chOpDescription.Width = 270;
             // 
             // tsQueue
             // 
@@ -464,7 +518,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "DeployerControl";
-            this.Size = new System.Drawing.Size(2197, 933);
+            this.Size = new System.Drawing.Size(1757, 746);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
             this.mainContainer.Panel1.ResumeLayout(false);
             this.mainContainer.Panel2.ResumeLayout(false);
@@ -485,6 +539,7 @@
             this.bodyContainer.ResumeLayout(false);
             this.tsAddOperation.ResumeLayout(false);
             this.tsAddOperation.PerformLayout();
+            this.pnlQueue.ResumeLayout(false);
             this.tsQueue.ResumeLayout(false);
             this.tsQueue.PerformLayout();
             this.ResumeLayout(false);
@@ -492,22 +547,33 @@
         }
         #endregion
 
+        // Main components
         private System.Windows.Forms.SplitContainer mainContainer;
-        private System.Windows.Forms.SplitContainer bodyContainer;
+
+        // Settings components
         private System.Windows.Forms.TableLayoutPanel pnlSettings;
+
+        // Environments group
+        private System.Windows.Forms.GroupBox gbEnvironments;
+        private System.Windows.Forms.Label lblSource;
+        private System.Windows.Forms.Label lblSourceValue;
+        private System.Windows.Forms.Label lblTarget;
+        private System.Windows.Forms.Label lblTargetValue;
+        private System.Windows.Forms.Button btnConnectTarget;
+
+        // Logs group
+        private System.Windows.Forms.Button btnClearLogs;
+        private System.Windows.Forms.GroupBox gbDeployerLogs;
+        private System.Windows.Forms.TextBox txtLogs;
         private System.Windows.Forms.GroupBox gbSolutionPackagerLogs;
         private System.Windows.Forms.Label lblPackagerVersion;
         private System.Windows.Forms.Label lblPackagerVersionValue;
         private System.Windows.Forms.RichTextBox txtOutput;
-        private System.Windows.Forms.GroupBox gbEnvironments;
-        private System.Windows.Forms.Button btnConnectTarget;
-        private System.Windows.Forms.Label lblTarget;
-        private System.Windows.Forms.Label lblTargetValue;
-        private System.Windows.Forms.Label lblSource;
-        private System.Windows.Forms.Label lblSourceValue;
-        private System.Windows.Forms.GroupBox gbDeployerLogs;
-        private System.Windows.Forms.TextBox txtLogs;
-        private System.Windows.Forms.Button btnClearLogs;
+
+        // Body components
+        private System.Windows.Forms.SplitContainer bodyContainer;
+
+        // Add Operation group
         private System.Windows.Forms.ToolStrip tsAddOperation;
         private System.Windows.Forms.ToolStripDropDownButton tsbAddOperation;
         private System.Windows.Forms.ToolStripMenuItem tsmiUpdate;
@@ -518,6 +584,8 @@
         private System.Windows.Forms.ToolStripSeparator tssOperation1;
         private System.Windows.Forms.ToolStripButton tsbOperationCancel;
         private WeifenLuo.WinFormsUI.Docking.DockPanel pnlAddOperation;
+
+        // Queue group
         private System.Windows.Forms.ToolStrip tsQueue;
         private System.Windows.Forms.ToolStripDropDownButton tsbManageQueue;
         private System.Windows.Forms.ToolStripMenuItem tsmiLoadQueue;
@@ -527,5 +595,11 @@
         private System.Windows.Forms.ToolStripButton tsbQueueExecute;
         private System.Windows.Forms.ToolStripButton tsbQueueCancel;
         private WeifenLuo.WinFormsUI.Docking.DockPanel pnlQueue;
+        private System.Windows.Forms.ListView lvQueue;
+        private System.Windows.Forms.ColumnHeader chOpIndex;
+        private System.Windows.Forms.ColumnHeader chOpType;
+        private System.Windows.Forms.ColumnHeader chOpDisplayName;
+        private System.Windows.Forms.ColumnHeader chOpPublisher;
+        private System.Windows.Forms.ColumnHeader chOpDescription;
     }
 }

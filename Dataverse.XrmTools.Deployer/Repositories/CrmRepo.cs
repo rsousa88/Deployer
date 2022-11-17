@@ -36,21 +36,21 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         /// <summary>
         /// Creates an instance of the CRM Repository using the specified CRM client.
         /// </summary>
-        /// <param name="target">Target instance client</param>
+        /// <param name="target">Source instance client</param>
         /// <param name="logger">Instantiated Logger object</param>
-        /// <param name="source">[Optional] Source instance client</param>
+        /// <param name="source">[Optional] Target instance client</param>
         /// <param name="worker">[Optional] Async background worker</param>
-        public CrmRepo(CrmServiceClient target, Logger logger, CrmServiceClient source = null, BackgroundWorker worker = null)
+        public CrmRepo(CrmServiceClient source, Logger logger, CrmServiceClient target = null, BackgroundWorker worker = null)
         {
-            _target = target;
-            _logger = logger;
             _source = source;
+            _logger = logger;
+            _target = target;
             _worker = worker;
         }
         #endregion Constructors
 
         #region Interface Methods
-        public IEnumerable<JointRecord> GetAllSolutions(ConnectionType connType = ConnectionType.TARGET)
+        public IEnumerable<JointRecord> GetAllSolutions(ConnectionType connType = ConnectionType.SOURCE)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public IEnumerable<JointRecord> GetSolutionsByType(PackageType queryType = PackageType.UNMANAGED, ConnectionType connType = ConnectionType.TARGET)
+        public IEnumerable<JointRecord> GetSolutionsByType(PackageType queryType = PackageType.UNMANAGED, ConnectionType connType = ConnectionType.SOURCE)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public Entity GetSolution(string logicalName, string[] columns, ConnectionType connType = ConnectionType.TARGET)
+        public Entity GetSolution(string logicalName, string[] columns, ConnectionType connType = ConnectionType.SOURCE)
         {
             try
             {

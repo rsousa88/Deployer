@@ -42,7 +42,6 @@ namespace Dataverse.XrmTools.Deployer
         // models
         private Instance _targetInstance;
         private Instance _sourceInstance;
-        private List<OperationGroup> _groups = new List<OperationGroup>();
         private List<Operation> _operations = new List<Operation>();
 
         // flags
@@ -92,22 +91,22 @@ namespace Dataverse.XrmTools.Deployer
                     _primary = detail.ServiceClient;
 
                     _logger.Log(LogLevel.DEBUG, $"Checking settings for known instances...");
-                    _targetInstance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_primary.ConnectedOrgUniqueName));
-                    if (_targetInstance is null)
+                    _sourceInstance = _settings.Instances.FirstOrDefault(inst => inst.UniqueName.Equals(_primary.ConnectedOrgUniqueName));
+                    if (_sourceInstance is null)
                     {
                         _logger.Log(LogLevel.DEBUG, $"New instance '{_primary.ConnectedOrgUniqueName}': Adding to settings...");
-                        _targetInstance = new Instance
+                        _sourceInstance = new Instance
                         {
                             Id = _primary.ConnectedOrgId,
                             UniqueName = _primary.ConnectedOrgUniqueName,
                             FriendlyName = _primary.ConnectedOrgFriendlyName
                         };
 
-                        _settings.Instances.Add(_targetInstance);
+                        _settings.Instances.Add(_sourceInstance);
                     }
                     else
                     {
-                        _logger.Log(LogLevel.DEBUG, $"Found known instance '{_targetInstance.UniqueName}'");
+                        _logger.Log(LogLevel.DEBUG, $"Found known instance '{_sourceInstance.UniqueName}'");
                     }
 
                     // save settings file
@@ -115,8 +114,8 @@ namespace Dataverse.XrmTools.Deployer
 
                     // render UI components
                     _logger.Log(LogLevel.DEBUG, $"Rendering UI components...");
-                    RenderInitialComponents(_targetInstance.FriendlyName);
-                    RenderConnectionStatus(ConnectionType.TARGET, _targetInstance.FriendlyName);
+                    RenderInitialComponents(_sourceInstance.FriendlyName);
+                    RenderConnectionStatus(ConnectionType.SOURCE, _sourceInstance.FriendlyName);
                     RenderSolutionPackagerStatus();
                 }
             }
@@ -138,16 +137,16 @@ namespace Dataverse.XrmTools.Deployer
                     _secondary = detail.ServiceClient;
 
                     if (_primary == null) { throw new Exception("Primary connection is invalid"); }
-                    LogInfo($"Target OrgId: {_primary.ConnectedOrgId}");
-                    LogInfo($"Target OrgUniqueName: {_primary.ConnectedOrgUniqueName}");
-                    LogInfo($"Target OrgFriendlyName: {_primary.ConnectedOrgFriendlyName}");
-                    LogInfo($"Target EnvId: {_primary.EnvironmentId}");
+                    LogInfo($"Source OrgId: {_primary.ConnectedOrgId}");
+                    LogInfo($"Source OrgUniqueName: {_primary.ConnectedOrgUniqueName}");
+                    LogInfo($"Source OrgFriendlyName: {_primary.ConnectedOrgFriendlyName}");
+                    LogInfo($"Source EnvId: {_primary.EnvironmentId}");
 
                     if (_secondary == null) { throw new Exception("Secondary connection is invalid"); }
-                    LogInfo($"Source OrgId: {_secondary.ConnectedOrgId}");
-                    LogInfo($"Source OrgUniqueName: {_secondary.ConnectedOrgUniqueName}");
-                    LogInfo($"Source OrgFriendlyName: {_secondary.ConnectedOrgFriendlyName}");
-                    LogInfo($"Source EnvId: {_secondary.EnvironmentId}");
+                    LogInfo($"Target OrgId: {_secondary.ConnectedOrgId}");
+                    LogInfo($"Target OrgUniqueName: {_secondary.ConnectedOrgUniqueName}");
+                    LogInfo($"Target OrgFriendlyName: {_secondary.ConnectedOrgFriendlyName}");
+                    LogInfo($"Target EnvId: {_secondary.EnvironmentId}");
 
                     if (_primary.ConnectedOrgUniqueName.Equals(_secondary.ConnectedOrgUniqueName))
                     {
@@ -167,11 +166,11 @@ namespace Dataverse.XrmTools.Deployer
                         _settings.Instances.Add(instance);
                     }
 
-                    _sourceInstance = instance;
+                    _targetInstance = instance;
 
                     _settings.SaveSettings();
 
-                    RenderConnectionStatus(ConnectionType.SOURCE, _sourceInstance.FriendlyName);
+                    RenderConnectionStatus(ConnectionType.TARGET, _targetInstance.FriendlyName);
                 }
             }
             catch (Exception ex)
@@ -191,9 +190,9 @@ namespace Dataverse.XrmTools.Deployer
 
         private IEnumerable<Solution> RetrieveSolutions(PackageType queryType, ConnectionType connType)
         {
-            if(connType.Equals(ConnectionType.SOURCE) && _secondary is null)
+            if(connType.Equals(ConnectionType.TARGET) && _secondary is null)
             {
-                throw new Exception("Source connection is required for export operation");
+                throw new Exception("Target connection is required for this operation");
             }
 
             LogInfo($"Loading solutions...");
@@ -218,14 +217,14 @@ namespace Dataverse.XrmTools.Deployer
                     }
                 };
 
-                var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) /*&& op.Solution.LogicalName.Equals(solution.LogicalName)*/);
-                if (updated != null)
-                {
-                    //// found an update operation -> also update queued operations
-                    //solution.DisplayName = updated.Solution.DisplayName;
-                    //solution.Version = updated.Solution.Version;
-                    //solution.Description = updated.Solution.Description;
-                }
+                //var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) /*&& op.Solution.LogicalName.Equals(solution.LogicalName)*/);
+                //if (updated != null)
+                //{
+                //    //// found an update operation -> also update queued operations
+                //    //solution.DisplayName = updated.Solution.DisplayName;
+                //    //solution.Version = updated.Solution.Version;
+                //    //solution.Description = updated.Solution.Description;
+                //}
 
                 return solution;
             }).OrderBy(sol => sol.DisplayName);
@@ -415,7 +414,7 @@ namespace Dataverse.XrmTools.Deployer
         #region Private Helper Methods
         private void RenderConnectionStatus(ConnectionType serviceType, string name)
         {
-            var label = serviceType.Equals(ConnectionType.SOURCE) ? lblTargetValue : lblSourceValue;
+            var label = serviceType.Equals(ConnectionType.SOURCE) ? lblSourceValue: lblTargetValue;
             label.Text = name;
             label.ForeColor = Color.MediumSeaGreen;
         }
@@ -504,30 +503,20 @@ namespace Dataverse.XrmTools.Deployer
             tsbQueueExecute.Enabled = false;
         }
 
-        //private void RenderOperationsList(int? selectedIndex = null)
-        //{
-        //    lvQueue.Items.Clear();
+        private void RenderOperationsList()
+        {
+            lvQueue.Items.Clear();
 
-        //    _groups = _groups.OrderBy(grp => grp.Index).ToList();
+            var index = 1;
 
-        //    var index = 1;
-        //    foreach (var grp in _groups)
-        //    {
-        //        var grpOps = grp.Operations.OrderBy(op => op.Index).ToList();
-        //        foreach (var op in grpOps)
-        //        {
-        //            op.Index = index++;
-        //        }
+            var operations = _operations.OrderBy(op => op.Index).ToList();
+            foreach (var op in operations)
+            {
+                op.Index = index++;
+            }
 
-        //        lvQueue.Items.AddRange(grpOps.Select(op => op.ToListViewItem()).ToArray());
-        //    }
-
-        //    if (selectedIndex.HasValue)
-        //    {
-        //        var operation = _groups.SingleOrDefault(grp => grp.Index.Equals(selectedIndex)).Operations.First();
-        //        lvQueue.Items.Cast<ListViewItem>().FirstOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(operation.OperationId)).Selected = true;
-        //    }
-        //}
+            lvQueue.Items.AddRange(operations.Select(op => op.ToListViewItem()).ToArray());
+        }
 
         private string GetOperationDescription(Operation operation)
         {
@@ -557,25 +546,25 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void SaveQueue()
-        {
-            _logger.Log(LogLevel.INFO, $"Saving queue...");
+        //private void SaveQueue()
+        //{
+        //    _logger.Log(LogLevel.INFO, $"Saving queue...");
 
-            var defaultFilename = $"{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
-            var filename = this.SaveFile("Json files (*.json)|*.queue.json", defaultFilename);
+        //    var defaultFilename = $"{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
+        //    var filename = this.SaveFile("Json files (*.json)|*.queue.json", defaultFilename);
 
-            var dirPath = Path.GetDirectoryName(filename);
-            if (string.IsNullOrEmpty(dirPath)) { return; }
+        //    var dirPath = Path.GetDirectoryName(filename);
+        //    if (string.IsNullOrEmpty(dirPath)) { return; }
 
-            _settings.Defaults.QueuePath = dirPath;
-            _settings.SaveSettings();
+        //    _settings.Defaults.QueuePath = dirPath;
+        //    _settings.SaveSettings();
 
-            var json = _groups.SerializeObject();
-            File.WriteAllText(filename, json);
+        //    var json = _groups.SerializeObject();
+        //    File.WriteAllText(filename, json);
 
-            _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
-            MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+        //    _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
+        //    MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //}
 
         //private void MarkAllFromGroup()
         //{
@@ -671,10 +660,10 @@ namespace Dataverse.XrmTools.Deployer
         //    }
         //}
 
-        private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
-        {
-            return RetrieveSolutions(queryType, connType);
-        }
+        //private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
+        //{
+        //    return RetrieveSolutions(queryType, connType);
+        //}
 
         private Solution HandleRetrieveSingleSolutionEvent(string logicalName, ConnectionType connType)
         {
@@ -921,7 +910,7 @@ namespace Dataverse.XrmTools.Deployer
 
         private void btnSaveQueue_Click(object sender, EventArgs e)
         {
-            SaveQueue();
+            //SaveQueue();
         }
 
         //private void btnLoadQueue_Click(object sender, EventArgs e)
@@ -975,14 +964,91 @@ namespace Dataverse.XrmTools.Deployer
 
         private void tsbOperationCancel_Click(object sender, EventArgs e)
         {
-            pnlAddOperation.Controls.Clear();
+            try
+            {
+
+                pnlAddOperation.Controls.Clear();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
         }
 
         private void tsmiUpdate_Click(object sender, EventArgs e)
         {
-            pnlAddOperation.Controls.Clear();
-            var update = new UpdateControl();
-            pnlAddOperation.Controls.Add(update);
+            try
+            {
+                ManageWorkingState(true);
+                pnlAddOperation.Controls.Clear();
+
+                var solutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
+
+                var update = new UpdateControl(_logger, solutions);
+                update.OnAddToQueue += HandleAddToQueueEvent;
+
+                pnlAddOperation.Controls.Add(update);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private void HandleAddToQueueEvent(object sender, IEnumerable<Operation> operations)
+        {
+            try
+            {
+                foreach (var operation in operations)
+                {
+                    operation.Index = lvQueue.Items.Count + 1;
+                    operation.Description = GetOperationDescription(operation);
+
+                    _operations.Add(operation);
+
+                    var lvItem = operation.ToListViewItem();
+                    lvQueue.Items.Add(lvItem);
+                    var message = $"Added '{operation.OperationType}' operation to queue";
+                    if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
+                    _logger.Log(LogLevel.INFO, message);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private void btnConnectTarget_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AddAdditionalOrganization();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
         }
     }
 }

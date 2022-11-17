@@ -77,22 +77,6 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                 item.Tag = solution;
                 return item;
             }
-            if (value is SolutionHistory)
-            {
-                var history = value as SolutionHistory;
-
-                var item = new ListViewItem(new string[] {
-                    history.LogicalName,
-                    history.Operation.ToString(),
-                    history.Status.Equals(HistoryStatus.COMPLETED) ? history.Result.ToString() : HistoryStatus.IN_PROGRESS.ToString()
-                });
-
-                item.Tag = history;
-
-                if (history.Status.Equals(HistoryStatus.COMPLETED) && history.Result.Equals(HistoryResult.FAILURE)) { item.BackColor = Color.LightSalmon; }
-
-                return item;
-            }
 
             return null;
         }

@@ -202,12 +202,6 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
-    <Compile Include="Controls\UpdateControl - Copy.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\UpdateControl - Copy.Designer.cs">
-      <DependentUpon>UpdateControl - Copy.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\UpdateControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -215,18 +209,6 @@
       <DependentUpon>UpdateControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Deployer.cs" />
-    <Compile Include="DeployerControl - Copy %282%29.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DeployerControl - Copy %282%29.designer.cs">
-      <DependentUpon>DeployerControl - Copy %282%29.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DeployerControl - Copy.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DeployerControl - Copy.designer.cs">
-      <DependentUpon>DeployerControl - Copy.cs</DependentUpon>
-    </Compile>
     <Compile Include="DeployerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -256,7 +238,6 @@
     <Compile Include="Models\ExportOperation.cs" />
     <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\JointRecord.cs" />
-    <Compile Include="Models\OperationGroup.cs" />
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />
@@ -287,18 +268,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\UpdateControl - Copy.resx">
-      <DependentUpon>UpdateControl - Copy.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\UpdateControl.resx">
       <DependentUpon>UpdateControl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DeployerControl - Copy %282%29.resx">
-      <DependentUpon>DeployerControl - Copy %282%29.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DeployerControl - Copy.resx">
-      <DependentUpon>DeployerControl - Copy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DeployerControl.resx">
       <DependentUpon>DeployerControl.cs</DependentUpon>
