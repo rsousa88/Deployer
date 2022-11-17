@@ -528,9 +528,9 @@ namespace Dataverse.XrmTools.Deployer
                 case OperationType.UPDATE:
                     var update = operation as UpdateOperation;
                     return $"Update solution '{update.Solution.DisplayName}' version to '{update.Version}'";
-                //case OperationType.EXPORT:
-                //    var export = operation as ExportOperation;
-                //    return $"Export '{export.Solution.Package.Type}' package (version '{export.Solution.Version}')";
+                case OperationType.EXPORT:
+                    var export = operation as ExportOperation;
+                    return $"Export '{export.PackageType}' package for solution '{export.Solution.DisplayName}'";
                 //case OperationType.IMPORT:
                 //    var import = operation as ImportOperation;
                 //    return $"Import '{import.Solution.Package.Type}' package (version '{import.Solution.Version}')";
@@ -542,8 +542,8 @@ namespace Dataverse.XrmTools.Deployer
                 //case OperationType.PACK:
                 //    var pack = operation as PackOperation;
                 //    return $"Pack '{pack.PackageType.ToUpper()}' package to '{pack.ZipFile}'";
-                case OperationType.PUBLISH:
-                    return $"Publish all customizations";
+                //case OperationType.PUBLISH:
+                //    return $"Publish all customizations";
                 default:
                     return string.Empty;
             }
@@ -925,7 +925,7 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void tsmiUpdate_Click(object sender, EventArgs e)
+        private void tsmiExport_Click(object sender, EventArgs e)
         {
             try
             {
@@ -934,10 +934,10 @@ namespace Dataverse.XrmTools.Deployer
 
                 var solutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
 
-                var update = new UpdateControl(_logger, solutions, _workspace.Version);
-                update.OnAddToQueue += HandleAddToQueueEvent;
+                var export = new ExportControl(_logger, solutions, _workspace.Version);
+                export.OnAddToQueue += HandleAddExportsToQueueEvent;
 
-                pnlAddOperation.Controls.Add(update);
+                pnlAddOperation.Controls.Add(export);
             }
             catch (Exception ex)
             {
@@ -950,36 +950,39 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void HandleAddToQueueEvent(object sender, IEnumerable<Operation> operations)
+        private void HandleAddExportsToQueueEvent(object sender, IEnumerable<ExportOperation> exports)
         {
             try
             {
-                foreach (var operation in operations)
+                foreach (var export in exports)
                 {
-                    if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
+                    if (_operations.Any(op => op.OperationType.Equals(export.OperationType) && op.Solution.LogicalName.Equals(export.Solution.LogicalName)))
                     {
-                        throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
+                        throw new Exception($"An operation of the same type on solution {export.Solution.DisplayName} is already added to queue");
                     }
 
-                    operation.Index = lvQueue.Items.Count + 1;
-                    operation.Description = GetOperationDescription(operation);
+                    if(export.UpdateVersion)
+                    {
+                        var update = new UpdateOperation
+                        {
+                            OperationType = OperationType.UPDATE,
+                            Version = export.Version,
+                            Solution = export.Solution
+                        };
 
-                    _operations.Add(operation);
+                        AddToQueue(update);
+                    }
 
-                    var lvItem = operation.ToListViewItem();
-                    lvQueue.Items.Add(lvItem);
+                    AddToQueue(export);
+
                     tsbQueueExecute.Enabled = true;
-
-                    var message = $"Added '{operation.OperationType}' operation to queue";
-                    if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
-                    _logger.Log(LogLevel.INFO, message);
                 }
 
                 // update workspace version if there is at least one update operation
-                var anyUpdate = operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE));
+                var anyUpdate = exports.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE));
                 if (anyUpdate != null)
                 {
-                    _workspace.Version = (anyUpdate as UpdateOperation).Version;
+                    _workspace.Version = (anyUpdate as ExportOperation).Version;
                     SaveWorkspaceFile();
                 }
             }
@@ -992,6 +995,19 @@ namespace Dataverse.XrmTools.Deployer
             {
                 ManageWorkingState(false);
             }
+        }
+
+        private void AddToQueue(Operation operation)
+        {
+            operation.Index = lvQueue.Items.Count + 1;
+            operation.Description = GetOperationDescription(operation);
+
+            _operations.Add(operation);
+
+            var exportLvi = operation.ToListViewItem();
+            lvQueue.Items.Add(exportLvi);
+
+            _logger.Log(LogLevel.INFO, $"Added '{operation.OperationType}' operation on solution '{operation.Solution.DisplayName}' to queue");
         }
 
         private void btnConnectTarget_Click(object sender, EventArgs e)
@@ -1059,7 +1075,7 @@ namespace Dataverse.XrmTools.Deployer
             chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
             chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.28);
             chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.23);
-            chOpDescription.Width = (int)Math.Floor(maxWidth * 0.27);
+            chOpDescription.Width = (int)Math.Floor(maxWidth * 0.35);
         }
 
         private void tsmiClearQueue_Click(object sender, EventArgs e)
@@ -1207,7 +1223,7 @@ namespace Dataverse.XrmTools.Deployer
                 CreateWorkspace(workspace);
 
                 _logger.Log(LogLevel.INFO, $"Project workspace successfully loaded from {path}");
-                MessageBox.Show(this, "Project workspace loaded", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show(this, "Project workspace loaded", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {

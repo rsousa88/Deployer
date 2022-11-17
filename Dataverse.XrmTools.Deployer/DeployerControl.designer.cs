@@ -26,6 +26,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployerControl));
             this.pnlMain = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tsMain = new System.Windows.Forms.ToolStrip();
+            this.tsbNewProject = new System.Windows.Forms.ToolStripButton();
+            this.tsbLoadProject = new System.Windows.Forms.ToolStripButton();
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbSolutionPackagerLogs = new System.Windows.Forms.GroupBox();
@@ -45,7 +47,6 @@
             this.pnlAddOperation = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tsAddOperation = new System.Windows.Forms.ToolStrip();
             this.tsbAddOperation = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tsmiUpdate = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,8 +68,6 @@
             this.tssQueue1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbQueueExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbQueueCancel = new System.Windows.Forms.ToolStripButton();
-            this.tsbNewProject = new System.Windows.Forms.ToolStripButton();
-            this.tsbLoadProject = new System.Windows.Forms.ToolStripButton();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
@@ -108,6 +107,27 @@
             this.tsMain.Size = new System.Drawing.Size(2000, 24);
             this.tsMain.TabIndex = 9;
             this.tsMain.Text = "Queue Toolstrip";
+            // 
+            // tsbNewProject
+            // 
+            this.tsbNewProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbNewProject.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbNewProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbNewProject.Image")));
+            this.tsbNewProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNewProject.Name = "tsbNewProject";
+            this.tsbNewProject.Size = new System.Drawing.Size(86, 21);
+            this.tsbNewProject.Text = "New Project";
+            this.tsbNewProject.Click += new System.EventHandler(this.tsbNewProject_Click);
+            // 
+            // tsbLoadProject
+            // 
+            this.tsbLoadProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbLoadProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbLoadProject.Image")));
+            this.tsbLoadProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbLoadProject.Name = "tsbLoadProject";
+            this.tsbLoadProject.Size = new System.Drawing.Size(89, 21);
+            this.tsbLoadProject.Text = "Load Project";
+            this.tsbLoadProject.Click += new System.EventHandler(this.tsbLoadProject_Click);
             // 
             // mainContainer
             // 
@@ -223,6 +243,7 @@
             this.btnConnectTarget.TabIndex = 9;
             this.btnConnectTarget.Text = "Add Target";
             this.btnConnectTarget.UseVisualStyleBackColor = true;
+            this.btnConnectTarget.Click += new System.EventHandler(this.btnConnectTarget_Click);
             // 
             // lblTarget
             // 
@@ -351,7 +372,6 @@
             // 
             this.tsbAddOperation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.tsbAddOperation.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiUpdate,
             this.tsmiExport,
             this.tsmiImport,
             this.tsmiDelete,
@@ -361,33 +381,30 @@
             this.tsbAddOperation.Size = new System.Drawing.Size(114, 23);
             this.tsbAddOperation.Text = "Add Operation";
             // 
-            // tsmiUpdate
-            // 
-            this.tsmiUpdate.Name = "tsmiUpdate";
-            this.tsmiUpdate.Size = new System.Drawing.Size(234, 26);
-            this.tsmiUpdate.Text = "Update versions";
-            this.tsmiUpdate.Click += new System.EventHandler(this.tsmiUpdate_Click);
-            // 
             // tsmiExport
             // 
             this.tsmiExport.Name = "tsmiExport";
             this.tsmiExport.Size = new System.Drawing.Size(234, 26);
             this.tsmiExport.Text = "Export solutions";
+            this.tsmiExport.Click += new System.EventHandler(this.tsmiExport_Click);
             // 
             // tsmiImport
             // 
+            this.tsmiImport.Enabled = false;
             this.tsmiImport.Name = "tsmiImport";
             this.tsmiImport.Size = new System.Drawing.Size(234, 26);
             this.tsmiImport.Text = "Import solutions";
             // 
             // tsmiDelete
             // 
+            this.tsmiDelete.Enabled = false;
             this.tsmiDelete.Name = "tsmiDelete";
             this.tsmiDelete.Size = new System.Drawing.Size(234, 26);
             this.tsmiDelete.Text = "Delete solutions";
             // 
             // tsmiPublish
             // 
+            this.tsmiPublish.Enabled = false;
             this.tsmiPublish.Name = "tsmiPublish";
             this.tsmiPublish.Size = new System.Drawing.Size(234, 26);
             this.tsmiPublish.Text = "Publish Customizations";
@@ -533,27 +550,6 @@
             this.tsbQueueCancel.Text = "Cancel";
             this.tsbQueueCancel.Visible = false;
             // 
-            // tsbNewProject
-            // 
-            this.tsbNewProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbNewProject.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbNewProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbNewProject.Image")));
-            this.tsbNewProject.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbNewProject.Name = "tsbNewProject";
-            this.tsbNewProject.Size = new System.Drawing.Size(86, 21);
-            this.tsbNewProject.Text = "New Project";
-            this.tsbNewProject.Click += new System.EventHandler(this.tsbNewProject_Click);
-            // 
-            // tsbLoadProject
-            // 
-            this.tsbLoadProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbLoadProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbLoadProject.Image")));
-            this.tsbLoadProject.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbLoadProject.Name = "tsbLoadProject";
-            this.tsbLoadProject.Size = new System.Drawing.Size(89, 21);
-            this.tsbLoadProject.Text = "Load Project";
-            this.tsbLoadProject.Click += new System.EventHandler(this.tsbLoadProject_Click);
-            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -620,7 +616,6 @@
         private WeifenLuo.WinFormsUI.Docking.DockPanel pnlAddOperation;
         private System.Windows.Forms.ToolStrip tsAddOperation;
         private System.Windows.Forms.ToolStripDropDownButton tsbAddOperation;
-        private System.Windows.Forms.ToolStripMenuItem tsmiUpdate;
         private System.Windows.Forms.ToolStripMenuItem tsmiExport;
         private System.Windows.Forms.ToolStripMenuItem tsmiImport;
         private System.Windows.Forms.ToolStripMenuItem tsmiDelete;

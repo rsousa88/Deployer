@@ -202,11 +202,11 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
-    <Compile Include="Controls\UpdateControl.cs">
+    <Compile Include="Controls\ExportControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\UpdateControl.Designer.cs">
-      <DependentUpon>UpdateControl.cs</DependentUpon>
+    <Compile Include="Controls\ExportControl.Designer.cs">
+      <DependentUpon>ExportControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Deployer.cs" />
     <Compile Include="DeployerControl.cs">
@@ -241,7 +241,7 @@
     <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\VersionHelper.cs" />
-    <Compile Include="Models\ExportOperation.cs" />
+    <Compile Include="Models\ExportOperation_old.cs" />
     <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\JointRecord.cs" />
     <Compile Include="Models\OperationResponse.cs" />
@@ -256,6 +256,7 @@
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Models\PackOperation.cs" />
     <Compile Include="Models\UnpackOperation.cs" />
+    <Compile Include="Models\ExportOperation.cs" />
     <Compile Include="Models\UpdateOperation.cs" />
     <Compile Include="Models\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -275,8 +276,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\UpdateControl.resx">
-      <DependentUpon>UpdateControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\ExportControl.resx">
+      <DependentUpon>ExportControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DeployerControl.resx">

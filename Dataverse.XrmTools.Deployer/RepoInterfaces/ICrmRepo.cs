@@ -36,7 +36,7 @@ namespace Dataverse.XrmTools.Deployer.RepoInterfaces
         /// Update solution
         /// </summary>
         /// <param name="update">Operation object that contains all the required data to update a referenced solution</param>
-        void UpdateSolution(UpdateOperation update);
+        void UpdateSolution(ExportOperation update);
 
         ///// <summary>
         ///// Export solution

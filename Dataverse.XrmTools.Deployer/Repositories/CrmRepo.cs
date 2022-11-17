@@ -129,7 +129,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void UpdateSolution(UpdateOperation update)
+        public void UpdateSolution(ExportOperation update)
         {
             try
             {
