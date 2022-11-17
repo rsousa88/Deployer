@@ -23,6 +23,7 @@
         #region Code généré par le Concepteur de composants
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployerControl));
             this.pnlMain = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tsMain = new System.Windows.Forms.ToolStrip();
@@ -68,6 +69,8 @@
             this.tssQueue1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbQueueExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbQueueCancel = new System.Windows.Forms.ToolStripButton();
+            this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
@@ -84,6 +87,7 @@
             this.tsAddOperation.SuspendLayout();
             this.pnlQueue.SuspendLayout();
             this.tsQueue.SuspendLayout();
+            this.cmsContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlMain
@@ -441,6 +445,7 @@
             this.chOpDisplayName,
             this.chOpPublisher,
             this.chOpDescription});
+            this.lvQueue.ContextMenuStrip = this.cmsContextMenu;
             this.lvQueue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvQueue.FullRowSelect = true;
             this.lvQueue.HideSelection = false;
@@ -550,6 +555,21 @@
             this.tsbQueueCancel.Text = "Cancel";
             this.tsbQueueCancel.Visible = false;
             // 
+            // cmsContextMenu
+            // 
+            this.cmsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmsiRemove});
+            this.cmsContextMenu.Name = "cmsContextMenu";
+            this.cmsContextMenu.Size = new System.Drawing.Size(138, 30);
+            // 
+            // cmsiRemove
+            // 
+            this.cmsiRemove.Name = "cmsiRemove";
+            this.cmsiRemove.Size = new System.Drawing.Size(137, 26);
+            this.cmsiRemove.Text = "Remove";
+            this.cmsiRemove.Click += new System.EventHandler(this.cmsiRemove_Click);
+            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -587,6 +607,7 @@
             this.pnlQueue.ResumeLayout(false);
             this.tsQueue.ResumeLayout(false);
             this.tsQueue.PerformLayout();
+            this.cmsContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -639,5 +660,7 @@
         private System.Windows.Forms.ToolStripButton tsbQueueCancel;
         private System.Windows.Forms.ToolStripButton tsbNewProject;
         private System.Windows.Forms.ToolStripButton tsbLoadProject;
+        private System.Windows.Forms.ContextMenuStrip cmsContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem cmsiRemove;
     }
 }
