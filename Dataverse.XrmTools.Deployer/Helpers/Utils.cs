@@ -12,6 +12,7 @@ using Dataverse.XrmTools.Deployer.External;
 
 // 3rd Party
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace Dataverse.XrmTools.Deployer.Helpers
 {
@@ -178,6 +179,12 @@ namespace Dataverse.XrmTools.Deployer.Helpers
             }
 
             return filePath;
+        }
+
+        public static string RemoveSpecialCharacters(this string str)
+        {
+            var trimmed = str.Trim();
+            return Regex.Replace(trimmed, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
         }
     }
 }

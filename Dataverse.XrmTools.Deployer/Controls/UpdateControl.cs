@@ -33,6 +33,11 @@ namespace Dataverse.XrmTools.Deployer.Controls
             InitializeComponent();
 
             LoadSolutionsList();
+
+            var today = DateTime.Today;
+            var version = new Version(today.Year, today.Month, today.Day, 1);
+            txtUpdateVersion.Text = version.ToString();
+            _version = version.ToString();
         }
 
         private void LoadSolutionsList()
@@ -118,8 +123,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
         {
             _updates = new List<UpdateOperation>();
 
-            var first = lvSolutions.SelectedItems[0].ToObject(new Solution()) as Solution;
-            txtUpdateVersion.Text = string.IsNullOrEmpty(txtUpdateVersion.Text) ? first.Version : txtUpdateVersion.Text;
+            if (lvSolutions.SelectedItems.Count.Equals(0)) { return; }
 
             foreach (var item in lvSolutions.SelectedItems)
             {
@@ -132,7 +136,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     Solution = new Solution
                     {
                         SolutionId = solution.SolutionId,
-                        DisplayName = solution.DisplayName
+                        DisplayName = solution.DisplayName,
+                        LogicalName = solution.LogicalName
                     }
                 };
 

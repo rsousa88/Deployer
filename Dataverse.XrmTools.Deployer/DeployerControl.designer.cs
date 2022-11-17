@@ -24,6 +24,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployerControl));
+            this.pnlMain = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.tsMain = new System.Windows.Forms.ToolStrip();
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbSolutionPackagerLogs = new System.Windows.Forms.GroupBox();
@@ -65,6 +67,9 @@
             this.tssQueue1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbQueueExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbQueueCancel = new System.Windows.Forms.ToolStripButton();
+            this.tsbNewProject = new System.Windows.Forms.ToolStripButton();
+            this.tsbLoadProject = new System.Windows.Forms.ToolStripButton();
+            this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
             this.mainContainer.Panel2.SuspendLayout();
@@ -82,10 +87,32 @@
             this.tsQueue.SuspendLayout();
             this.SuspendLayout();
             // 
+            // pnlMain
+            // 
+            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMain.Location = new System.Drawing.Point(0, 0);
+            this.pnlMain.Name = "pnlMain";
+            this.pnlMain.Size = new System.Drawing.Size(2000, 900);
+            this.pnlMain.TabIndex = 0;
+            // 
+            // tsMain
+            // 
+            this.tsMain.AutoSize = false;
+            this.tsMain.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.tsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbNewProject,
+            this.tsbLoadProject});
+            this.tsMain.Location = new System.Drawing.Point(0, 0);
+            this.tsMain.Name = "tsMain";
+            this.tsMain.Size = new System.Drawing.Size(2000, 24);
+            this.tsMain.TabIndex = 9;
+            this.tsMain.Text = "Queue Toolstrip";
+            // 
             // mainContainer
             // 
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainContainer.Location = new System.Drawing.Point(0, 0);
+            this.mainContainer.Location = new System.Drawing.Point(0, 24);
             this.mainContainer.Name = "mainContainer";
             // 
             // mainContainer.Panel1
@@ -95,9 +122,9 @@
             // mainContainer.Panel2
             // 
             this.mainContainer.Panel2.Controls.Add(this.bodyContainer);
-            this.mainContainer.Size = new System.Drawing.Size(2196, 933);
-            this.mainContainer.SplitterDistance = 471;
-            this.mainContainer.TabIndex = 0;
+            this.mainContainer.Size = new System.Drawing.Size(2000, 876);
+            this.mainContainer.SplitterDistance = 427;
+            this.mainContainer.TabIndex = 2;
             // 
             // pnlSettings
             // 
@@ -114,7 +141,7 @@
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
-            this.pnlSettings.Size = new System.Drawing.Size(471, 933);
+            this.pnlSettings.Size = new System.Drawing.Size(427, 876);
             this.pnlSettings.TabIndex = 1;
             // 
             // gbSolutionPackagerLogs
@@ -123,11 +150,11 @@
             this.gbSolutionPackagerLogs.Controls.Add(this.lblPackagerVersionValue);
             this.gbSolutionPackagerLogs.Controls.Add(this.txtOutput);
             this.gbSolutionPackagerLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSolutionPackagerLogs.Location = new System.Drawing.Point(3, 545);
+            this.gbSolutionPackagerLogs.Location = new System.Drawing.Point(3, 513);
             this.gbSolutionPackagerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSolutionPackagerLogs.Name = "gbSolutionPackagerLogs";
             this.gbSolutionPackagerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSolutionPackagerLogs.Size = new System.Drawing.Size(465, 386);
+            this.gbSolutionPackagerLogs.Size = new System.Drawing.Size(421, 361);
             this.gbSolutionPackagerLogs.TabIndex = 4;
             this.gbSolutionPackagerLogs.TabStop = false;
             this.gbSolutionPackagerLogs.Text = "Solution Packager Logs";
@@ -163,7 +190,7 @@
             this.txtOutput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(458, 328);
+            this.txtOutput.Size = new System.Drawing.Size(414, 303);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
             // 
@@ -179,7 +206,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(465, 151);
+            this.gbEnvironments.Size = new System.Drawing.Size(421, 142);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -192,11 +219,10 @@
             this.btnConnectTarget.Location = new System.Drawing.Point(7, 92);
             this.btnConnectTarget.Margin = new System.Windows.Forms.Padding(4);
             this.btnConnectTarget.Name = "btnConnectTarget";
-            this.btnConnectTarget.Size = new System.Drawing.Size(452, 30);
+            this.btnConnectTarget.Size = new System.Drawing.Size(408, 30);
             this.btnConnectTarget.TabIndex = 9;
             this.btnConnectTarget.Text = "Add Target";
             this.btnConnectTarget.UseVisualStyleBackColor = true;
-            this.btnConnectTarget.Click += new System.EventHandler(this.btnConnectTarget_Click);
             // 
             // lblTarget
             // 
@@ -243,11 +269,11 @@
             this.gbDeployerLogs.Controls.Add(this.txtLogs);
             this.gbDeployerLogs.Controls.Add(this.btnClearLogs);
             this.gbDeployerLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbDeployerLogs.Location = new System.Drawing.Point(3, 157);
+            this.gbDeployerLogs.Location = new System.Drawing.Point(3, 148);
             this.gbDeployerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbDeployerLogs.Name = "gbDeployerLogs";
             this.gbDeployerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbDeployerLogs.Size = new System.Drawing.Size(465, 384);
+            this.gbDeployerLogs.Size = new System.Drawing.Size(421, 361);
             this.gbDeployerLogs.TabIndex = 1;
             this.gbDeployerLogs.TabStop = false;
             this.gbDeployerLogs.Text = "Deployer Logs";
@@ -263,7 +289,7 @@
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(453, 323);
+            this.txtLogs.Size = new System.Drawing.Size(409, 300);
             this.txtLogs.TabIndex = 2;
             // 
             // btnClearLogs
@@ -274,7 +300,7 @@
             this.btnClearLogs.Location = new System.Drawing.Point(7, 21);
             this.btnClearLogs.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearLogs.Name = "btnClearLogs";
-            this.btnClearLogs.Size = new System.Drawing.Size(451, 30);
+            this.btnClearLogs.Size = new System.Drawing.Size(407, 30);
             this.btnClearLogs.TabIndex = 9;
             this.btnClearLogs.Text = "Clear Logs";
             this.btnClearLogs.UseVisualStyleBackColor = true;
@@ -295,8 +321,8 @@
             // 
             this.bodyContainer.Panel2.Controls.Add(this.pnlQueue);
             this.bodyContainer.Panel2.Controls.Add(this.tsQueue);
-            this.bodyContainer.Size = new System.Drawing.Size(1721, 933);
-            this.bodyContainer.SplitterDistance = 422;
+            this.bodyContainer.Size = new System.Drawing.Size(1569, 876);
+            this.bodyContainer.SplitterDistance = 390;
             this.bodyContainer.TabIndex = 0;
             // 
             // pnlAddOperation
@@ -304,7 +330,7 @@
             this.pnlAddOperation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlAddOperation.Location = new System.Drawing.Point(0, 26);
             this.pnlAddOperation.Name = "pnlAddOperation";
-            this.pnlAddOperation.Size = new System.Drawing.Size(1721, 396);
+            this.pnlAddOperation.Size = new System.Drawing.Size(1569, 364);
             this.pnlAddOperation.TabIndex = 14;
             // 
             // tsAddOperation
@@ -317,7 +343,7 @@
             this.tsbOperationCancel});
             this.tsAddOperation.Location = new System.Drawing.Point(0, 0);
             this.tsAddOperation.Name = "tsAddOperation";
-            this.tsAddOperation.Size = new System.Drawing.Size(1721, 26);
+            this.tsAddOperation.Size = new System.Drawing.Size(1569, 26);
             this.tsAddOperation.TabIndex = 13;
             this.tsAddOperation.Text = "Add Operation Toolstrip";
             // 
@@ -330,7 +356,6 @@
             this.tsmiImport,
             this.tsmiDelete,
             this.tsmiPublish});
-            this.tsbAddOperation.Image = ((System.Drawing.Image)(resources.GetObject("tsbAddOperation.Image")));
             this.tsbAddOperation.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbAddOperation.Name = "tsbAddOperation";
             this.tsbAddOperation.Size = new System.Drawing.Size(114, 23);
@@ -388,7 +413,7 @@
             this.pnlQueue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlQueue.Location = new System.Drawing.Point(0, 26);
             this.pnlQueue.Name = "pnlQueue";
-            this.pnlQueue.Size = new System.Drawing.Size(1721, 481);
+            this.pnlQueue.Size = new System.Drawing.Size(1569, 456);
             this.pnlQueue.TabIndex = 13;
             // 
             // lvQueue
@@ -406,7 +431,7 @@
             this.lvQueue.Margin = new System.Windows.Forms.Padding(4);
             this.lvQueue.MultiSelect = false;
             this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(1721, 481);
+            this.lvQueue.Size = new System.Drawing.Size(1569, 456);
             this.lvQueue.TabIndex = 2;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
@@ -447,7 +472,7 @@
             this.tsbQueueCancel});
             this.tsQueue.Location = new System.Drawing.Point(0, 0);
             this.tsQueue.Name = "tsQueue";
-            this.tsQueue.Size = new System.Drawing.Size(1721, 26);
+            this.tsQueue.Size = new System.Drawing.Size(1569, 26);
             this.tsQueue.TabIndex = 12;
             this.tsQueue.Text = "Queue Toolstrip";
             // 
@@ -458,7 +483,6 @@
             this.tsmiLoadQueue,
             this.tsmiSaveQueue,
             this.tsmiClearQueue});
-            this.tsbManageQueue.Image = ((System.Drawing.Image)(resources.GetObject("tsbManageQueue.Image")));
             this.tsbManageQueue.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbManageQueue.Name = "tsbManageQueue";
             this.tsbManageQueue.Size = new System.Drawing.Size(118, 23);
@@ -509,17 +533,42 @@
             this.tsbQueueCancel.Text = "Cancel";
             this.tsbQueueCancel.Visible = false;
             // 
+            // tsbNewProject
+            // 
+            this.tsbNewProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbNewProject.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbNewProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbNewProject.Image")));
+            this.tsbNewProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNewProject.Name = "tsbNewProject";
+            this.tsbNewProject.Size = new System.Drawing.Size(86, 21);
+            this.tsbNewProject.Text = "New Project";
+            this.tsbNewProject.Click += new System.EventHandler(this.tsbNewProject_Click);
+            // 
+            // tsbLoadProject
+            // 
+            this.tsbLoadProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbLoadProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbLoadProject.Image")));
+            this.tsbLoadProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbLoadProject.Name = "tsbLoadProject";
+            this.tsbLoadProject.Size = new System.Drawing.Size(89, 21);
+            this.tsbLoadProject.Text = "Load Project";
+            this.tsbLoadProject.Click += new System.EventHandler(this.tsbLoadProject_Click);
+            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.mainContainer);
+            this.Controls.Add(this.tsMain);
+            this.Controls.Add(this.pnlMain);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "DeployerControl";
-            this.Size = new System.Drawing.Size(1757, 746);
+            this.Size = new System.Drawing.Size(2000, 900);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
+            this.tsMain.ResumeLayout(false);
+            this.tsMain.PerformLayout();
             this.mainContainer.Panel1.ResumeLayout(false);
             this.mainContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
@@ -548,32 +597,27 @@
         #endregion
 
         // Main components
+        private WeifenLuo.WinFormsUI.Docking.DockPanel pnlMain;
+        private System.Windows.Forms.ToolStrip tsMain;
         private System.Windows.Forms.SplitContainer mainContainer;
 
-        // Settings components
+        // 
         private System.Windows.Forms.TableLayoutPanel pnlSettings;
-
-        // Environments group
-        private System.Windows.Forms.GroupBox gbEnvironments;
-        private System.Windows.Forms.Label lblSource;
-        private System.Windows.Forms.Label lblSourceValue;
-        private System.Windows.Forms.Label lblTarget;
-        private System.Windows.Forms.Label lblTargetValue;
-        private System.Windows.Forms.Button btnConnectTarget;
-
-        // Logs group
-        private System.Windows.Forms.Button btnClearLogs;
-        private System.Windows.Forms.GroupBox gbDeployerLogs;
-        private System.Windows.Forms.TextBox txtLogs;
         private System.Windows.Forms.GroupBox gbSolutionPackagerLogs;
         private System.Windows.Forms.Label lblPackagerVersion;
         private System.Windows.Forms.Label lblPackagerVersionValue;
         private System.Windows.Forms.RichTextBox txtOutput;
-
-        // Body components
+        private System.Windows.Forms.GroupBox gbEnvironments;
+        private System.Windows.Forms.Button btnConnectTarget;
+        private System.Windows.Forms.Label lblTarget;
+        private System.Windows.Forms.Label lblTargetValue;
+        private System.Windows.Forms.Label lblSource;
+        private System.Windows.Forms.Label lblSourceValue;
+        private System.Windows.Forms.GroupBox gbDeployerLogs;
+        private System.Windows.Forms.TextBox txtLogs;
+        private System.Windows.Forms.Button btnClearLogs;
         private System.Windows.Forms.SplitContainer bodyContainer;
-
-        // Add Operation group
+        private WeifenLuo.WinFormsUI.Docking.DockPanel pnlAddOperation;
         private System.Windows.Forms.ToolStrip tsAddOperation;
         private System.Windows.Forms.ToolStripDropDownButton tsbAddOperation;
         private System.Windows.Forms.ToolStripMenuItem tsmiUpdate;
@@ -583,9 +627,13 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiPublish;
         private System.Windows.Forms.ToolStripSeparator tssOperation1;
         private System.Windows.Forms.ToolStripButton tsbOperationCancel;
-        private WeifenLuo.WinFormsUI.Docking.DockPanel pnlAddOperation;
-
-        // Queue group
+        private WeifenLuo.WinFormsUI.Docking.DockPanel pnlQueue;
+        private System.Windows.Forms.ListView lvQueue;
+        private System.Windows.Forms.ColumnHeader chOpIndex;
+        private System.Windows.Forms.ColumnHeader chOpType;
+        private System.Windows.Forms.ColumnHeader chOpDisplayName;
+        private System.Windows.Forms.ColumnHeader chOpPublisher;
+        private System.Windows.Forms.ColumnHeader chOpDescription;
         private System.Windows.Forms.ToolStrip tsQueue;
         private System.Windows.Forms.ToolStripDropDownButton tsbManageQueue;
         private System.Windows.Forms.ToolStripMenuItem tsmiLoadQueue;
@@ -594,12 +642,7 @@
         private System.Windows.Forms.ToolStripSeparator tssQueue1;
         private System.Windows.Forms.ToolStripButton tsbQueueExecute;
         private System.Windows.Forms.ToolStripButton tsbQueueCancel;
-        private WeifenLuo.WinFormsUI.Docking.DockPanel pnlQueue;
-        private System.Windows.Forms.ListView lvQueue;
-        private System.Windows.Forms.ColumnHeader chOpIndex;
-        private System.Windows.Forms.ColumnHeader chOpType;
-        private System.Windows.Forms.ColumnHeader chOpDisplayName;
-        private System.Windows.Forms.ColumnHeader chOpPublisher;
-        private System.Windows.Forms.ColumnHeader chOpDescription;
+        private System.Windows.Forms.ToolStripButton tsbNewProject;
+        private System.Windows.Forms.ToolStripButton tsbLoadProject;
     }
 }
