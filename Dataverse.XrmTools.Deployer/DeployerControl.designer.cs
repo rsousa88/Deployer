@@ -544,6 +544,7 @@
             this.tsbQueueExecute.Name = "tsbQueueExecute";
             this.tsbQueueExecute.Size = new System.Drawing.Size(59, 23);
             this.tsbQueueExecute.Text = "Execute";
+            this.tsbQueueExecute.Click += new System.EventHandler(this.tsbQueueExecute_Click);
             // 
             // tsbQueueCancel
             // 

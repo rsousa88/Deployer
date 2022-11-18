@@ -47,6 +47,7 @@ namespace Dataverse.XrmTools.Deployer
 
         // flags
         private bool _working;
+        private bool _workspaceLoaded = false;
 
         // handlers
         private Logger _logger;
@@ -487,7 +488,7 @@ namespace Dataverse.XrmTools.Deployer
 
         private void ManageWorkingState(bool working)
         {
-            mainContainer.Enabled = !working;
+            mainContainer.Enabled = !working && _workspaceLoaded;
 
             _working = working;
             Cursor = working ? Cursors.WaitCursor : Cursors.Default;
@@ -536,12 +537,12 @@ namespace Dataverse.XrmTools.Deployer
                 //    return $"Import '{import.Solution.Package.Type}' package (version '{import.Solution.Version}')";
                 //case OperationType.DELETE:
                 //    return $"Delete '{operation.Solution.DisplayName}' solution";
-                //case OperationType.UNPACK:
-                //    var unpack = operation as UnpackOperation;
-                //    return $"Unpack '{unpack.PackageType.ToUpper()}' package to '{unpack.Folder}'";
-                //case OperationType.PACK:
-                //    var pack = operation as PackOperation;
-                //    return $"Pack '{pack.PackageType.ToUpper()}' package to '{pack.ZipFile}'";
+                case OperationType.UNPACK:
+                    var unpack = operation as UnpackOperation;
+                    return $"Unpack '{unpack.PackageType.ToUpper()}' package to '{unpack.Folder}'";
+                case OperationType.PACK:
+                    var pack = operation as PackOperation;
+                    return $"Pack '{pack.PackageType.ToUpper()}' package to '{pack.ZipFile}'";
                 //case OperationType.PUBLISH:
                 //    return $"Publish all customizations";
                 default:
@@ -932,7 +933,11 @@ namespace Dataverse.XrmTools.Deployer
                 ManageWorkingState(true);
                 pnlAddOperation.Controls.Clear();
 
-                var solutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
+                var allSolutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
+
+                // filter workspace solutions
+                var solutionIds = _workspace.Solutions.Select(ws => ws.SolutionId);
+                var solutions = allSolutions.Where(sol => solutionIds.Contains(sol.SolutionId));
 
                 var export = new ExportControl(_logger, solutions, _workspace.Version);
                 export.OnAddToQueue += HandleAddExportsToQueueEvent;
@@ -963,17 +968,23 @@ namespace Dataverse.XrmTools.Deployer
 
                     if(export.UpdateVersion)
                     {
-                        var update = new UpdateOperation
-                        {
-                            OperationType = OperationType.UPDATE,
-                            Version = export.Version,
-                            Solution = export.Solution
-                        };
-
+                        var update = ParseUpdate(export);
                         AddToQueue(update);
                     }
 
                     AddToQueue(export);
+
+                    if (export.Unpack)
+                    {
+                        var unpack = ParseUnpack(export);
+                        AddToQueue(unpack);
+                    }
+
+                    if (export.Pack)
+                    {
+                        var pack = ParsePack(export);
+                        AddToQueue(pack);
+                    }
 
                     tsbQueueExecute.Enabled = true;
                 }
@@ -995,6 +1006,69 @@ namespace Dataverse.XrmTools.Deployer
             {
                 ManageWorkingState(false);
             }
+        }
+
+        private UpdateOperation ParseUpdate(ExportOperation export)
+        {
+            return new UpdateOperation
+            {
+                OperationType = OperationType.UPDATE,
+                Version = export.Version,
+                Solution = new Solution
+                {
+                    SolutionId = export.Solution.SolutionId,
+                    DisplayName = export.Solution.DisplayName,
+                    Publisher = export.Solution.Publisher
+                }
+            };
+        }
+
+        private UnpackOperation ParseUnpack(ExportOperation export)
+        {
+            var projectDir = Path.Combine(_workspace.RootPath, _workspace.ProjectDisplayName);
+            var solutionDir = Path.Combine(projectDir, export.Solution.DisplayName);
+
+            return new UnpackOperation
+            {
+                OperationType = OperationType.UNPACK,
+                Solution = new Solution
+                {
+                    SolutionId = export.Solution.SolutionId,
+                    DisplayName = export.Solution.DisplayName,
+                    Publisher = export.Solution.Publisher
+                },
+                Action = "Extract",
+                WorkingDir = _settings.WorkingDirectory,
+                Packager = _settings.PackagerPath,
+                Folder = Path.Combine(solutionDir, "source"),
+                PackageType = export.PackageType.Equals(PackageType.MANAGED) ? "Managed" : "Unmanaged",
+                ZipFile = $"{Path.Combine(solutionDir, "backup")}\\{export.PackageName}",
+                Map = string.Empty
+            };
+        }
+
+        private PackOperation ParsePack(ExportOperation export)
+        {
+            var projectDir = Path.Combine(_workspace.RootPath, _workspace.ProjectDisplayName);
+            var solutionDir = Path.Combine(projectDir, export.Solution.DisplayName);
+
+            return new PackOperation
+            {
+                OperationType = OperationType.PACK,
+                Solution = new Solution
+                {
+                    SolutionId = export.Solution.SolutionId,
+                    DisplayName = export.Solution.DisplayName,
+                    Publisher = export.Solution.Publisher
+                },
+                Action = "Pack",
+                WorkingDir = _settings.WorkingDirectory,
+                Packager = _settings.PackagerPath,
+                PackageType = export.PackageType.Equals(PackageType.MANAGED) ? "Managed" : "Unmanaged",
+                ZipFile = $"{Path.Combine(solutionDir, "dist")}\\{export.PackageName}",
+                Folder = Path.Combine(solutionDir, "source"),
+                Map = string.Empty
+            };
         }
 
         private void AddToQueue(Operation operation)
@@ -1188,25 +1262,27 @@ namespace Dataverse.XrmTools.Deployer
             {
                 var solutionDir = Path.Combine(projectDir, solution.DisplayName);
 
-                Directory.CreateDirectory(Path.Combine(solutionDir, "source"));
-                Directory.CreateDirectory(Path.Combine(solutionDir, "dist"));
+                Directory.CreateDirectory(Path.Combine(solutionDir, "backup")); // exported solutions dir
+                Directory.CreateDirectory(Path.Combine(solutionDir, "source")); // unpacked solutions dir
+                Directory.CreateDirectory(Path.Combine(solutionDir, "dist")); // packed solutions dir
             }
 
             _workspace = workspace;
+            _workspaceLoaded = true;
             mainContainer.Enabled = true;
         }
 
         private void SaveWorkspaceFile()
         {
-            _logger.Log(LogLevel.INFO, $"Creating project workspace...");
+            _logger.Log(LogLevel.INFO, $"Saving project workspace file...");
 
             var filename = Path.Combine(_workspace.RootPath, $"{_workspace.ProjectLogicalName}.workspace");
 
             var json = _workspace.SerializeObject();
             File.WriteAllText(filename, json);
 
-            _logger.Log(LogLevel.INFO, $"Project workspace created and saved to {filename}");
-            MessageBox.Show(this, "Project workspace created", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _logger.Log(LogLevel.INFO, $"Project workspace saved to {filename}");
+            //MessageBox.Show(this, "Project workspace successfully saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void tsbLoadProject_Click(object sender, EventArgs e)
@@ -1219,6 +1295,12 @@ namespace Dataverse.XrmTools.Deployer
 
                 var json = File.ReadAllText(path);
                 var workspace = json.DeserializeObject<Workspace>();
+
+                // compare workspace instances with connected environments
+                if(!workspace.Source.Id.Equals(_primary.ConnectedOrgId))
+                {
+                    throw new Exception($"Project workspace is associated with a different instance. Please update plugin connection or create a new project.\n\nWorkspace: '{workspace.Source.FriendlyName}'\nYour connection: '{_primary.ConnectedOrgFriendlyName}'");
+                }
 
                 CreateWorkspace(workspace);
 
@@ -1234,6 +1316,11 @@ namespace Dataverse.XrmTools.Deployer
             {
                 ManageWorkingState(false);
             }
+        }
+
+        private void tsbQueueExecute_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

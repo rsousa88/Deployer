@@ -8,5 +8,7 @@ namespace Dataverse.XrmTools.Deployer.Models
         public string PackageName { get; set; }
         public bool UpdateVersion { get; set; }
         public string Version { get; set; }
+        public bool Unpack { get; set; }
+        public bool Pack { get; set; }
     }
 }

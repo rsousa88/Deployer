@@ -52,11 +52,11 @@ namespace Dataverse.XrmTools.Deployer.Controls
         // Event Handlers
         private void lvSolutions_Resize(object sender, EventArgs e)
         {
-            var maxWidth = lvSolutions.Width >= 548 ? lvSolutions.Width : 548;
-            chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.39);
-            chSolVersion.Width = (int)Math.Floor(maxWidth * 0.19);
-            chSolManaged.Width = (int)Math.Floor(maxWidth * 0.19);
-            chSolPublisher.Width = (int)Math.Floor(maxWidth * 0.19);
+            var maxWidth = lvSolutions.Width >= 625 ? lvSolutions.Width : 625;
+            chSolDisplayName.Width = (int)Math.Floor(maxWidth * 0.40);
+            chSolVersion.Width = (int)Math.Floor(maxWidth * 0.15);
+            chSolManaged.Width = (int)Math.Floor(maxWidth * 0.15);
+            chSolPublisher.Width = (int)Math.Floor(maxWidth * 0.25);
         }
 
         private async void txtSolutionFilter_TextChanged(object sender, EventArgs e)
@@ -107,6 +107,8 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     PackageName = $"{solution.LogicalName}_{_version}{suffix}",
                     UpdateVersion = cbUpdate.Checked,
                     Version = _version,
+                    Unpack = cbUnpack.Checked,
+                    Pack = cbPack.Checked,
                     Solution = new Solution
                     {
                         SolutionId = solution.SolutionId,
@@ -180,6 +182,31 @@ namespace Dataverse.XrmTools.Deployer.Controls
             }
 
             box.Focus();
+        }
+
+        private void cbUnpack_CheckedChanged(object sender, EventArgs e)
+        {
+            cbPack.Enabled = cbUnpack.Checked;
+            cbPack.Checked = !cbPack.Enabled ? false : cbPack.Checked;
+
+            if (_exports != null && _exports.Count > 0)
+            {
+                foreach (var export in _exports)
+                {
+                    export.Unpack = cbUnpack.Checked;
+                }
+            }
+        }
+
+        private void cbPack_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_exports != null && _exports.Count > 0)
+            {
+                foreach (var export in _exports)
+                {
+                    export.Pack = cbPack.Checked;
+                }
+            }
         }
 
         private void btnAddToQueue_Click(object sender, EventArgs e)

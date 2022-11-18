@@ -94,7 +94,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
                     Workspace = new Workspace
                     {
-                        Instance = _instance,
+                        Source = _instance,
                         Solutions = selected,
                         RootPath = txtProjectDirPathValue.Text,
                         ProjectDisplayName = txtProjectName.Text,
