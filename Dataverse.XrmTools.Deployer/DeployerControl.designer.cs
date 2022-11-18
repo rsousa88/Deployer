@@ -61,6 +61,8 @@
             this.chOpDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chOpDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.tsQueue = new System.Windows.Forms.ToolStrip();
             this.tsbManageQueue = new System.Windows.Forms.ToolStripDropDownButton();
             this.tsmiLoadQueue = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,8 +71,6 @@
             this.tssQueue1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbQueueExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbQueueCancel = new System.Windows.Forms.ToolStripButton();
-            this.cmsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.cmsiRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
@@ -86,8 +86,8 @@
             this.bodyContainer.SuspendLayout();
             this.tsAddOperation.SuspendLayout();
             this.pnlQueue.SuspendLayout();
-            this.tsQueue.SuspendLayout();
             this.cmsContextMenu.SuspendLayout();
+            this.tsQueue.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlMain
@@ -398,6 +398,7 @@
             this.tsmiImport.Name = "tsmiImport";
             this.tsmiImport.Size = new System.Drawing.Size(234, 26);
             this.tsmiImport.Text = "Import solutions";
+            this.tsmiImport.Click += new System.EventHandler(this.tsmiImport_Click);
             // 
             // tsmiDelete
             // 
@@ -451,12 +452,12 @@
             this.lvQueue.HideSelection = false;
             this.lvQueue.Location = new System.Drawing.Point(0, 0);
             this.lvQueue.Margin = new System.Windows.Forms.Padding(4);
-            this.lvQueue.MultiSelect = false;
             this.lvQueue.Name = "lvQueue";
             this.lvQueue.Size = new System.Drawing.Size(1569, 456);
             this.lvQueue.TabIndex = 2;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
+            this.lvQueue.Resize += new System.EventHandler(this.lvQueue_Resize);
             // 
             // chOpIndex
             // 
@@ -482,6 +483,21 @@
             // 
             this.chOpDescription.Text = "Description";
             this.chOpDescription.Width = 270;
+            // 
+            // cmsContextMenu
+            // 
+            this.cmsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmsiRemove});
+            this.cmsContextMenu.Name = "cmsContextMenu";
+            this.cmsContextMenu.Size = new System.Drawing.Size(138, 30);
+            // 
+            // cmsiRemove
+            // 
+            this.cmsiRemove.Name = "cmsiRemove";
+            this.cmsiRemove.Size = new System.Drawing.Size(137, 26);
+            this.cmsiRemove.Text = "Remove";
+            this.cmsiRemove.Click += new System.EventHandler(this.cmsiRemove_Click);
             // 
             // tsQueue
             // 
@@ -514,22 +530,25 @@
             // 
             this.tsmiLoadQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsmiLoadQueue.Name = "tsmiLoadQueue";
-            this.tsmiLoadQueue.Size = new System.Drawing.Size(168, 26);
+            this.tsmiLoadQueue.Size = new System.Drawing.Size(224, 26);
             this.tsmiLoadQueue.Text = "Load Queue";
+            this.tsmiLoadQueue.Click += new System.EventHandler(this.tsmiLoadQueue_Click);
             // 
             // tsmiSaveQueue
             // 
             this.tsmiSaveQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsmiSaveQueue.Name = "tsmiSaveQueue";
-            this.tsmiSaveQueue.Size = new System.Drawing.Size(168, 26);
+            this.tsmiSaveQueue.Size = new System.Drawing.Size(224, 26);
             this.tsmiSaveQueue.Text = "Save Queue";
+            this.tsmiSaveQueue.Click += new System.EventHandler(this.tsmiSaveQueue_Click);
             // 
             // tsmiClearQueue
             // 
             this.tsmiClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsmiClearQueue.Name = "tsmiClearQueue";
-            this.tsmiClearQueue.Size = new System.Drawing.Size(168, 26);
+            this.tsmiClearQueue.Size = new System.Drawing.Size(224, 26);
             this.tsmiClearQueue.Text = "Clear Queue";
+            this.tsmiClearQueue.Click += new System.EventHandler(this.tsmiClearQueue_Click);
             // 
             // tssQueue1
             // 
@@ -555,21 +574,6 @@
             this.tsbQueueCancel.Size = new System.Drawing.Size(53, 23);
             this.tsbQueueCancel.Text = "Cancel";
             this.tsbQueueCancel.Visible = false;
-            // 
-            // cmsContextMenu
-            // 
-            this.cmsContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.cmsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cmsiRemove});
-            this.cmsContextMenu.Name = "cmsContextMenu";
-            this.cmsContextMenu.Size = new System.Drawing.Size(138, 30);
-            // 
-            // cmsiRemove
-            // 
-            this.cmsiRemove.Name = "cmsiRemove";
-            this.cmsiRemove.Size = new System.Drawing.Size(137, 26);
-            this.cmsiRemove.Text = "Remove";
-            this.cmsiRemove.Click += new System.EventHandler(this.cmsiRemove_Click);
             // 
             // DeployerControl
             // 
@@ -606,9 +610,9 @@
             this.tsAddOperation.ResumeLayout(false);
             this.tsAddOperation.PerformLayout();
             this.pnlQueue.ResumeLayout(false);
+            this.cmsContextMenu.ResumeLayout(false);
             this.tsQueue.ResumeLayout(false);
             this.tsQueue.PerformLayout();
-            this.cmsContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

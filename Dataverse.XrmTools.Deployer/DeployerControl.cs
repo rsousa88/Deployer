@@ -520,6 +520,10 @@ namespace Dataverse.XrmTools.Deployer
             }
 
             lvQueue.Items.AddRange(operations.Select(op => op.ToListViewItem()).ToArray());
+
+            tsbQueueExecute.Enabled = lvQueue.Items.Count > 0;
+            tsmiSaveQueue.Enabled = lvQueue.Items.Count > 0;
+            tsmiClearQueue.Enabled = lvQueue.Items.Count > 0;
         }
 
         private string GetOperationDescription(Operation operation)
@@ -532,9 +536,9 @@ namespace Dataverse.XrmTools.Deployer
                 case OperationType.EXPORT:
                     var export = operation as ExportOperation;
                     return $"Export '{export.PackageType}' package for solution '{export.Solution.DisplayName}'";
-                //case OperationType.IMPORT:
-                //    var import = operation as ImportOperation;
-                //    return $"Import '{import.Solution.Package.Type}' package (version '{import.Solution.Version}')";
+                case OperationType.IMPORT:
+                    var import = operation as ImportOperation;
+                    return $"Import '{import.PackageType}' package for solution '{import.Solution.DisplayName}'";
                 //case OperationType.DELETE:
                 //    return $"Delete '{operation.Solution.DisplayName}' solution";
                 case OperationType.UNPACK:
@@ -986,7 +990,15 @@ namespace Dataverse.XrmTools.Deployer
                         AddToQueue(pack);
                     }
 
+                    if (export.Import)
+                    {
+                        var import = ParseImport(export);
+                        AddToQueue(import);
+                    }
+
                     tsbQueueExecute.Enabled = true;
+                    tsmiSaveQueue.Enabled = true;
+                    tsmiClearQueue.Enabled = true;
                 }
 
                 // update workspace version if there is at least one update operation
@@ -1018,6 +1030,7 @@ namespace Dataverse.XrmTools.Deployer
                 {
                     SolutionId = export.Solution.SolutionId,
                     DisplayName = export.Solution.DisplayName,
+                    LogicalName = export.Solution.LogicalName,
                     Publisher = export.Solution.Publisher
                 }
             };
@@ -1035,6 +1048,7 @@ namespace Dataverse.XrmTools.Deployer
                 {
                     SolutionId = export.Solution.SolutionId,
                     DisplayName = export.Solution.DisplayName,
+                    LogicalName = export.Solution.LogicalName,
                     Publisher = export.Solution.Publisher
                 },
                 Action = "Extract",
@@ -1059,6 +1073,7 @@ namespace Dataverse.XrmTools.Deployer
                 {
                     SolutionId = export.Solution.SolutionId,
                     DisplayName = export.Solution.DisplayName,
+                    LogicalName = export.Solution.LogicalName,
                     Publisher = export.Solution.Publisher
                 },
                 Action = "Pack",
@@ -1068,6 +1083,31 @@ namespace Dataverse.XrmTools.Deployer
                 ZipFile = $"{Path.Combine(solutionDir, "dist")}\\{export.PackageName}",
                 Folder = Path.Combine(solutionDir, "source"),
                 Map = string.Empty
+            };
+        }
+        
+        private ImportOperation ParseImport(ExportOperation export)
+        {
+            var projectDir = Path.Combine(_workspace.RootPath, _workspace.ProjectDisplayName);
+            var solutionDir = Path.Combine(projectDir, export.Solution.DisplayName);
+
+            var solution = RetrieveSolutionByLogicalName(export.Solution.LogicalName, ConnectionType.TARGET);
+
+            return new ImportOperation
+            {
+                OperationType = OperationType.IMPORT,
+                Solution = new Solution
+                {
+                    SolutionId = export.Solution.SolutionId,
+                    DisplayName = export.Solution.DisplayName,
+                    LogicalName = export.Solution.LogicalName,
+                    Publisher = export.Solution.Publisher
+                },
+                PackageType = export.PackageType,
+                ZipFile = $"{Path.Combine(solutionDir, "dist")}\\{export.PackageName}",
+                HoldingSolution = solution != null,
+                OverwriteUnmanaged = export.OverwriteUnmanaged,
+                PublishWorkflows = export.PublishWorkflows
             };
         }
 
@@ -1105,12 +1145,12 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
-                if (lvQueue.FocusedItem != null && lvQueue.SelectedItems.Count > 0)
-                {
-                    var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-                    lvQueue.Items.RemoveAt(selected.Index);
+                if (lvQueue.FocusedItem is null || lvQueue.SelectedItems.Count.Equals(0)) { return; }
 
-                    ReRenderOperationsList(); // reset operation indexes and rerender list view
+                foreach (var itemObj in lvQueue.SelectedItems)
+                {
+                    var selected = itemObj as ListViewItem;
+                    lvQueue.Items.RemoveAt(selected.Index);
 
                     var operation = selected.ToObject(new Operation()) as Operation;
                     var item = _operations.SingleOrDefault(op => op.OperationType.Equals(operation.OperationType) && (op.OperationType.Equals(OperationType.PUBLISH) || op.Solution.LogicalName.Equals(operation.Solution.LogicalName)));
@@ -1121,15 +1161,10 @@ namespace Dataverse.XrmTools.Deployer
                         var message = $"Removed '{operation.OperationType}' operation from queue";
                         if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
                         _logger.Log(LogLevel.INFO, message);
-
-                        if (lvQueue.Items.Count.Equals(0))
-                        {
-                            tsbQueueExecute.Enabled = false;
-                            tsmiSaveQueue.Enabled = false;
-                            tsmiClearQueue.Enabled = false;
-                        }
                     }
                 }
+
+                ReRenderOperationsList(); // reset operation indexes and rerender list view
             }
             catch (Exception ex)
             {
@@ -1159,10 +1194,7 @@ namespace Dataverse.XrmTools.Deployer
                 lvQueue.Items.Clear();
                 _operations.Clear();
 
-                tsbQueueExecute.Enabled = false;
-
-                tsmiSaveQueue.Enabled = false;
-                tsmiClearQueue.Enabled = false;
+                ReRenderOperationsList();
             }
             catch (Exception ex)
             {
@@ -1316,6 +1348,11 @@ namespace Dataverse.XrmTools.Deployer
             {
                 ManageWorkingState(false);
             }
+        }
+
+        private void tsmiImport_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void tsbQueueExecute_Click(object sender, EventArgs e)

@@ -109,6 +109,9 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     Version = _version,
                     Unpack = cbUnpack.Checked,
                     Pack = cbPack.Checked,
+                    Import = cbImport.Checked,
+                    OverwriteUnmanaged = cbOverwriteUnmanaged.Checked,
+                    PublishWorkflows = cbPublishWorkflows.Checked,
                     Solution = new Solution
                     {
                         SolutionId = solution.SolutionId,
@@ -205,6 +208,39 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 foreach (var export in _exports)
                 {
                     export.Pack = cbPack.Checked;
+                }
+            }
+        }
+
+        private void cbImport_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_exports != null && _exports.Count > 0)
+            {
+                foreach (var export in _exports)
+                {
+                    export.Import = cbPack.Checked;
+                }
+            }
+        }
+
+        private void cbOverwriteUnmanaged_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_exports != null && _exports.Count > 0)
+            {
+                foreach (var export in _exports)
+                {
+                    export.OverwriteUnmanaged = cbOverwriteUnmanaged.Checked;
+                }
+            }
+        }
+
+        private void cbPublishWorkflows_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_exports != null && _exports.Count > 0)
+            {
+                foreach (var export in _exports)
+                {
+                    export.PublishWorkflows = cbPublishWorkflows.Checked;
                 }
             }
         }

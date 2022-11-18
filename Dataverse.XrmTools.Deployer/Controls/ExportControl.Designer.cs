@@ -29,6 +29,13 @@
         private void InitializeComponent()
         {
             this.gbExportOperation = new System.Windows.Forms.GroupBox();
+            this.gbImport = new System.Windows.Forms.GroupBox();
+            this.cbPublishWorkflows = new System.Windows.Forms.CheckBox();
+            this.cbOverwriteUnmanaged = new System.Windows.Forms.CheckBox();
+            this.cbImport = new System.Windows.Forms.CheckBox();
+            this.gbPackagerOptions = new System.Windows.Forms.GroupBox();
+            this.cbPack = new System.Windows.Forms.CheckBox();
+            this.cbUnpack = new System.Windows.Forms.CheckBox();
             this.gbUpdateOptions = new System.Windows.Forms.GroupBox();
             this.cbUpdate = new System.Windows.Forms.CheckBox();
             this.lblVersion = new System.Windows.Forms.Label();
@@ -46,18 +53,17 @@
             this.chSolPublisher = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lblSolutionFilter = new System.Windows.Forms.Label();
             this.txtSolutionFilter = new System.Windows.Forms.TextBox();
-            this.gbPackagerOptions = new System.Windows.Forms.GroupBox();
-            this.cbUnpack = new System.Windows.Forms.CheckBox();
-            this.cbPack = new System.Windows.Forms.CheckBox();
             this.gbExportOperation.SuspendLayout();
+            this.gbImport.SuspendLayout();
+            this.gbPackagerOptions.SuspendLayout();
             this.gbUpdateOptions.SuspendLayout();
             this.gbExportOptions.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.gbPackagerOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbExportOperation
             // 
+            this.gbExportOperation.Controls.Add(this.gbImport);
             this.gbExportOperation.Controls.Add(this.gbPackagerOptions);
             this.gbExportOperation.Controls.Add(this.gbUpdateOptions);
             this.gbExportOperation.Controls.Add(this.gbExportOptions);
@@ -73,15 +79,108 @@
             this.gbExportOperation.TabStop = false;
             this.gbExportOperation.Text = "Export Operation";
             // 
+            // gbImport
+            // 
+            this.gbImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbImport.Controls.Add(this.cbPublishWorkflows);
+            this.gbImport.Controls.Add(this.cbOverwriteUnmanaged);
+            this.gbImport.Controls.Add(this.cbImport);
+            this.gbImport.Location = new System.Drawing.Point(642, 213);
+            this.gbImport.Name = "gbImport";
+            this.gbImport.Size = new System.Drawing.Size(352, 107);
+            this.gbImport.TabIndex = 25;
+            this.gbImport.TabStop = false;
+            this.gbImport.Text = "Import Options";
+            // 
+            // cbPublishWorkflows
+            // 
+            this.cbPublishWorkflows.AutoSize = true;
+            this.cbPublishWorkflows.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbPublishWorkflows.Checked = true;
+            this.cbPublishWorkflows.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbPublishWorkflows.Location = new System.Drawing.Point(9, 76);
+            this.cbPublishWorkflows.Name = "cbPublishWorkflows";
+            this.cbPublishWorkflows.Size = new System.Drawing.Size(138, 20);
+            this.cbPublishWorkflows.TabIndex = 23;
+            this.cbPublishWorkflows.Text = "Publish Workflows";
+            this.cbPublishWorkflows.UseVisualStyleBackColor = true;
+            this.cbPublishWorkflows.CheckedChanged += new System.EventHandler(this.cbPublishWorkflows_CheckedChanged);
+            // 
+            // cbOverwriteUnmanaged
+            // 
+            this.cbOverwriteUnmanaged.AutoSize = true;
+            this.cbOverwriteUnmanaged.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbOverwriteUnmanaged.Checked = true;
+            this.cbOverwriteUnmanaged.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbOverwriteUnmanaged.Location = new System.Drawing.Point(6, 50);
+            this.cbOverwriteUnmanaged.Name = "cbOverwriteUnmanaged";
+            this.cbOverwriteUnmanaged.Size = new System.Drawing.Size(163, 20);
+            this.cbOverwriteUnmanaged.TabIndex = 22;
+            this.cbOverwriteUnmanaged.Text = "Overwrite Unmanaged";
+            this.cbOverwriteUnmanaged.UseVisualStyleBackColor = true;
+            this.cbOverwriteUnmanaged.CheckedChanged += new System.EventHandler(this.cbOverwriteUnmanaged_CheckedChanged);
+            // 
+            // cbImport
+            // 
+            this.cbImport.AutoSize = true;
+            this.cbImport.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbImport.Location = new System.Drawing.Point(6, 24);
+            this.cbImport.Name = "cbImport";
+            this.cbImport.Size = new System.Drawing.Size(66, 20);
+            this.cbImport.TabIndex = 21;
+            this.cbImport.Text = "Import";
+            this.cbImport.UseVisualStyleBackColor = true;
+            this.cbImport.CheckedChanged += new System.EventHandler(this.cbImport_CheckedChanged);
+            // 
+            // gbPackagerOptions
+            // 
+            this.gbPackagerOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbPackagerOptions.Controls.Add(this.cbPack);
+            this.gbPackagerOptions.Controls.Add(this.cbUnpack);
+            this.gbPackagerOptions.Location = new System.Drawing.Point(642, 150);
+            this.gbPackagerOptions.Name = "gbPackagerOptions";
+            this.gbPackagerOptions.Size = new System.Drawing.Size(352, 57);
+            this.gbPackagerOptions.TabIndex = 24;
+            this.gbPackagerOptions.TabStop = false;
+            this.gbPackagerOptions.Text = "Solution Packager Options";
+            // 
+            // cbPack
+            // 
+            this.cbPack.AutoSize = true;
+            this.cbPack.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbPack.Checked = true;
+            this.cbPack.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbPack.Location = new System.Drawing.Point(97, 24);
+            this.cbPack.Name = "cbPack";
+            this.cbPack.Size = new System.Drawing.Size(60, 20);
+            this.cbPack.TabIndex = 22;
+            this.cbPack.Text = "Pack";
+            this.cbPack.UseVisualStyleBackColor = true;
+            this.cbPack.CheckedChanged += new System.EventHandler(this.cbPack_CheckedChanged);
+            // 
+            // cbUnpack
+            // 
+            this.cbUnpack.AutoSize = true;
+            this.cbUnpack.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbUnpack.Checked = true;
+            this.cbUnpack.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbUnpack.Location = new System.Drawing.Point(6, 24);
+            this.cbUnpack.Name = "cbUnpack";
+            this.cbUnpack.Size = new System.Drawing.Size(76, 20);
+            this.cbUnpack.TabIndex = 21;
+            this.cbUnpack.Text = "Unpack";
+            this.cbUnpack.UseVisualStyleBackColor = true;
+            this.cbUnpack.CheckedChanged += new System.EventHandler(this.cbUnpack_CheckedChanged);
+            // 
             // gbUpdateOptions
             // 
             this.gbUpdateOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.gbUpdateOptions.Controls.Add(this.cbUpdate);
             this.gbUpdateOptions.Controls.Add(this.lblVersion);
             this.gbUpdateOptions.Controls.Add(this.txtUpdateVersion);
-            this.gbUpdateOptions.Location = new System.Drawing.Point(643, 87);
+            this.gbUpdateOptions.Location = new System.Drawing.Point(642, 87);
             this.gbUpdateOptions.Name = "gbUpdateOptions";
-            this.gbUpdateOptions.Size = new System.Drawing.Size(351, 57);
+            this.gbUpdateOptions.Size = new System.Drawing.Size(352, 57);
             this.gbUpdateOptions.TabIndex = 23;
             this.gbUpdateOptions.TabStop = false;
             this.gbUpdateOptions.Text = "Update Options";
@@ -104,7 +203,7 @@
             // 
             this.lblVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(165, 16);
+            this.lblVersion.Location = new System.Drawing.Point(166, 16);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.lblVersion.Size = new System.Drawing.Size(56, 26);
@@ -114,7 +213,7 @@
             // txtUpdateVersion
             // 
             this.txtUpdateVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUpdateVersion.Location = new System.Drawing.Point(228, 20);
+            this.txtUpdateVersion.Location = new System.Drawing.Point(229, 20);
             this.txtUpdateVersion.Margin = new System.Windows.Forms.Padding(4);
             this.txtUpdateVersion.Name = "txtUpdateVersion";
             this.txtUpdateVersion.Size = new System.Drawing.Size(116, 22);
@@ -128,9 +227,9 @@
             this.gbExportOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.gbExportOptions.Controls.Add(this.lblType);
             this.gbExportOptions.Controls.Add(this.panel1);
-            this.gbExportOptions.Location = new System.Drawing.Point(646, 21);
+            this.gbExportOptions.Location = new System.Drawing.Point(642, 21);
             this.gbExportOptions.Name = "gbExportOptions";
-            this.gbExportOptions.Size = new System.Drawing.Size(351, 60);
+            this.gbExportOptions.Size = new System.Drawing.Size(352, 60);
             this.gbExportOptions.TabIndex = 22;
             this.gbExportOptions.TabStop = false;
             this.gbExportOptions.Text = "Export Options";
@@ -153,7 +252,7 @@
             this.panel1.Controls.Add(this.rbUnmanaged);
             this.panel1.Location = new System.Drawing.Point(78, 21);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(267, 26);
+            this.panel1.Size = new System.Drawing.Size(268, 26);
             this.panel1.TabIndex = 17;
             // 
             // rbManaged
@@ -254,46 +353,6 @@
             this.txtSolutionFilter.TabIndex = 8;
             this.txtSolutionFilter.TextChanged += new System.EventHandler(this.txtSolutionFilter_TextChanged);
             // 
-            // gbPackagerOptions
-            // 
-            this.gbPackagerOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbPackagerOptions.Controls.Add(this.cbPack);
-            this.gbPackagerOptions.Controls.Add(this.cbUnpack);
-            this.gbPackagerOptions.Location = new System.Drawing.Point(646, 150);
-            this.gbPackagerOptions.Name = "gbPackagerOptions";
-            this.gbPackagerOptions.Size = new System.Drawing.Size(351, 57);
-            this.gbPackagerOptions.TabIndex = 24;
-            this.gbPackagerOptions.TabStop = false;
-            this.gbPackagerOptions.Text = "Solution Packager Options";
-            // 
-            // cbUnpack
-            // 
-            this.cbUnpack.AutoSize = true;
-            this.cbUnpack.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.cbUnpack.Checked = true;
-            this.cbUnpack.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbUnpack.Location = new System.Drawing.Point(6, 24);
-            this.cbUnpack.Name = "cbUnpack";
-            this.cbUnpack.Size = new System.Drawing.Size(76, 20);
-            this.cbUnpack.TabIndex = 21;
-            this.cbUnpack.Text = "Unpack";
-            this.cbUnpack.UseVisualStyleBackColor = true;
-            this.cbUnpack.CheckedChanged += new System.EventHandler(this.cbUnpack_CheckedChanged);
-            // 
-            // cbPack
-            // 
-            this.cbPack.AutoSize = true;
-            this.cbPack.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.cbPack.Checked = true;
-            this.cbPack.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbPack.Location = new System.Drawing.Point(97, 24);
-            this.cbPack.Name = "cbPack";
-            this.cbPack.Size = new System.Drawing.Size(60, 20);
-            this.cbPack.TabIndex = 22;
-            this.cbPack.Text = "Pack";
-            this.cbPack.UseVisualStyleBackColor = true;
-            this.cbPack.CheckedChanged += new System.EventHandler(this.cbPack_CheckedChanged);
-            // 
             // ExportControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -304,14 +363,16 @@
             this.Size = new System.Drawing.Size(1000, 500);
             this.gbExportOperation.ResumeLayout(false);
             this.gbExportOperation.PerformLayout();
+            this.gbImport.ResumeLayout(false);
+            this.gbImport.PerformLayout();
+            this.gbPackagerOptions.ResumeLayout(false);
+            this.gbPackagerOptions.PerformLayout();
             this.gbUpdateOptions.ResumeLayout(false);
             this.gbUpdateOptions.PerformLayout();
             this.gbExportOptions.ResumeLayout(false);
             this.gbExportOptions.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.gbPackagerOptions.ResumeLayout(false);
-            this.gbPackagerOptions.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -338,5 +399,9 @@
         private System.Windows.Forms.GroupBox gbPackagerOptions;
         private System.Windows.Forms.CheckBox cbUnpack;
         private System.Windows.Forms.CheckBox cbPack;
+        private System.Windows.Forms.GroupBox gbImport;
+        private System.Windows.Forms.CheckBox cbOverwriteUnmanaged;
+        private System.Windows.Forms.CheckBox cbImport;
+        private System.Windows.Forms.CheckBox cbPublishWorkflows;
     }
 }
