@@ -1,15 +1,13 @@
-﻿using Dataverse.XrmTools.Deployer.Enums;
-using Dataverse.XrmTools.Deployer.Helpers;
-using Dataverse.XrmTools.Deployer.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Dataverse.XrmTools.Deployer.Enums;
+using Dataverse.XrmTools.Deployer.Helpers;
+using Dataverse.XrmTools.Deployer.Models;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
@@ -17,24 +15,34 @@ namespace Dataverse.XrmTools.Deployer.Controls
     {
         private readonly Logger _logger;
         private IEnumerable<Solution> _solutions;
+        private Workspace _workspace;
+        private bool _targetConnected;
 
         private string _version;
         private IList<ExportOperation> _exports;
 
         // events
-        public event EventHandler<IEnumerable<ExportOperation>> OnAddToQueue;
+        public event EventHandler<IEnumerable<ExportOperation>> OnAddToQueue_Export;
 
-        public ExportControl(Logger logger, IEnumerable<Solution> solutions, string baseVersion)
+        public ExportControl(Logger logger, IEnumerable<Solution> solutions, Workspace workspace, bool targetConnected)
         {
             _logger = logger;
             _solutions = solutions;
+            _workspace = workspace;
+            _targetConnected = targetConnected;
 
             Dock = DockStyle.Fill;
             InitializeComponent();
 
             LoadSolutionsList();
 
-            txtUpdateVersion.Text = baseVersion;
+            txtUpdateVersion.Text = _workspace.Version;
+
+            gbExportOptions.Enabled = false;
+            gbUpdateOptions.Enabled = false;
+            gbPackagerOptions.Enabled = false;
+            gbImport.Enabled = false;
+            btnAddToQueue.Enabled = false;
         }
 
         private void LoadSolutionsList()
@@ -99,12 +107,18 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
                 var type = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED;
                 var suffix = type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
+                var packageName = $"{solution.LogicalName}_{_version}{suffix}";
+
+                var projectDir = Path.Combine(_workspace.RootPath, _workspace.ProjectDisplayName);
+                var solutionDir = Path.Combine(projectDir, solution.DisplayName);
+                var exportDir = Path.Combine(solutionDir, "backup");
 
                 var export = new ExportOperation
                 {
                     OperationType = OperationType.EXPORT,
                     PackageType = type,
-                    PackageName = $"{solution.LogicalName}_{_version}{suffix}",
+                    PackageName = packageName,
+                    PackagePath = Path.Combine(exportDir, packageName),
                     UpdateVersion = cbUpdate.Checked,
                     Version = _version,
                     Unpack = cbUnpack.Checked,
@@ -123,6 +137,12 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
                 _exports.Add(export);
             }
+
+            gbExportOptions.Enabled = true;
+            gbUpdateOptions.Enabled = true;
+            gbPackagerOptions.Enabled = true;
+            gbImport.Enabled = _targetConnected;
+            btnAddToQueue.Enabled = true;
         }
 
         private void rbPackageType_CheckedChanged(object sender, EventArgs e)
@@ -176,10 +196,16 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     var type = rbManaged.Checked ? PackageType.MANAGED : PackageType.UNMANAGED;
                     var suffix = type.Equals(PackageType.MANAGED) ? "_managed.zip" : ".zip";
 
+                    var projectDir = Path.Combine(_workspace.RootPath, _workspace.ProjectDisplayName);
+
                     foreach (var export in _exports)
                     {
                         export.Version = _version;
                         export.PackageName = $"{export.Solution.LogicalName}_{_version}{suffix}";
+
+                        var solutionDir = Path.Combine(projectDir, export.Solution.DisplayName);
+                        var exportDir = Path.Combine(solutionDir, "backup");
+                        export.PackagePath = Path.Combine(exportDir, export.PackageName);
                     }
                 }
             }
@@ -218,7 +244,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
             {
                 foreach (var export in _exports)
                 {
-                    export.Import = cbPack.Checked;
+                    export.Import = cbImport.Checked;
                 }
             }
         }
@@ -247,7 +273,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private void btnAddToQueue_Click(object sender, EventArgs e)
         {
-            OnAddToQueue?.Invoke(this, _exports);
+            OnAddToQueue_Export?.Invoke(this, _exports);
         }
     }
 }

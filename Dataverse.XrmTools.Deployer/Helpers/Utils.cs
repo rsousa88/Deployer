@@ -18,6 +18,21 @@ namespace Dataverse.XrmTools.Deployer.Helpers
 {
     public static class Utils
     {
+        public delegate bool TryParseHandler<T>(string value, out T result);
+        public static T? TryParse<T>(this string value, TryParseHandler<T> handler) where T : struct
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            if (handler(value, out T result))
+            {
+                return result;
+            }
+            return null;
+        }
+
         public static T DeserializeObject<T>(this string json)
         {
             var settings = new JsonSerializerSettings()

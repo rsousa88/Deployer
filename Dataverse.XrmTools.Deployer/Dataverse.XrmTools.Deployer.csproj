@@ -202,6 +202,12 @@
     <Compile Include="AppSettings\Instance.cs" />
     <Compile Include="AppSettings\Settings.cs" />
     <Compile Include="AppSettings\Sort.cs" />
+    <Compile Include="Controls\ImportControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ImportControl.Designer.cs">
+      <DependentUpon>ImportControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExportControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -242,11 +248,14 @@
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\VersionHelper.cs" />
     <Compile Include="Models\ExportOperation_old.cs" />
+    <Compile Include="Models\ImportJobData.cs" />
     <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\JointRecord.cs" />
+    <Compile Include="Models\MissingDependency.cs" />
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />
+    <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Record.cs" />
     <Compile Include="Models\SolutionHistory.cs" />
     <Compile Include="Models\Publisher.cs" />
@@ -276,6 +285,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ImportControl.resx">
+      <DependentUpon>ImportControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExportControl.resx">
       <DependentUpon>ExportControl.cs</DependentUpon>
       <SubType>Designer</SubType>

@@ -95,10 +95,9 @@
             // cbPublishWorkflows
             // 
             this.cbPublishWorkflows.AutoSize = true;
-            this.cbPublishWorkflows.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbPublishWorkflows.Checked = true;
             this.cbPublishWorkflows.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbPublishWorkflows.Location = new System.Drawing.Point(9, 76);
+            this.cbPublishWorkflows.Location = new System.Drawing.Point(6, 76);
             this.cbPublishWorkflows.Name = "cbPublishWorkflows";
             this.cbPublishWorkflows.Size = new System.Drawing.Size(138, 20);
             this.cbPublishWorkflows.TabIndex = 23;
@@ -109,7 +108,6 @@
             // cbOverwriteUnmanaged
             // 
             this.cbOverwriteUnmanaged.AutoSize = true;
-            this.cbOverwriteUnmanaged.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbOverwriteUnmanaged.Checked = true;
             this.cbOverwriteUnmanaged.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbOverwriteUnmanaged.Location = new System.Drawing.Point(6, 50);
@@ -123,7 +121,6 @@
             // cbImport
             // 
             this.cbImport.AutoSize = true;
-            this.cbImport.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbImport.Location = new System.Drawing.Point(6, 24);
             this.cbImport.Name = "cbImport";
             this.cbImport.Size = new System.Drawing.Size(66, 20);
@@ -147,7 +144,6 @@
             // cbPack
             // 
             this.cbPack.AutoSize = true;
-            this.cbPack.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbPack.Checked = true;
             this.cbPack.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbPack.Location = new System.Drawing.Point(97, 24);
@@ -161,7 +157,6 @@
             // cbUnpack
             // 
             this.cbUnpack.AutoSize = true;
-            this.cbUnpack.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbUnpack.Checked = true;
             this.cbUnpack.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbUnpack.Location = new System.Drawing.Point(6, 24);
@@ -188,7 +183,6 @@
             // cbUpdate
             // 
             this.cbUpdate.AutoSize = true;
-            this.cbUpdate.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbUpdate.Checked = true;
             this.cbUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbUpdate.Location = new System.Drawing.Point(6, 24);

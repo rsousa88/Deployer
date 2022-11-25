@@ -43,7 +43,7 @@ namespace Dataverse.XrmTools.Deployer
         private Instance _targetInstance;
         private Instance _sourceInstance;
         private Workspace _workspace;
-        private List<Operation> _operations = new List<Operation>();
+        private IList<Operation> _operations = new List<Operation>();
 
         // flags
         private bool _working;
@@ -173,6 +173,8 @@ namespace Dataverse.XrmTools.Deployer
                     _settings.SaveSettings();
 
                     RenderConnectionStatus(ConnectionType.TARGET, _targetInstance.FriendlyName);
+                    pnlAddOperation.Controls.Clear();
+                    tsmiImport.Enabled = true;
                 }
             }
             catch (Exception ex)
@@ -234,22 +236,28 @@ namespace Dataverse.XrmTools.Deployer
 
         private Solution RetrieveSolutionByLogicalName(string logicalName, ConnectionType connType)
         {
-            if (connType.Equals(ConnectionType.SOURCE) && _secondary is null)
+            if (connType.Equals(ConnectionType.TARGET) && _secondary is null)
             {
-                throw new Exception("Source connection is required for export operation");
+                throw new Exception("A target connection is required for this operation");
             }
 
             LogInfo($"Loading solutions...");
 
             var repo = new CrmRepo(_primary, _logger, _secondary);
-            var record = repo.GetSolution(logicalName, new string[] { "solutionid", "uniquename" });
+            var record = repo.GetSolution(logicalName, new string[] { "solutionid", "uniquename", "ismanaged" }, connType);
 
-            return record is null ? null : new Solution { SolutionId = record.GetAttributeValue<Guid>("solutionid") };
+            return record is null ? null : new Solution { SolutionId = record.GetAttributeValue<Guid>("solutionid"), IsManaged = record.GetAttributeValue<bool>("ismanaged") };
         }
 
         private async Task CheckRequirements()
         {
             _logger.Log(LogLevel.INFO, $"Checking requirements...");
+            var targetRequired = _operations.Any(op => op.OperationType.Equals(OperationType.IMPORT));
+            if(targetRequired && _secondary is null)
+            {
+                throw new Exception($"A target connect is required to execute queued operations");
+            }
+
             var packagerRequired = _operations.Any(op => op.OperationType.Equals(OperationType.UNPACK) || op.OperationType.Equals(OperationType.PACK));
             if (packagerRequired && (!File.Exists(_settings.PackagerPath) || string.IsNullOrEmpty(_settings.PackagerVersion)))
             {
@@ -265,152 +273,153 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        //private void DeployQueue()
-        //{
-        //    var count = _operations.Count;
-        //    if (DialogResult.No == MessageBox.Show(this, $@"{count} operations will be executed sequentially in the presented order. Are you sure you want to continue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
+        private void ExecuteQueue()
+        {
+            var count = _operations.Count;
+            if (DialogResult.No == MessageBox.Show(this, $@"{count} operations will be executed sequentially in the presented order. Are you sure you want to continue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { return; }
 
-        //    _logger.Log(LogLevel.INFO, $"Executing queued operations...");
-        //    if (_working) { return; }
-        //    ManageWorkingState(true);
+            if (_working) { return; }
+            _logger.Log(LogLevel.INFO, $"Executing queued operations...");
 
-        //    WorkAsync(new WorkAsyncInfo
-        //    {
-        //        Message = $"Executing queued operations...",
-        //        IsCancelable = true,
-        //        Work = (worker, args) =>
-        //        {
-        //            var startTotalTime = DateTime.UtcNow;
+            ManageWorkingState(true);
 
-        //            var repo = new CrmRepo(_primary, _logger, _secondary, worker);
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = $"Executing queued operations...",
+                IsCancelable = true,
+                Work = (worker, args) =>
+                {
+                    var startTotalTime = DateTime.UtcNow;
 
-        //            var index = 1;
-        //            foreach (var operation in _operations)
-        //            {
-        //                if (worker.CancellationPending) { return; }
+                    var repo = new CrmRepo(_primary, _logger, _secondary, worker);
 
-        //                var startPartialTime = DateTime.UtcNow;
+                    var index = 1;
+                    foreach (var operation in _operations)
+                    {
+                        if (worker.CancellationPending) { return; }
 
-        //                var progress = 100 * (index -1) / count;
+                        var startPartialTime = DateTime.UtcNow;
 
-        //                switch (operation.OperationType)
-        //                {
-        //                    case OperationType.UPDATE:
-        //                        var update = operation as UpdateOperation;
-        //                        worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpdating '{update.Solution.DisplayName}'");
-        //                        repo.UpdateSolution(update);
+                        var progress = 100 * (index - 1) / count;
 
-        //                        var updateTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                        _logger.Log(LogLevel.INFO, $"Solution {update.Solution.DisplayName} successfully updated in {updateTime}");
-        //                        break;
-        //                    //case OperationType.EXPORT:
-        //                    //    var export = operation as ExportOperation;
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nExporting '{export.Solution.DisplayName}'");
-        //                    //    repo.ExportSolution(export);
+                        switch (operation.OperationType)
+                        {
+                            case OperationType.UPDATE:
+                                var update = operation as UpdateOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpdating '{update.Solution.DisplayName}'");
+                                repo.UpdateSolution(update);
 
-        //                    //    var exportTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {export.Solution.DisplayName} successfully exported in {exportTime}");
-        //                    //    break;
-        //                    //case OperationType.IMPORT:
-        //                    //    var import = operation as ImportOperation;
-        //                    //    var message = $"Queue execution: {index}/{count} ({progress}%)\nImporting '{import.Solution.DisplayName}'";
-        //                    //    worker.ReportProgress(progress, message);
-        //                    //    repo.ImportSolution(import, message);
+                                var updateTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {update.Solution.DisplayName} successfully updated in {updateTime}");
+                                break;
+                            case OperationType.EXPORT:
+                                var export = operation as ExportOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nExporting '{export.Solution.DisplayName}'");
+                                repo.ExportSolution(export);
 
-        //                    //    var importTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully imported in {importTime}");
+                                var exportTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {export.Solution.DisplayName} successfully exported in {exportTime}");
+                                break;
+                            case OperationType.IMPORT:
+                                var import = operation as ImportOperation;
+                                var message = $"Queue execution: {index}/{count} ({progress}%)\nImporting '{import.Solution.DisplayName}'";
+                                worker.ReportProgress(progress, message);
+                                repo.ImportSolution(import, message);
 
-        //                    //    if (import.HoldingSolution)
-        //                    //    {
-        //                    //        startPartialTime = DateTime.UtcNow;
+                                var importTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully imported in {importTime}");
 
-        //                    //        worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpgrading '{import.Solution.DisplayName}'");
-        //                    //        repo.UpgradeSolution(import.Solution);
+                                if (import.HoldingSolution)
+                                {
+                                    startPartialTime = DateTime.UtcNow;
 
-        //                    //        var upgradeTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //        _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully upgraded in {upgradeTime}");
-        //                    //    }
-        //                    //    break;
-        //                    //case OperationType.DELETE:
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nDeleting '{operation.Solution.DisplayName}'");
-        //                    //    repo.DeleteSolution(operation.Solution);
+                                    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUpgrading '{import.Solution.DisplayName}'");
+                                    repo.UpgradeSolution(import.Solution);
 
-        //                    //    var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
-        //                    //    break;
-        //                    //case OperationType.UNPACK:
-        //                    //    var unpack = operation as UnpackOperation;
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUnpacking '{unpack.Solution.DisplayName}'");
-        //                    //    repo.UnpackSolution(unpack);
+                                    var upgradeTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully upgraded in {upgradeTime}");
+                                }
+                                break;
+                            //case OperationType.DELETE:
+                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nDeleting '{operation.Solution.DisplayName}'");
+                            //    repo.DeleteSolution(operation.Solution);
 
-        //                    //    var unpackTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {unpack.Solution.DisplayName} successfully unpacked in {unpackTime}");
-        //                    //    break;
-        //                    //case OperationType.PACK:
-        //                    //    var pack = operation as PackOperation;
-        //                    //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPacking '{pack.Solution.DisplayName}'");
-        //                    //    repo.PackSolution(pack);
+                            //    var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
+                            //    break;
+                            case OperationType.UNPACK:
+                                var unpack = operation as UnpackOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUnpacking '{unpack.Solution.DisplayName}'");
+                                repo.UnpackSolution(unpack);
 
-        //                    //    var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                    //    _logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
-        //                    //    break;
-        //                    case OperationType.PUBLISH:
-        //                        worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPublishing all customizations");
-        //                        repo.PublishCustomizations();
+                                var unpackTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {unpack.Solution.DisplayName} successfully unpacked in {unpackTime}");
+                                break;
+                            case OperationType.PACK:
+                                var pack = operation as PackOperation;
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPacking '{pack.Solution.DisplayName}'");
+                                repo.PackSolution(pack);
 
-        //                        var publishTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-        //                        _logger.Log(LogLevel.INFO, $"All customizations were successfully published in {publishTime}");
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
+                                var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
+                                break;
+                            //case OperationType.PUBLISH:
+                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPublishing all customizations");
+                            //    repo.PublishCustomizations();
 
-        //                index++;
-        //            }
+                            //    var publishTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                            //    _logger.Log(LogLevel.INFO, $"All customizations were successfully published in {publishTime}");
+                            //    break;
+                            default:
+                                break;
+                        }
 
-        //            var totalTime = (DateTime.UtcNow - startTotalTime).ToString(@"hh\:mm\:ss");
-        //            _logger.Log(LogLevel.INFO, $"Total execution time: {totalTime}");
-        //        },
-        //        PostWorkCallBack = args =>
-        //        {
-        //            ManageWorkingState(false);
+                        index++;
+                    }
 
-        //            if(args.Cancelled)
-        //            {
-        //                _logger.Log(LogLevel.INFO, $"Operation canceled by user");
-        //                MessageBox.Show(this, "Operation canceled by user", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
+                    var totalTime = (DateTime.UtcNow - startTotalTime).ToString(@"hh\:mm\:ss");
+                    _logger.Log(LogLevel.INFO, $"Total execution time: {totalTime}");
+                },
+                PostWorkCallBack = args =>
+                {
+                    ManageWorkingState(false);
 
-        //            if (args.Error != null)
-        //            {
-        //                _logger.Log(LogLevel.ERROR, args.Error.Message);
-        //                MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            else
-        //            {
-        //                _logger.Log(LogLevel.INFO, $"All operations were successfully executed");
-        //                if (DialogResult.Yes == MessageBox.Show(this, "All operations were successfully executed.\n\nDo you want to save current queue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { SaveQueue(); }
+                    if (args.Cancelled)
+                    {
+                        _logger.Log(LogLevel.INFO, $"Operation canceled by user");
+                        MessageBox.Show(this, "Operation canceled by user", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
 
-        //                // clear queue
-        //                lvQueue.Items.Clear();
-        //                _operations.Clear();
+                    if (args.Error != null)
+                    {
+                        _logger.Log(LogLevel.ERROR, args.Error.Message);
+                        MessageBox.Show(this, args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        _logger.Log(LogLevel.INFO, $"All operations were successfully executed");
+                        if (DialogResult.Yes == MessageBox.Show(this, "All operations were successfully executed.\n\nDo you want to save current queue?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) { SaveQueue(); }
 
-        //                tsbQueueExecute.Enabled = false;
+                        // clear queue
+                        lvQueue.Items.Clear();
+                        _operations.Clear();
 
-        //                //btnUp.Enabled = false;
-        //                //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+                        tsbQueueExecute.Enabled = false;
 
-        //                //btnDown.Enabled = false;
-        //                //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
-        //            }
-        //        },
-        //        ProgressChanged = args =>
-        //        {
-        //            SetWorkingMessage(args.UserState.ToString());
-        //        }
-        //    });
-        //}
+                        //btnUp.Enabled = false;
+                        //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
+
+                        //btnDown.Enabled = false;
+                        //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
+                    }
+                },
+                ProgressChanged = args =>
+                {
+                    SetWorkingMessage(args.UserState.ToString());
+                }
+            });
+        }
         #endregion Private Main Methods
 
         #region Private Helper Methods
@@ -524,6 +533,8 @@ namespace Dataverse.XrmTools.Deployer
             tsbQueueExecute.Enabled = lvQueue.Items.Count > 0;
             tsmiSaveQueue.Enabled = lvQueue.Items.Count > 0;
             tsmiClearQueue.Enabled = lvQueue.Items.Count > 0;
+
+            pnlAddOperation.Controls.Clear();
         }
 
         private string GetOperationDescription(Operation operation)
@@ -538,7 +549,7 @@ namespace Dataverse.XrmTools.Deployer
                     return $"Export '{export.PackageType}' package for solution '{export.Solution.DisplayName}'";
                 case OperationType.IMPORT:
                     var import = operation as ImportOperation;
-                    return $"Import '{import.PackageType}' package for solution '{import.Solution.DisplayName}'";
+                    return $"Import '{import.Package.Type}' package for solution '{import.Solution.DisplayName}'";
                 //case OperationType.DELETE:
                 //    return $"Delete '{operation.Solution.DisplayName}' solution";
                 case OperationType.UNPACK:
@@ -554,25 +565,28 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        //private void SaveQueue()
-        //{
-        //    _logger.Log(LogLevel.INFO, $"Saving queue...");
+        private void SaveQueue()
+        {
+            _logger.Log(LogLevel.INFO, $"Saving queue...");
 
-        //    var defaultFilename = $"{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
-        //    var filename = this.SaveFile("Json files (*.json)|*.queue.json", defaultFilename);
+            var defaultFilename = $"{_workspace.Version}.queue.json";
+            var filename = this.SaveFile("Json files (*.json)|*.queue.json", defaultFilename);
 
-        //    var dirPath = Path.GetDirectoryName(filename);
-        //    if (string.IsNullOrEmpty(dirPath)) { return; }
+            var dirPath = Path.GetDirectoryName(filename);
+            if (string.IsNullOrEmpty(dirPath)) { return; }
 
-        //    _settings.Defaults.QueuePath = dirPath;
-        //    _settings.SaveSettings();
+            var project = new Project
+            {
+                Workspace = _workspace,
+                Operations = _operations
+            };
 
-        //    var json = _groups.SerializeObject();
-        //    File.WriteAllText(filename, json);
+            var json = project.SerializeObject();
+            File.WriteAllText(filename, json);
 
-        //    _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
-        //    MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //}
+            _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
+            MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
         //private void MarkAllFromGroup()
         //{
@@ -943,8 +957,8 @@ namespace Dataverse.XrmTools.Deployer
                 var solutionIds = _workspace.Solutions.Select(ws => ws.SolutionId);
                 var solutions = allSolutions.Where(sol => solutionIds.Contains(sol.SolutionId));
 
-                var export = new ExportControl(_logger, solutions, _workspace.Version);
-                export.OnAddToQueue += HandleAddExportsToQueueEvent;
+                var export = new ExportControl(_logger, solutions, _workspace, _secondary != null);
+                export.OnAddToQueue_Export += HandleAddExportsToQueueEvent;
 
                 pnlAddOperation.Controls.Add(export);
             }
@@ -965,11 +979,6 @@ namespace Dataverse.XrmTools.Deployer
             {
                 foreach (var export in exports)
                 {
-                    if (_operations.Any(op => op.OperationType.Equals(export.OperationType) && op.Solution.LogicalName.Equals(export.Solution.LogicalName)))
-                    {
-                        throw new Exception($"An operation of the same type on solution {export.Solution.DisplayName} is already added to queue");
-                    }
-
                     if(export.UpdateVersion)
                     {
                         var update = ParseUpdate(export);
@@ -1002,10 +1011,10 @@ namespace Dataverse.XrmTools.Deployer
                 }
 
                 // update workspace version if there is at least one update operation
-                var anyUpdate = exports.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE));
+                var anyUpdate = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE));
                 if (anyUpdate != null)
                 {
-                    _workspace.Version = (anyUpdate as ExportOperation).Version;
+                    _workspace.Version = (anyUpdate as UpdateOperation).Version;
                     SaveWorkspaceFile();
                 }
             }
@@ -1092,6 +1101,7 @@ namespace Dataverse.XrmTools.Deployer
             var solutionDir = Path.Combine(projectDir, export.Solution.DisplayName);
 
             var solution = RetrieveSolutionByLogicalName(export.Solution.LogicalName, ConnectionType.TARGET);
+            var zipPath = $"{Path.Combine(solutionDir, "dist")}\\{export.PackageName}";
 
             return new ImportOperation
             {
@@ -1103,8 +1113,12 @@ namespace Dataverse.XrmTools.Deployer
                     LogicalName = export.Solution.LogicalName,
                     Publisher = export.Solution.Publisher
                 },
-                PackageType = export.PackageType,
-                ZipFile = $"{Path.Combine(solutionDir, "dist")}\\{export.PackageName}",
+                Package = new Package
+                {
+                    Name = export.PackageName,
+                    Type = export.PackageType,
+                    Path = zipPath
+                },
                 HoldingSolution = solution != null,
                 OverwriteUnmanaged = export.OverwriteUnmanaged,
                 PublishWorkflows = export.PublishWorkflows
@@ -1113,6 +1127,11 @@ namespace Dataverse.XrmTools.Deployer
 
         private void AddToQueue(Operation operation)
         {
+            if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
+            {
+                throw new Exception($"An operation of type '{operation.OperationType}' on solution '{operation.Solution.DisplayName}' is already added to queue");
+            }
+
             operation.Index = lvQueue.Items.Count + 1;
             operation.Description = GetOperationDescription(operation);
 
@@ -1181,10 +1200,10 @@ namespace Dataverse.XrmTools.Deployer
         {
             var maxWidth = lvQueue.Width >= 1300 ? lvQueue.Width : 1300;
             chOpIndex.Width = (int)Math.Floor(maxWidth * 0.03);
-            chOpType.Width = (int)Math.Floor(maxWidth * 0.10);
-            chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.28);
-            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.23);
-            chOpDescription.Width = (int)Math.Floor(maxWidth * 0.35);
+            chOpType.Width = (int)Math.Floor(maxWidth * 0.07);
+            chOpDisplayName.Width = (int)Math.Floor(maxWidth * 0.20);
+            chOpPublisher.Width = (int)Math.Floor(maxWidth * 0.15);
+            chOpDescription.Width = (int)Math.Floor(maxWidth * 0.45);
         }
 
         private void tsmiClearQueue_Click(object sender, EventArgs e)
@@ -1211,7 +1230,7 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
-
+                SaveQueue();
             }
             catch (Exception ex)
             {
@@ -1228,22 +1247,25 @@ namespace Dataverse.XrmTools.Deployer
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Saving queue...");
+                _logger.Log(LogLevel.INFO, $"Loading queue...");
+                var path = this.SelectFile("Json files (*.json)|*.queue.json");
+                if (string.IsNullOrEmpty(path)) { return; }
 
-                var defaultFilename = $"{DateTime.UtcNow.ToString("yyyy.MM.dd_HH.mm.ss")}.queue.json";
-                var filename = this.SaveFile("Json files (*.json)|*.queue.json", defaultFilename);
+                var json = File.ReadAllText(path);
+                var project = json.DeserializeObject<Project>();
+                if(project is null || project.Workspace is null)
+                {
+                    throw new Exception($"Invalid queue file");
+                }
+                if (!project.Workspace.Source.Id.Equals(_workspace.Source.Id))
+                {
+                    throw new Exception($"This queue file is related with another workspace");
+                }
 
-                var dirPath = Path.GetDirectoryName(filename);
-                if (string.IsNullOrEmpty(dirPath)) { return; }
+                _operations = project.Operations;
 
-                //_settings.Defaults.QueuePath = dirPath;
-                //_settings.SaveSettings();
-
-                var json = _operations.SerializeObject();
-                File.WriteAllText(filename, json);
-
-                _logger.Log(LogLevel.INFO, $"Queue saved to {filename}");
-                MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ReRenderOperationsList();
+                _logger.Log(LogLevel.INFO, $"Queue loaded from file {path}");
             }
             catch (Exception ex)
             {
@@ -1352,10 +1374,73 @@ namespace Dataverse.XrmTools.Deployer
 
         private void tsmiImport_Click(object sender, EventArgs e)
         {
+            try
+            {
+                ManageWorkingState(true);
+                pnlAddOperation.Controls.Clear();
 
+                var exports = _operations.Where(op => op.OperationType.Equals(OperationType.EXPORT)).Select(op => op as ExportOperation);
+
+                var import = new ImportControl(_logger, exports, _secondary);
+                import.OnAddToQueue_Import += HandleAddImportsToQueueEvent;
+                import.OnTargetSolutionRetrieveRequested += RetrieveSolutionByLogicalName;
+
+                pnlAddOperation.Controls.Add(import);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
         }
 
-        private void tsbQueueExecute_Click(object sender, EventArgs e)
+        private void HandleAddImportsToQueueEvent(object sender, IEnumerable<ImportOperation> imports)
+        {
+            try
+            {
+                foreach (var import in imports)
+                {
+                    AddToQueue(import);
+
+                    tsbQueueExecute.Enabled = true;
+                    tsmiSaveQueue.Enabled = true;
+                    tsmiClearQueue.Enabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private async void tsbQueueExecute_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                txtLogs.Clear();
+                txtOutput.Clear();
+
+                await CheckRequirements();
+                ExecuteQueue();
+            }
+            catch (Exception ex)
+            {
+                ManageWorkingState(false);
+                _logger.Log(LogLevel.ERROR, ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void tsmiDelete_Click(object sender, EventArgs e)
         {
 
         }

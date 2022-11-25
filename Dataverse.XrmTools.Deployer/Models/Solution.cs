@@ -11,6 +11,6 @@ namespace Dataverse.XrmTools.Deployer.Models
         public string Description { get; set; }
         public bool IsManaged{ get; set; }
         public Publisher Publisher { get; set; }
-        public Package Package { get; set; }
+        //public Package Package { get; set; }
     }
 }

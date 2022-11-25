@@ -20,6 +20,8 @@ using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.RepoInterfaces;
+using System.Xml.Linq;
+using System.Text;
 
 namespace Dataverse.XrmTools.Deployer.Repositories
 {
@@ -129,7 +131,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        public void UpdateSolution(ExportOperation update)
+        public void UpdateSolution(UpdateOperation update)
         {
             try
             {
@@ -141,7 +143,7 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                         Attributes =
                         {
                             { "solutionid", update.Solution.SolutionId },
-                            { "version", update.Solution.Version }
+                            { "version", update.Version }
                         }
                     }
                 };
@@ -154,107 +156,119 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        //public void ExportSolution(ExportOperation export)
-        //{
-        //    try
-        //    {
-        //        _logger.Log(LogLevel.INFO, $"Exporting solution {export.Solution.DisplayName}...");
-        //        var exportReq = new OrganizationRequest("ExportSolutionAsync")
-        //        {
-        //            Parameters =
-        //            {
-        //                { "SolutionName", export.Solution.LogicalName },
-        //                { "Managed", export.Solution.Package.Type.Equals(PackageType.MANAGED) }
-        //            }
-        //        };
+        public void ExportSolution(ExportOperation export)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Exporting solution {export.Solution.DisplayName}...");
+                var exportReq = new OrganizationRequest("ExportSolutionAsync")
+                {
+                    Parameters =
+                    {
+                        { "SolutionName", export.Solution.LogicalName },
+                        { "Managed", export.PackageType.Equals(PackageType.MANAGED) }
+                    }
+                };
 
-        //        var exportResp = _source.Execute(exportReq);
+                var exportResp = _source.Execute(exportReq);
 
-        //        _logger.Log(LogLevel.INFO, $"Waiting for export operation...");
-        //        var result = CheckProgress(ConnectionType.SOURCE, Guid.Parse(exportResp["AsyncOperationId"].ToString()));
-        //        if(result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+                _logger.Log(LogLevel.INFO, $"Waiting for export operation...");
+                var result = CheckProgress(ConnectionType.SOURCE, Guid.Parse(exportResp["AsyncOperationId"].ToString()));
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
 
-        //        if (!result.Success)
-        //        {
-        //            throw new Exception($"Error on Export operation:\n{result.Message}");
-        //        }
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Export operation:\n{result.Message}");
+                }
 
-        //        _logger.Log(LogLevel.INFO, $"Downloading solution {export.Solution.DisplayName}...");
-        //        var downloadReq = new OrganizationRequest("DownloadSolutionExportData")
-        //        {
-        //            Parameters =
-        //            {
-        //                { "ExportJobId", Guid.Parse(exportResp["ExportJobId"].ToString()) }
-        //            }
-        //        };
+                _logger.Log(LogLevel.INFO, $"Downloading solution {export.Solution.DisplayName}...");
+                var downloadReq = new OrganizationRequest("DownloadSolutionExportData")
+                {
+                    Parameters =
+                    {
+                        { "ExportJobId", Guid.Parse(exportResp["ExportJobId"].ToString()) }
+                    }
+                };
 
-        //        var downloadResp = _source.Execute(downloadReq);
+                var downloadResp = _source.Execute(downloadReq);
 
-        //        var package = export.Solution.Package;
-        //        package.Bytes = downloadResp["ExportSolutionFile"] as byte[];
+                var package = new Package
+                {
+                    Name = export.PackageName,
+                    Type = export.PackageType,
+                    Bytes = downloadResp["ExportSolutionFile"] as byte[],
+                    Path = export.PackagePath
+                };
 
-        //        using (var writer = new BinaryWriter(File.OpenWrite(package.Path)))
-        //        {
-        //            writer.Write(package.Bytes);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
+                using (var writer = new BinaryWriter(File.OpenWrite(package.Path)))
+                {
+                    writer.Write(package.Bytes);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-        //public void ImportSolution(ImportOperation import, string progressMessage)
-        //{
-        //    try
-        //    {
-        //        _logger.Log(LogLevel.INFO, $"Importing solution {import.Solution.DisplayName}...");
-        //        var request = new ImportSolutionAsyncRequest
-        //        {
-        //            CustomizationFile = import.Solution.Package.Bytes,
-        //            HoldingSolution = import.HoldingSolution,
-        //            OverwriteUnmanagedCustomizations = import.OverwriteUnmanaged,
-        //            PublishWorkflows = import.PublishWorkflows
-        //        };
+        public void ImportSolution(ImportOperation import, string progressMessage)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Importing solution {import.Solution.DisplayName}...");
 
-        //        var response = _target.Execute(request) as ImportSolutionAsyncResponse;
+                if(!File.Exists(import.Package.Path))
+                {
+                    throw new Exception($"Error on Import operation\nInvalid package on path '{import.Package.Path}'");
+                }
 
-        //        _logger.Log(LogLevel.INFO, $"Waiting for import operation...");
-        //        var result = CheckProgress(ConnectionType.TARGET, response.AsyncOperationId, Guid.Parse(response.ImportJobKey), progressMessage);
-        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+                var bytes = File.ReadAllBytes(import.Package.Path);
+                var request = new ImportSolutionAsyncRequest
+                {
+                    CustomizationFile = bytes,
+                    HoldingSolution = import.HoldingSolution,
+                    OverwriteUnmanagedCustomizations = import.OverwriteUnmanaged,
+                    PublishWorkflows = import.PublishWorkflows
+                };
 
-        //        if (!result.Success)
-        //        {
-        //            throw new Exception($"Error on Import operation:\n{result.Message}");
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
+                var response = _target.Execute(request) as ImportSolutionAsyncResponse;
 
-        //public void UpgradeSolution(Solution solution)
-        //{
-        //    try
-        //    {
-        //        _logger.Log(LogLevel.INFO, $"Upgrading solution {solution.DisplayName}...");
-        //        var operationId = _target.DeleteAndPromoteSolutionAsync(solution.LogicalName);
+                _logger.Log(LogLevel.INFO, $"Waiting for import operation...");
+                var result = CheckProgress(ConnectionType.TARGET, response.AsyncOperationId, Guid.Parse(response.ImportJobKey), progressMessage);
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
 
-        //        _logger.Log(LogLevel.INFO, $"Waiting for upgrade operation...");
-        //        var result = CheckProgress(ConnectionType.TARGET, operationId);
-        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Import operation\n{result.Message}");
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-        //        if (!result.Success)
-        //        {
-        //            throw new Exception($"Error on Upgrade operation:\n{result.Message}");
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
+        public void UpgradeSolution(Solution solution)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Upgrading solution {solution.DisplayName}...");
+                var operationId = _target.DeleteAndPromoteSolutionAsync(solution.LogicalName);
+
+                _logger.Log(LogLevel.INFO, $"Waiting for upgrade operation...");
+                var result = CheckProgress(ConnectionType.TARGET, operationId);
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Upgrade operation:\n{result.Message}");
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         //public void DeleteSolution(Solution solution)
         //{
@@ -303,139 +317,61 @@ namespace Dataverse.XrmTools.Deployer.Repositories
         //    }
         //}
 
-        //public void UnpackSolution(UnpackOperation unpack)
-        //{
-        //    try
-        //    {
-        //        _logger.Log(LogLevel.INFO, $"Checking requirements...");
-        //        if(!File.Exists(unpack.Packager))
-        //        {
-        //            throw new Exception($"Solution Packager not found - Please download Solution Packager before executing an Unpack operation");
-        //        }
-
-        //        _logger.Log(LogLevel.INFO, $"Cleaning output directory...");
-        //        if (Directory.Exists(unpack.Folder))
-        //        {
-        //            var dirInfo = new DirectoryInfo(unpack.Folder);
-        //            foreach (var file in dirInfo.GetFiles()) { file.Delete(); }
-        //            foreach (var dir in dirInfo.GetDirectories()) { dir.Delete(true); }
-        //        }
-
-        //        _logger.Log(LogLevel.INFO, $"Unpacking solution {unpack.Solution.DisplayName}...");
-        //        var process = new Process
-        //        {
-        //            StartInfo =
-        //        {
-        //            FileName = unpack.Packager,
-        //            Arguments = $"/action:{unpack.Action} /zipfile:\"{unpack.ZipFile}\" /folder:\"{unpack.Folder}\" /packagetype:\"{unpack.PackageType}\" /allowDelete:\"No\"",
-        //            WorkingDirectory = unpack.WorkingDir,
-        //            UseShellExecute = false,
-        //            CreateNoWindow = true,
-        //            RedirectStandardOutput = true,
-        //            RedirectStandardError = true
-        //        },
-        //            EnableRaisingEvents = true
-        //        };
-
-        //        _logger.Output(LogLevel.PACKAGER, "Process starting...");
-
-        //        process.Start();
-
-        //        while (!process.StandardOutput.EndOfStream)
-        //        {
-        //            var output = process.StandardOutput.ReadLine();
-        //            _logger.Output(LogLevel.PACKAGER, output);
-        //        }
-
-        //        while (!process.StandardError.EndOfStream)
-        //        {
-        //            var errors = process.StandardError.ReadLine();
-        //            _logger.Output(LogLevel.PACKAGER, errors);
-        //        }
-
-        //        process.WaitForExit(30000);
-
-        //        if (process.ExitCode != 0)
-        //        {
-        //            throw new Exception("An error occurred while executing Solution Packager");
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
-
-        //public void PackSolution(PackOperation pack)
-        //{
-        //    try
-        //    {
-        //        _logger.Log(LogLevel.INFO, $"Checking requirements...");
-        //        if (!File.Exists(pack.Packager))
-        //        {
-        //            throw new Exception($"Solution Packager not found - Please download Solution Packager before executing a Pack operation");
-        //        }
-
-        //        _logger.Log(LogLevel.INFO, $"Packing solution {pack.Solution.DisplayName}...");
-        //        var process = new Process
-        //        {
-        //            StartInfo =
-        //            {
-        //                FileName = pack.Packager,
-        //                Arguments = $"/action:{pack.Action} /zipfile:\"{pack.ZipFile}\" /folder:\"{pack.Folder}\" /packagetype:\"{pack.PackageType}\" /allowDelete:\"No\"",
-        //                WorkingDirectory = pack.WorkingDir,
-        //                UseShellExecute = false,
-        //                CreateNoWindow = true,
-        //                RedirectStandardOutput = true,
-        //                RedirectStandardError = true
-        //            },
-        //            EnableRaisingEvents = true
-        //        };
-
-        //        _logger.Output(LogLevel.PACKAGER, "Process starting...");
-
-        //        process.Start();
-
-        //        while (!process.StandardOutput.EndOfStream)
-        //        {
-        //            var output = process.StandardOutput.ReadLine();
-        //            _logger.Output(LogLevel.PACKAGER, output);
-        //        }
-
-        //        while (!process.StandardError.EndOfStream)
-        //        {
-        //            var errors = process.StandardError.ReadLine();
-        //            _logger.Output(LogLevel.PACKAGER, errors);
-        //        }
-
-        //        process.WaitForExit(30000);
-
-        //        if (process.ExitCode != 0)
-        //        {
-        //            throw new Exception("An error occurred while executing Solution Packager");
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
-
-        public void PublishCustomizations()
+        public void UnpackSolution(UnpackOperation unpack)
         {
             try
             {
-                _logger.Log(LogLevel.INFO, $"Publishing all customizations...");
-
-                var response = _target.Execute(new OrganizationRequest("PublishAllXmlAsync"));
-
-                _logger.Log(LogLevel.INFO, $"Waiting for publish operation...");
-                var result = CheckProgress(ConnectionType.TARGET, Guid.Parse(response["AsyncOperationId"].ToString()));
-                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
-
-                if (!result.Success)
+                _logger.Log(LogLevel.INFO, $"Checking requirements...");
+                if (!File.Exists(unpack.Packager))
                 {
-                    throw new Exception($"Error on Publish operation:\n{result.Message}");
+                    throw new Exception($"Solution Packager not found - Please download Solution Packager before executing an Unpack operation");
+                }
+
+                _logger.Log(LogLevel.INFO, $"Cleaning output directory...");
+                if (Directory.Exists(unpack.Folder))
+                {
+                    var dirInfo = new DirectoryInfo(unpack.Folder);
+                    foreach (var file in dirInfo.GetFiles()) { file.Delete(); }
+                    foreach (var dir in dirInfo.GetDirectories()) { dir.Delete(true); }
+                }
+
+                _logger.Log(LogLevel.INFO, $"Unpacking solution {unpack.Solution.DisplayName}...");
+                var process = new Process
+                {
+                    StartInfo =
+                {
+                    FileName = unpack.Packager,
+                    Arguments = $"/action:{unpack.Action} /zipfile:\"{unpack.ZipFile}\" /folder:\"{unpack.Folder}\" /packagetype:\"{unpack.PackageType}\" /allowDelete:\"No\"",
+                    WorkingDirectory = unpack.WorkingDir,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                },
+                    EnableRaisingEvents = true
+                };
+
+                _logger.Output(LogLevel.PACKAGER, "Process starting...");
+
+                process.Start();
+
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var output = process.StandardOutput.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, output);
+                }
+
+                while (!process.StandardError.EndOfStream)
+                {
+                    var errors = process.StandardError.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, errors);
+                }
+
+                process.WaitForExit(30000);
+
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception("An error occurred while executing Solution Packager");
                 }
             }
             catch
@@ -443,6 +379,84 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 throw;
             }
         }
+
+        public void PackSolution(PackOperation pack)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Checking requirements...");
+                if (!File.Exists(pack.Packager))
+                {
+                    throw new Exception($"Solution Packager not found - Please download Solution Packager before executing a Pack operation");
+                }
+
+                _logger.Log(LogLevel.INFO, $"Packing solution {pack.Solution.DisplayName}...");
+                var process = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = pack.Packager,
+                        Arguments = $"/action:{pack.Action} /zipfile:\"{pack.ZipFile}\" /folder:\"{pack.Folder}\" /packagetype:\"{pack.PackageType}\" /allowDelete:\"No\"",
+                        WorkingDirectory = pack.WorkingDir,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    },
+                    EnableRaisingEvents = true
+                };
+
+                _logger.Output(LogLevel.PACKAGER, "Process starting...");
+
+                process.Start();
+
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var output = process.StandardOutput.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, output);
+                }
+
+                while (!process.StandardError.EndOfStream)
+                {
+                    var errors = process.StandardError.ReadLine();
+                    _logger.Output(LogLevel.PACKAGER, errors);
+                }
+
+                process.WaitForExit(30000);
+
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception("An error occurred while executing Solution Packager");
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        //public void PublishCustomizations()
+        //{
+        //    try
+        //    {
+        //        _logger.Log(LogLevel.INFO, $"Publishing all customizations...");
+
+        //        var response = _target.Execute(new OrganizationRequest("PublishAllXmlAsync"));
+
+        //        _logger.Log(LogLevel.INFO, $"Waiting for publish operation...");
+        //        var result = CheckProgress(ConnectionType.TARGET, Guid.Parse(response["AsyncOperationId"].ToString()));
+        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+
+        //        if (!result.Success)
+        //        {
+        //            throw new Exception($"Error on Publish operation:\n{result.Message}");
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
         #endregion Interface Methods
 
         #region Private Methods
@@ -451,7 +465,9 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             var connection = connType.Equals(ConnectionType.SOURCE) ? _source : _target;
 
             var success = false;
+            var jobMessage = string.Empty;
             var opStatus = Enums.OperationStatus.IN_PROGRESS;
+            var opMessage = string.Empty;
             var message = string.Empty;
 
             var completed = false;
@@ -468,12 +484,93 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
                 if (importJobId.HasValue)
                 {
-                    var importJob = connection.Retrieve("importjob", importJobId.Value, new ColumnSet(new string[] { "progress" }));
+                    var importJob = connection.Retrieve("importjob", importJobId.Value, new ColumnSet(new string[] { "progress", "data" }));
                     var progress = Math.Round(importJob.GetAttributeValue<double>("progress"), 2);
                     _logger.Log(LogLevel.DEBUG, $"Import progress: {progress}%");
 
                     var progressMsg = $"{baseMsg}\n{progress}%";
                     _worker.ReportProgress(Convert.ToInt32(progress), progressMsg);
+
+                    if(!string.IsNullOrEmpty(importJob.GetAttributeValue<string>("data")))
+                    {
+                        var xmlStr = importJob.GetAttributeValue<string>("data");
+                        var xmlDoc = XDocument.Parse(xmlStr);
+
+                        var jobStatusAttr = xmlDoc.Root.Attribute("succeeded");
+                        var jobMessageAttr = xmlDoc.Root.Attribute("status");
+                        var dependencies = new List<ImportDependency>();
+                        if(jobStatusAttr != null && jobMessageAttr != null)
+                        {
+                            var jobMessageStr = xmlDoc.Root.Attribute("status").Value;
+                            if(jobMessageStr.Contains("<MissingDependencies>"))
+                            {
+                                var startDelimiter = "<MissingDependencies>";
+                                var endDelimiter = "</MissingDependencies>";
+
+                                var start = jobMessageStr.IndexOf(startDelimiter);
+                                var end = jobMessageStr.IndexOf(endDelimiter) + endDelimiter.Length;
+
+                                var depsXml = jobMessageStr.Substring(start, end - start);
+                                var depsDoc = XDocument.Parse(depsXml);
+
+                                dependencies = depsDoc.Root.Descendants("MissingDependency").Select(node =>
+                                {
+                                    var required = node.Descendants("Required").First();
+                                    var dependent = node.Descendants("Dependent").First();
+
+                                    return new ImportDependency
+                                    {
+                                        Required = new DependencyComponent
+                                        {
+                                            Id = required.Attribute("id") != null ? Guid.Parse(required.Attribute("id").Value) : Guid.Empty,
+                                            Type = required.Attribute("type") != null ? (ComponentType)required.Attribute("type").Value.TryParse<int>(int.TryParse) : ComponentType.Unknown,
+                                            LogicalName = required.Attribute("schemaName") != null ? required.Attribute("schemaName").Value : string.Empty,
+                                            DisplayName = required.Attribute("displayName") != null ? required.Attribute("displayName").Value : string.Empty
+                                        },
+                                        Dependent = new DependencyComponent
+                                        {
+                                            Id = dependent.Attribute("id") != null ? Guid.Parse(dependent.Attribute("id").Value) : Guid.Empty,
+                                            Type = dependent.Attribute("type") != null ? (ComponentType)dependent.Attribute("type").Value.TryParse<int>(int.TryParse) : ComponentType.Unknown,
+                                            LogicalName = dependent.Attribute("schemaName") != null ? dependent.Attribute("schemaName").Value : string.Empty,
+                                            DisplayName = dependent.Attribute("displayName") != null ? dependent.Attribute("displayName").Value : string.Empty
+                                        }
+                                    };
+                                }).ToList();
+                            }
+
+                            var jobStatus = jobStatusAttr.Value.ToUpper();
+                            var sb1 = new StringBuilder($"{jobStatus}: ");
+                            if (dependencies.Any())
+                            {
+                                sb1.Append($"There are unresolved import dependencies, check logs for details.");
+                                sb1.AppendLine();
+                                var groups = dependencies.GroupBy(dep => dep.Dependent.LogicalName);
+
+                                var sb2 = new StringBuilder();
+                                foreach (var grp in groups)
+                                {
+                                    sb2.AppendLine($"{grp.First().Dependent.Type} '{grp.First().Dependent.DisplayName}' ({grp.First().Dependent.LogicalName}) requires the following components:");
+                                    foreach (var dep in grp)
+                                    {
+                                        sb2.AppendLine($"\tType: {dep.Required.Type}");
+                                        sb2.AppendLine($"\tDisplay Name: {dep.Required.DisplayName}");
+                                        sb2.AppendLine($"\tLogical Name: {dep.Required.LogicalName}");
+                                        sb2.AppendLine($"\tComponent ID: {dep.Required.Id}");
+                                        sb2.AppendLine();
+                                    }
+                                }
+
+                                _logger.Log(LogLevel.ERROR, sb2.ToString());
+                            }
+                            else
+                            {
+                                sb1.Append(jobMessageStr);
+                                sb1.AppendLine();
+                            }
+
+                            jobMessage = sb1.ToString();
+                        }
+                    }
                 }
 
                 if (state.Equals(3))
@@ -483,21 +580,35 @@ namespace Dataverse.XrmTools.Deployer.Repositories
 
                     if (status > 30)
                     {
-                        message = async.GetAttributeValue<string>("friendlymessage");
-                        if(string.IsNullOrEmpty(message))
+                        if (!string.IsNullOrEmpty(async.GetAttributeValue<string>("friendlymessage")))
+                        {
+                            opMessage = async.GetAttributeValue<string>("friendlymessage");
+                        }
+                        else if (!string.IsNullOrEmpty(async.GetAttributeValue<string>("message")))
                         {
                             var raw = async.GetAttributeValue<string>("message");
 
                             var delimiters = new string[] { "Message: ", "Detail: " };
                             var splitArr = raw.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
-                            message = splitArr[1];
+                            opMessage = splitArr[1];
+                        }
+                        else
+                        {
+                            opMessage = $"Unknown error during import operation";
                         }
                     }
                 }
 
                 success = completed && status.Equals(30) ? true : false;
-                message = completed && status.Equals(30) ? "Solution successfully imported and upgraded" : message;
+                if(completed && status.Equals(30))
+                {
+                    message = "Solution successfully imported and upgraded";
+                }
+                else if (completed && !status.Equals(30))
+                {
+                    message = !string.IsNullOrEmpty(jobMessage) ? jobMessage : opMessage;
+                }
 
                 if (!state.Equals(3)) { Sleep(DateTime.UtcNow - startTime); }
             }

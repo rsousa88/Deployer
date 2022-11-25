@@ -27,8 +27,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployerControl));
             this.pnlMain = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tsMain = new System.Windows.Forms.ToolStrip();
-            this.tsbNewProject = new System.Windows.Forms.ToolStripButton();
-            this.tsbLoadProject = new System.Windows.Forms.ToolStripButton();
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbSolutionPackagerLogs = new System.Windows.Forms.GroupBox();
@@ -71,6 +69,8 @@
             this.tssQueue1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbQueueExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbQueueCancel = new System.Windows.Forms.ToolStripButton();
+            this.tsbNewProject = new System.Windows.Forms.ToolStripButton();
+            this.tsbLoadProject = new System.Windows.Forms.ToolStripButton();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
@@ -108,35 +108,14 @@
             this.tsbLoadProject});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(2000, 24);
+            this.tsMain.Size = new System.Drawing.Size(2000, 30);
             this.tsMain.TabIndex = 9;
             this.tsMain.Text = "Queue Toolstrip";
-            // 
-            // tsbNewProject
-            // 
-            this.tsbNewProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbNewProject.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.tsbNewProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbNewProject.Image")));
-            this.tsbNewProject.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbNewProject.Name = "tsbNewProject";
-            this.tsbNewProject.Size = new System.Drawing.Size(86, 21);
-            this.tsbNewProject.Text = "New Project";
-            this.tsbNewProject.Click += new System.EventHandler(this.tsbNewProject_Click);
-            // 
-            // tsbLoadProject
-            // 
-            this.tsbLoadProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbLoadProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbLoadProject.Image")));
-            this.tsbLoadProject.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbLoadProject.Name = "tsbLoadProject";
-            this.tsbLoadProject.Size = new System.Drawing.Size(89, 21);
-            this.tsbLoadProject.Text = "Load Project";
-            this.tsbLoadProject.Click += new System.EventHandler(this.tsbLoadProject_Click);
             // 
             // mainContainer
             // 
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainContainer.Location = new System.Drawing.Point(0, 24);
+            this.mainContainer.Location = new System.Drawing.Point(0, 38);
             this.mainContainer.Name = "mainContainer";
             // 
             // mainContainer.Panel1
@@ -146,7 +125,7 @@
             // mainContainer.Panel2
             // 
             this.mainContainer.Panel2.Controls.Add(this.bodyContainer);
-            this.mainContainer.Size = new System.Drawing.Size(2000, 876);
+            this.mainContainer.Size = new System.Drawing.Size(2000, 863);
             this.mainContainer.SplitterDistance = 427;
             this.mainContainer.TabIndex = 2;
             // 
@@ -165,7 +144,7 @@
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
             this.pnlSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37.5F));
-            this.pnlSettings.Size = new System.Drawing.Size(427, 876);
+            this.pnlSettings.Size = new System.Drawing.Size(427, 863);
             this.pnlSettings.TabIndex = 1;
             // 
             // gbSolutionPackagerLogs
@@ -174,11 +153,11 @@
             this.gbSolutionPackagerLogs.Controls.Add(this.lblPackagerVersionValue);
             this.gbSolutionPackagerLogs.Controls.Add(this.txtOutput);
             this.gbSolutionPackagerLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbSolutionPackagerLogs.Location = new System.Drawing.Point(3, 513);
+            this.gbSolutionPackagerLogs.Location = new System.Drawing.Point(3, 504);
             this.gbSolutionPackagerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbSolutionPackagerLogs.Name = "gbSolutionPackagerLogs";
             this.gbSolutionPackagerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbSolutionPackagerLogs.Size = new System.Drawing.Size(421, 361);
+            this.gbSolutionPackagerLogs.Size = new System.Drawing.Size(421, 357);
             this.gbSolutionPackagerLogs.TabIndex = 4;
             this.gbSolutionPackagerLogs.TabStop = false;
             this.gbSolutionPackagerLogs.Text = "Solution Packager Logs";
@@ -214,7 +193,7 @@
             this.txtOutput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(414, 303);
+            this.txtOutput.Size = new System.Drawing.Size(414, 299);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
             // 
@@ -230,7 +209,7 @@
             this.gbEnvironments.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbEnvironments.Name = "gbEnvironments";
             this.gbEnvironments.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbEnvironments.Size = new System.Drawing.Size(421, 142);
+            this.gbEnvironments.Size = new System.Drawing.Size(421, 139);
             this.gbEnvironments.TabIndex = 0;
             this.gbEnvironments.TabStop = false;
             this.gbEnvironments.Text = "Environments";
@@ -294,11 +273,11 @@
             this.gbDeployerLogs.Controls.Add(this.txtLogs);
             this.gbDeployerLogs.Controls.Add(this.btnClearLogs);
             this.gbDeployerLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbDeployerLogs.Location = new System.Drawing.Point(3, 148);
+            this.gbDeployerLogs.Location = new System.Drawing.Point(3, 145);
             this.gbDeployerLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbDeployerLogs.Name = "gbDeployerLogs";
             this.gbDeployerLogs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbDeployerLogs.Size = new System.Drawing.Size(421, 361);
+            this.gbDeployerLogs.Size = new System.Drawing.Size(421, 355);
             this.gbDeployerLogs.TabIndex = 1;
             this.gbDeployerLogs.TabStop = false;
             this.gbDeployerLogs.Text = "Deployer Logs";
@@ -314,7 +293,7 @@
             this.txtLogs.Name = "txtLogs";
             this.txtLogs.ReadOnly = true;
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLogs.Size = new System.Drawing.Size(409, 300);
+            this.txtLogs.Size = new System.Drawing.Size(409, 294);
             this.txtLogs.TabIndex = 2;
             // 
             // btnClearLogs
@@ -346,8 +325,8 @@
             // 
             this.bodyContainer.Panel2.Controls.Add(this.pnlQueue);
             this.bodyContainer.Panel2.Controls.Add(this.tsQueue);
-            this.bodyContainer.Size = new System.Drawing.Size(1569, 876);
-            this.bodyContainer.SplitterDistance = 390;
+            this.bodyContainer.Size = new System.Drawing.Size(1569, 863);
+            this.bodyContainer.SplitterDistance = 384;
             this.bodyContainer.TabIndex = 0;
             // 
             // pnlAddOperation
@@ -355,7 +334,7 @@
             this.pnlAddOperation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlAddOperation.Location = new System.Drawing.Point(0, 26);
             this.pnlAddOperation.Name = "pnlAddOperation";
-            this.pnlAddOperation.Size = new System.Drawing.Size(1569, 364);
+            this.pnlAddOperation.Size = new System.Drawing.Size(1569, 358);
             this.pnlAddOperation.TabIndex = 14;
             // 
             // tsAddOperation
@@ -406,6 +385,7 @@
             this.tsmiDelete.Name = "tsmiDelete";
             this.tsmiDelete.Size = new System.Drawing.Size(234, 26);
             this.tsmiDelete.Text = "Delete solutions";
+            this.tsmiDelete.Click += new System.EventHandler(this.tsmiDelete_Click);
             // 
             // tsmiPublish
             // 
@@ -435,7 +415,7 @@
             this.pnlQueue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlQueue.Location = new System.Drawing.Point(0, 26);
             this.pnlQueue.Name = "pnlQueue";
-            this.pnlQueue.Size = new System.Drawing.Size(1569, 456);
+            this.pnlQueue.Size = new System.Drawing.Size(1569, 449);
             this.pnlQueue.TabIndex = 13;
             // 
             // lvQueue
@@ -453,7 +433,7 @@
             this.lvQueue.Location = new System.Drawing.Point(0, 0);
             this.lvQueue.Margin = new System.Windows.Forms.Padding(4);
             this.lvQueue.Name = "lvQueue";
-            this.lvQueue.Size = new System.Drawing.Size(1569, 456);
+            this.lvQueue.Size = new System.Drawing.Size(1569, 449);
             this.lvQueue.TabIndex = 2;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
             this.lvQueue.View = System.Windows.Forms.View.Details;
@@ -530,7 +510,7 @@
             // 
             this.tsmiLoadQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsmiLoadQueue.Name = "tsmiLoadQueue";
-            this.tsmiLoadQueue.Size = new System.Drawing.Size(224, 26);
+            this.tsmiLoadQueue.Size = new System.Drawing.Size(168, 26);
             this.tsmiLoadQueue.Text = "Load Queue";
             this.tsmiLoadQueue.Click += new System.EventHandler(this.tsmiLoadQueue_Click);
             // 
@@ -538,7 +518,7 @@
             // 
             this.tsmiSaveQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsmiSaveQueue.Name = "tsmiSaveQueue";
-            this.tsmiSaveQueue.Size = new System.Drawing.Size(224, 26);
+            this.tsmiSaveQueue.Size = new System.Drawing.Size(168, 26);
             this.tsmiSaveQueue.Text = "Save Queue";
             this.tsmiSaveQueue.Click += new System.EventHandler(this.tsmiSaveQueue_Click);
             // 
@@ -546,7 +526,7 @@
             // 
             this.tsmiClearQueue.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.tsmiClearQueue.Name = "tsmiClearQueue";
-            this.tsmiClearQueue.Size = new System.Drawing.Size(224, 26);
+            this.tsmiClearQueue.Size = new System.Drawing.Size(168, 26);
             this.tsmiClearQueue.Text = "Clear Queue";
             this.tsmiClearQueue.Click += new System.EventHandler(this.tsmiClearQueue_Click);
             // 
@@ -575,6 +555,27 @@
             this.tsbQueueCancel.Text = "Cancel";
             this.tsbQueueCancel.Visible = false;
             // 
+            // tsbNewProject
+            // 
+            this.tsbNewProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbNewProject.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.tsbNewProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbNewProject.Image")));
+            this.tsbNewProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNewProject.Name = "tsbNewProject";
+            this.tsbNewProject.Size = new System.Drawing.Size(86, 27);
+            this.tsbNewProject.Text = "New Project";
+            this.tsbNewProject.Click += new System.EventHandler(this.tsbNewProject_Click);
+            // 
+            // tsbLoadProject
+            // 
+            this.tsbLoadProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbLoadProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbLoadProject.Image")));
+            this.tsbLoadProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbLoadProject.Name = "tsbLoadProject";
+            this.tsbLoadProject.Size = new System.Drawing.Size(89, 27);
+            this.tsbLoadProject.Text = "Load Project";
+            this.tsbLoadProject.Click += new System.EventHandler(this.tsbLoadProject_Click);
+            // 
             // DeployerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -586,7 +587,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "DeployerControl";
-            this.Size = new System.Drawing.Size(2000, 900);
+            this.Size = new System.Drawing.Size(1600, 720);
             this.Load += new System.EventHandler(this.DataMigrationControl_Load);
             this.tsMain.ResumeLayout(false);
             this.tsMain.PerformLayout();

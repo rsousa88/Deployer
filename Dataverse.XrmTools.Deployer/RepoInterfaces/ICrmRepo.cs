@@ -36,26 +36,26 @@ namespace Dataverse.XrmTools.Deployer.RepoInterfaces
         /// Update solution
         /// </summary>
         /// <param name="update">Operation object that contains all the required data to update a referenced solution</param>
-        void UpdateSolution(ExportOperation update);
+        void UpdateSolution(UpdateOperation update);
 
-        ///// <summary>
-        ///// Export solution
-        ///// </summary>
-        ///// <param name="export">Operation object that contains all the required data to export a referenced solution</param>
-        //void ExportSolution(ExportOperation export);
+        /// <summary>
+        /// Export solution
+        /// </summary>
+        /// <param name="export">Operation object that contains all the required data to export a referenced solution</param>
+        void ExportSolution(ExportOperation export);
 
-        ///// <summary>
-        ///// Import solution
-        ///// </summary>
-        ///// <param name="import">Operation object that contains all the required data to import a referenced solution</param>
-        ///// <param name="progressMessage">Base message for the progress report</param>
-        //void ImportSolution(ImportOperation import, string progressMessage);
+        /// <summary>
+        /// Import solution
+        /// </summary>
+        /// <param name="import">Operation object that contains all the required data to import a referenced solution</param>
+        /// <param name="progressMessage">Base message for the progress report</param>
+        void ImportSolution(ImportOperation import, string progressMessage);
 
-        ///// <summary>
-        ///// Upgrade solution
-        ///// </summary>
-        ///// <param name="solution">Solution object to be upgraded</param>
-        //void UpgradeSolution(Solution solution);
+        /// <summary>
+        /// Upgrade solution
+        /// </summary>
+        /// <param name="solution">Solution object to be upgraded</param>
+        void UpgradeSolution(Solution solution);
 
         ///// <summary>
         ///// Delete solution
@@ -63,21 +63,21 @@ namespace Dataverse.XrmTools.Deployer.RepoInterfaces
         ///// <param name="solution">Solution object to be deleted</param>
         //void DeleteSolution(Solution solution);
 
-        ///// <summary>
-        ///// Unpack solution
-        ///// </summary>
-        ///// <param name="unpack">Operation object that contains all the required data to unpack a referenced solution</param>
-        //void UnpackSolution(UnpackOperation unpack);
-
-        ///// <summary>
-        ///// Pack solution
-        ///// </summary>
-        ///// <param name="pack">Operation object that contains all the required data to pack a referenced solution</param>
-        //void PackSolution(PackOperation pack);
+        /// <summary>
+        /// Unpack solution
+        /// </summary>
+        /// <param name="unpack">Operation object that contains all the required data to unpack a referenced solution</param>
+        void UnpackSolution(UnpackOperation unpack);
 
         /// <summary>
-        /// Publish all customizations
+        /// Pack solution
         /// </summary>
-        void PublishCustomizations();
+        /// <param name="pack">Operation object that contains all the required data to pack a referenced solution</param>
+        void PackSolution(PackOperation pack);
+
+        ///// <summary>
+        ///// Publish all customizations
+        ///// </summary>
+        //void PublishCustomizations();
     }
 }
