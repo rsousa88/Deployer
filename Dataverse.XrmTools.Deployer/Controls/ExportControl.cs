@@ -41,7 +41,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             gbExportOptions.Enabled = false;
             gbUpdateOptions.Enabled = false;
             gbPackagerOptions.Enabled = false;
-            gbImport.Enabled = false;
             btnAddToQueue.Enabled = false;
         }
 
@@ -123,9 +122,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                     Version = _version,
                     Unpack = cbUnpack.Checked,
                     Pack = cbPack.Checked,
-                    Import = cbImport.Checked,
-                    OverwriteUnmanaged = cbOverwriteUnmanaged.Checked,
-                    PublishWorkflows = cbPublishWorkflows.Checked,
                     Solution = new Solution
                     {
                         SolutionId = solution.SolutionId,
@@ -141,7 +137,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
             gbExportOptions.Enabled = true;
             gbUpdateOptions.Enabled = true;
             gbPackagerOptions.Enabled = true;
-            gbImport.Enabled = _targetConnected;
             btnAddToQueue.Enabled = true;
         }
 
@@ -234,39 +229,6 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 foreach (var export in _exports)
                 {
                     export.Pack = cbPack.Checked;
-                }
-            }
-        }
-
-        private void cbImport_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_exports != null && _exports.Count > 0)
-            {
-                foreach (var export in _exports)
-                {
-                    export.Import = cbImport.Checked;
-                }
-            }
-        }
-
-        private void cbOverwriteUnmanaged_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_exports != null && _exports.Count > 0)
-            {
-                foreach (var export in _exports)
-                {
-                    export.OverwriteUnmanaged = cbOverwriteUnmanaged.Checked;
-                }
-            }
-        }
-
-        private void cbPublishWorkflows_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_exports != null && _exports.Count > 0)
-            {
-                foreach (var export in _exports)
-                {
-                    export.PublishWorkflows = cbPublishWorkflows.Checked;
                 }
             }
         }

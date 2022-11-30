@@ -999,12 +999,6 @@ namespace Dataverse.XrmTools.Deployer
                         AddToQueue(pack);
                     }
 
-                    if (export.Import)
-                    {
-                        var import = ParseImport(export);
-                        AddToQueue(import);
-                    }
-
                     tsbQueueExecute.Enabled = true;
                     tsmiSaveQueue.Enabled = true;
                     tsmiClearQueue.Enabled = true;
@@ -1017,6 +1011,8 @@ namespace Dataverse.XrmTools.Deployer
                     _workspace.Version = (anyUpdate as UpdateOperation).Version;
                     SaveWorkspaceFile();
                 }
+
+                pnlAddOperation.Controls.Clear();
             }
             catch (Exception ex)
             {
@@ -1092,36 +1088,6 @@ namespace Dataverse.XrmTools.Deployer
                 ZipFile = $"{Path.Combine(solutionDir, "dist")}\\{export.PackageName}",
                 Folder = Path.Combine(solutionDir, "source"),
                 Map = string.Empty
-            };
-        }
-        
-        private ImportOperation ParseImport(ExportOperation export)
-        {
-            var projectDir = Path.Combine(_workspace.RootPath, _workspace.ProjectDisplayName);
-            var solutionDir = Path.Combine(projectDir, export.Solution.DisplayName);
-
-            var solution = RetrieveSolutionByLogicalName(export.Solution.LogicalName, ConnectionType.TARGET);
-            var zipPath = $"{Path.Combine(solutionDir, "dist")}\\{export.PackageName}";
-
-            return new ImportOperation
-            {
-                OperationType = OperationType.IMPORT,
-                Solution = new Solution
-                {
-                    SolutionId = export.Solution.SolutionId,
-                    DisplayName = export.Solution.DisplayName,
-                    LogicalName = export.Solution.LogicalName,
-                    Publisher = export.Solution.Publisher
-                },
-                Package = new Package
-                {
-                    Name = export.PackageName,
-                    Type = export.PackageType,
-                    Path = zipPath
-                },
-                HoldingSolution = solution != null,
-                OverwriteUnmanaged = export.OverwriteUnmanaged,
-                PublishWorkflows = export.PublishWorkflows
             };
         }
 
@@ -1410,6 +1376,8 @@ namespace Dataverse.XrmTools.Deployer
                     tsmiSaveQueue.Enabled = true;
                     tsmiClearQueue.Enabled = true;
                 }
+
+                pnlAddOperation.Controls.Clear();
             }
             catch (Exception ex)
             {

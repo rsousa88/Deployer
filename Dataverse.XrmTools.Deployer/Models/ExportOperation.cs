@@ -11,8 +11,5 @@ namespace Dataverse.XrmTools.Deployer.Models
         public string Version { get; set; }
         public bool Unpack { get; set; }
         public bool Pack { get; set; }
-        public bool Import { get; set; }
-        public bool OverwriteUnmanaged { get; set; }
-        public bool PublishWorkflows { get; set; }
     }
 }
