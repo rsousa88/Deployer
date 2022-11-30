@@ -270,52 +270,52 @@ namespace Dataverse.XrmTools.Deployer.Repositories
             }
         }
 
-        //public void DeleteSolution(Solution solution)
-        //{
-        //    try
-        //    {
-        //        _logger.Log(LogLevel.INFO, $"Deleting solution {solution.DisplayName}...");
+        public void DeleteSolution(Solution solution)
+        {
+            try
+            {
+                _logger.Log(LogLevel.INFO, $"Deleting solution {solution.DisplayName}...");
 
-        //        var filter = new FilterExpression(LogicalOperator.And)
-        //        {
-        //            Conditions =
-        //            {
-        //                new ConditionExpression("solutionid", ConditionOperator.Equal, solution.SolutionId)
-        //            }
-        //        };
+                var filter = new FilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("solutionid", ConditionOperator.Equal, solution.SolutionId)
+                    }
+                };
 
-        //        var request = new BulkDeleteRequest
-        //        {
-        //            JobName = $"Solution {solution.DisplayName} Delete",
-        //            QuerySet = new QueryExpression[]
-        //            {
-        //                new QueryExpression("solution")
-        //                {
-        //                    ColumnSet = new ColumnSet("solutionid"),
-        //                    Criteria = filter
-        //                }
-        //            },
-        //            ToRecipients = new Guid[] { },
-        //            CCRecipients = new Guid[] { },
-        //            RecurrencePattern = string.Empty
-        //        };
+                var request = new BulkDeleteRequest
+                {
+                    JobName = $"Solution {solution.DisplayName} Delete",
+                    QuerySet = new QueryExpression[]
+                    {
+                        new QueryExpression("solution")
+                        {
+                            ColumnSet = new ColumnSet("solutionid"),
+                            Criteria = filter
+                        }
+                    },
+                    ToRecipients = new Guid[] { },
+                    CCRecipients = new Guid[] { },
+                    RecurrencePattern = string.Empty
+                };
 
-        //        var response = _target.Execute(request) as BulkDeleteResponse;
+                var response = _target.Execute(request) as BulkDeleteResponse;
 
-        //        _logger.Log(LogLevel.INFO, $"Waiting for delete operation...");
-        //        var result = CheckProgress(ConnectionType.TARGET, response.JobId);
-        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
+                _logger.Log(LogLevel.INFO, $"Waiting for delete operation...");
+                var result = CheckProgress(ConnectionType.TARGET, response.JobId);
+                if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
 
-        //        if (!result.Success)
-        //        {
-        //            throw new Exception($"Error on Delete operation:\n{result.Message}");
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
+                if (!result.Success)
+                {
+                    throw new Exception($"Error on Delete operation:\n{result.Message}");
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         public void UnpackSolution(UnpackOperation unpack)
         {

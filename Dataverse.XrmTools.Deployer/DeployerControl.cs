@@ -175,6 +175,7 @@ namespace Dataverse.XrmTools.Deployer
                     RenderConnectionStatus(ConnectionType.TARGET, _targetInstance.FriendlyName);
                     pnlAddOperation.Controls.Clear();
                     tsmiImport.Enabled = true;
+                    tsmiDelete.Enabled = true;
                 }
             }
             catch (Exception ex)
@@ -340,13 +341,13 @@ namespace Dataverse.XrmTools.Deployer
                                     _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully upgraded in {upgradeTime}");
                                 }
                                 break;
-                            //case OperationType.DELETE:
-                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nDeleting '{operation.Solution.DisplayName}'");
-                            //    repo.DeleteSolution(operation.Solution);
+                            case OperationType.DELETE:
+                                worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nDeleting '{operation.Solution.DisplayName}'");
+                                repo.DeleteSolution(operation.Solution);
 
-                            //    var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-                            //    _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
-                            //    break;
+                                var deleteTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
+                                _logger.Log(LogLevel.INFO, $"Solution {operation.Solution.DisplayName} successfully deleted in {deleteTime}");
+                                break;
                             case OperationType.UNPACK:
                                 var unpack = operation as UnpackOperation;
                                 worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nUnpacking '{unpack.Solution.DisplayName}'");
@@ -550,8 +551,8 @@ namespace Dataverse.XrmTools.Deployer
                 case OperationType.IMPORT:
                     var import = operation as ImportOperation;
                     return $"Import '{import.Package.Type}' package for solution '{import.Solution.DisplayName}'";
-                //case OperationType.DELETE:
-                //    return $"Delete '{operation.Solution.DisplayName}' solution";
+                case OperationType.DELETE:
+                    return $"Delete solution '{operation.Solution.DisplayName}'";
                 case OperationType.UNPACK:
                     var unpack = operation as UnpackOperation;
                     return $"Unpack '{unpack.PackageType.ToUpper()}' package to '{unpack.Folder}'";
@@ -1252,7 +1253,7 @@ namespace Dataverse.XrmTools.Deployer
 
                 var solutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
 
-                using (var form = new NewProject(_logger, solutions, _sourceInstance))
+                using (var form = new ProjectForm(_logger, solutions, _sourceInstance))
                 {
                     var workspace = form.ShowDialog(this) == DialogResult.OK ? form.Workspace : null;
                     if (workspace != null)
@@ -1289,6 +1290,7 @@ namespace Dataverse.XrmTools.Deployer
 
             _workspace = workspace;
             _workspaceLoaded = true;
+            tsbEditProject.Enabled = true;
             mainContainer.Enabled = true;
         }
 
@@ -1326,6 +1328,41 @@ namespace Dataverse.XrmTools.Deployer
 
                 _logger.Log(LogLevel.INFO, $"Project workspace successfully loaded from {path}");
                 //MessageBox.Show(this, "Project workspace loaded", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private void tsbEditProject_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ManageWorkingState(true);
+
+                var project = new Project
+                {
+                    Workspace = _workspace,
+                    Operations = _operations
+                };
+
+                var solutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
+
+                using (var form = new ProjectForm(_logger, solutions, project, _sourceInstance))
+                {
+                    var workspace = form.ShowDialog(this) == DialogResult.OK ? form.Workspace : null;
+                    if (workspace != null)
+                    {
+                        CreateWorkspace(workspace);
+                        SaveWorkspaceFile();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -1410,7 +1447,53 @@ namespace Dataverse.XrmTools.Deployer
 
         private void tsmiDelete_Click(object sender, EventArgs e)
         {
+            try
+            {
+                ManageWorkingState(true);
+                pnlAddOperation.Controls.Clear();
 
+                var managedTargetSolutions = RetrieveSolutions(PackageType.MANAGED, ConnectionType.TARGET);
+
+                var delete = new DeleteControl(_logger, managedTargetSolutions);
+                delete.OnAddToQueue_Delete += HandleAddDeletesToQueueEvent;
+
+                pnlAddOperation.Controls.Add(delete);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private void HandleAddDeletesToQueueEvent(object sender, IEnumerable<DeleteOperation> deletes)
+        {
+            try
+            {
+                foreach (var delete in deletes)
+                {
+                    AddToQueue(delete);
+
+                    tsbQueueExecute.Enabled = true;
+                    tsmiSaveQueue.Enabled = true;
+                    tsmiClearQueue.Enabled = true;
+                }
+
+                pnlAddOperation.Controls.Clear();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
         }
     }
 }

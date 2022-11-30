@@ -220,9 +220,9 @@
             // btnAddToQueue
             // 
             this.btnAddToQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddToQueue.Location = new System.Drawing.Point(854, 434);
+            this.btnAddToQueue.Location = new System.Drawing.Point(642, 434);
             this.btnAddToQueue.Name = "btnAddToQueue";
-            this.btnAddToQueue.Size = new System.Drawing.Size(139, 60);
+            this.btnAddToQueue.Size = new System.Drawing.Size(351, 60);
             this.btnAddToQueue.TabIndex = 10;
             this.btnAddToQueue.Text = "Add to queue";
             this.btnAddToQueue.UseVisualStyleBackColor = true;

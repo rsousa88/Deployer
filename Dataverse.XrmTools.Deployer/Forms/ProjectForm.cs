@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Dataverse.XrmTools.Deployer.Forms
 {
-    public partial class NewProject : Form
+    public partial class ProjectForm : Form
     {
         private readonly Logger _logger;
         private IEnumerable<Solution> _solutions;
@@ -19,7 +19,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
 
         public Workspace Workspace;
 
-        public NewProject(Logger logger, IEnumerable<Solution> solutions, Instance instance)
+        public ProjectForm(Logger logger, IEnumerable<Solution> solutions, Instance instance)
         {
             _logger = logger;
             _solutions = solutions;
@@ -30,14 +30,37 @@ namespace Dataverse.XrmTools.Deployer.Forms
             LoadSolutionsList();
         }
 
-        private void LoadSolutionsList()
+        public ProjectForm(Logger logger, IEnumerable<Solution> solutions, Project project, Instance instance)
+        {
+            _logger = logger;
+            _solutions = solutions;
+            _instance = instance;
+
+            InitializeComponent();
+
+            LoadSolutionsList(project.Workspace.Solutions);
+
+            Text = "Edit Project";
+            txtProjectDirPathValue.Text = project.Workspace.RootPath;
+            txtProjectName.Text = project.Workspace.ProjectDisplayName;
+            txtVersion.Text = project.Workspace.Version;
+        }
+
+        private void LoadSolutionsList(IEnumerable<Solution> selected = null)
         {
             lvSolutions.Items.Clear();
 
             var textFilter = txtSolutionFilter.Text;
             var filtered = _solutions.Where(sol => string.IsNullOrWhiteSpace(textFilter) || sol.MatchFilter(textFilter));
 
-            var items = filtered.Select(sol => sol.ToListViewItem()).ToArray();
+            //var items = filtered.Select(sol => sol.ToListViewItem()).ToArray();
+            var selectedIds = selected.Select(sel => sel.SolutionId);
+            var items = filtered.Select(sol => {
+                var item = sol.ToListViewItem();
+                item.Selected = selectedIds.Contains(sol.SolutionId);
+
+                return item;
+            }).ToArray();
 
             lvSolutions.Items.AddRange(items);
         }

@@ -57,11 +57,11 @@ namespace Dataverse.XrmTools.Deployer.RepoInterfaces
         /// <param name="solution">Solution object to be upgraded</param>
         void UpgradeSolution(Solution solution);
 
-        ///// <summary>
-        ///// Delete solution
-        ///// </summary>
-        ///// <param name="solution">Solution object to be deleted</param>
-        //void DeleteSolution(Solution solution);
+        /// <summary>
+        /// Delete solution
+        /// </summary>
+        /// <param name="solution">Solution object to be deleted</param>
+        void DeleteSolution(Solution solution);
 
         /// <summary>
         /// Unpack solution

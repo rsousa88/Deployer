@@ -58,7 +58,7 @@ namespace Dataverse.XrmTools.Deployer.Controls
 
         private void lvImportQueue_Resize(object sender, EventArgs e)
         {
-            var maxWidth = lvOperations.Width >= 800 ? lvOperations.Width : 800;
+            var maxWidth = lvImportQueue.Width >= 400 ? lvImportQueue.Width : 400;
             chImpQueIndex.Width = (int)Math.Floor(maxWidth * 0.10);
             chImpQueDisplayName.Width = (int)Math.Floor(maxWidth * 0.80);
         }

@@ -1,6 +1,6 @@
 ﻿namespace Dataverse.XrmTools.Deployer.Forms
 {
-    partial class NewProject
+    partial class ProjectForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblProjectName = new System.Windows.Forms.Label();
             this.txtProjectName = new System.Windows.Forms.TextBox();
             this.gbSolutions = new System.Windows.Forms.GroupBox();
             this.lvSolutions = new System.Windows.Forms.ListView();
@@ -44,19 +44,19 @@
             this.lblOutputDirPath = new System.Windows.Forms.Label();
             this.txtProjectDirPathValue = new System.Windows.Forms.TextBox();
             this.txtVersion = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblVersion = new System.Windows.Forms.Label();
             this.gbSolutions.SuspendLayout();
             this.gbProjectDetails.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // lblProjectName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 75);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 16);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Project Name:";
+            this.lblProjectName.AutoSize = true;
+            this.lblProjectName.Location = new System.Drawing.Point(6, 75);
+            this.lblProjectName.Name = "lblProjectName";
+            this.lblProjectName.Size = new System.Drawing.Size(92, 16);
+            this.lblProjectName.TabIndex = 0;
+            this.lblProjectName.Text = "Project Name:";
             // 
             // txtProjectName
             // 
@@ -146,8 +146,8 @@
             this.gbProjectDetails.Controls.Add(this.lblOutputDirPath);
             this.gbProjectDetails.Controls.Add(this.txtProjectDirPathValue);
             this.gbProjectDetails.Controls.Add(this.txtVersion);
-            this.gbProjectDetails.Controls.Add(this.label2);
-            this.gbProjectDetails.Controls.Add(this.label1);
+            this.gbProjectDetails.Controls.Add(this.lblVersion);
+            this.gbProjectDetails.Controls.Add(this.lblProjectName);
             this.gbProjectDetails.Controls.Add(this.txtProjectName);
             this.gbProjectDetails.Location = new System.Drawing.Point(12, 363);
             this.gbProjectDetails.Name = "gbProjectDetails";
@@ -167,7 +167,7 @@
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(182, 29);
             this.btnOk.TabIndex = 21;
-            this.btnOk.Text = "Create Project";
+            this.btnOk.Text = "Ok";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
@@ -213,16 +213,16 @@
             this.txtVersion.Size = new System.Drawing.Size(214, 22);
             this.txtVersion.TabIndex = 3;
             // 
-            // label2
+            // lblVersion
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(733, 75);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 16);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Initial Version:";
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Location = new System.Drawing.Point(733, 75);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(70, 20);
+            this.lblVersion.TabIndex = 2;
+            this.lblVersion.Text = "Version:";
             // 
-            // NewProject
+            // ProjectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -232,11 +232,11 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "NewProject";
+            this.Name = "ProjectForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "NewProject";
+            this.Text = "New Project";
             this.gbSolutions.ResumeLayout(false);
             this.gbSolutions.PerformLayout();
             this.gbProjectDetails.ResumeLayout(false);
@@ -247,7 +247,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblProjectName;
         private System.Windows.Forms.GroupBox gbSolutions;
         private System.Windows.Forms.ListView lvSolutions;
         private System.Windows.Forms.ColumnHeader chSolDisplayName;
@@ -258,7 +258,7 @@
         private System.Windows.Forms.TextBox txtSolutionFilter;
         private System.Windows.Forms.GroupBox gbProjectDetails;
         private System.Windows.Forms.TextBox txtVersion;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.TextBox txtProjectName;
         private System.Windows.Forms.Button btnAddSourceDir;
         private System.Windows.Forms.Label lblOutputDirPath;
