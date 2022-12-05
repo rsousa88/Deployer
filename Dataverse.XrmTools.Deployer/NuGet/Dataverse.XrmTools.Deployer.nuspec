@@ -2,24 +2,28 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Dataverse.XrmTools.Deployer</id>
-    <version>2022.5.19.1</version>
+    <version>2022.12.5.1</version>
     <title>Deployer</title>
     <authors>Rui Sousa</authors>
     <owners>Rui Sousa</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
-    <projectUrl>https://github.com/rsousa88/ActiveLayerExplorer</projectUrl>
+    <projectUrl>https://github.com/rsousa88/Deployer</projectUrl>
     <icon>images\icon.png</icon>
     <description>
-		Tool used to deploy dataverse solutions to a target environment.
+		Tool used to manage solution operations with ease. It allows for bulk export/import operations and ultimately a semi-automated deploy with just a few clicks.
 	</description>
-    <summary>Easily deploy solutions to a target dataverse instance.</summary>
+    <summary>Easily export and import solutions to a target dataverse instance.</summary>
     <releaseNotes>
 		2022.5.19.x
 		- First commit
+		2022.11.30.x
+		- First release version
+		2022.12.5.x
+		- Minor bug fix
 	</releaseNotes>
     <copyright>Copyright 2022</copyright>
-    <tags>XrmToolBox dataverse managed unmanaged active solution solutions layer layers deploy import tool dynamics 365 crm xrm</tags>
+    <tags>XrmToolBox dataverse managed unmanaged active solution solutions layer layers manage deploy import export delete tool dynamics 365 crm xrm</tags>
     <dependencies>
       <dependency id="XrmToolBox" version="1.2021.6.51" />
     </dependencies>

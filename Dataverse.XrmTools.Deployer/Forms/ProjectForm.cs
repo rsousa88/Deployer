@@ -53,7 +53,7 @@ namespace Dataverse.XrmTools.Deployer.Forms
             var textFilter = txtSolutionFilter.Text;
             var filtered = _solutions.Where(sol => string.IsNullOrWhiteSpace(textFilter) || sol.MatchFilter(textFilter));
 
-            //var items = filtered.Select(sol => sol.ToListViewItem()).ToArray();
+            if(selected is null) { selected = new List<Solution>().AsEnumerable(); }
             var selectedIds = selected.Select(sel => sel.SolutionId);
             var items = filtered.Select(sol => {
                 var item = sol.ToListViewItem();

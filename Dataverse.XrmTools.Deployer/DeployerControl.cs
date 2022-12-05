@@ -222,15 +222,6 @@ namespace Dataverse.XrmTools.Deployer
                     }
                 };
 
-                //var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) /*&& op.Solution.LogicalName.Equals(solution.LogicalName)*/);
-                //if (updated != null)
-                //{
-                //    //// found an update operation -> also update queued operations
-                //    //solution.DisplayName = updated.Solution.DisplayName;
-                //    //solution.Version = updated.Solution.Version;
-                //    //solution.Description = updated.Solution.Description;
-                //}
-
                 return solution;
             }).OrderBy(sol => sol.DisplayName);
         }
@@ -364,13 +355,6 @@ namespace Dataverse.XrmTools.Deployer
                                 var packTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
                                 _logger.Log(LogLevel.INFO, $"Solution {pack.Solution.DisplayName} successfully packed in {packTime}");
                                 break;
-                            //case OperationType.PUBLISH:
-                            //    worker.ReportProgress(progress, $"Queue execution: {index}/{count} ({progress}%)\nPublishing all customizations");
-                            //    repo.PublishCustomizations();
-
-                            //    var publishTime = (DateTime.UtcNow - startPartialTime).ToString(@"hh\:mm\:ss");
-                            //    _logger.Log(LogLevel.INFO, $"All customizations were successfully published in {publishTime}");
-                            //    break;
                             default:
                                 break;
                         }
@@ -407,12 +391,6 @@ namespace Dataverse.XrmTools.Deployer
                         _operations.Clear();
 
                         tsbQueueExecute.Enabled = false;
-
-                        //btnUp.Enabled = false;
-                        //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
-
-                        //btnDown.Enabled = false;
-                        //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
                     }
                 },
                 ProgressChanged = args =>
@@ -559,8 +537,6 @@ namespace Dataverse.XrmTools.Deployer
                 case OperationType.PACK:
                     var pack = operation as PackOperation;
                     return $"Pack '{pack.PackageType.ToUpper()}' package to '{pack.ZipFile}'";
-                //case OperationType.PUBLISH:
-                //    return $"Publish all customizations";
                 default:
                     return string.Empty;
             }
@@ -589,324 +565,6 @@ namespace Dataverse.XrmTools.Deployer
             MessageBox.Show(this, "Queue saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        //private void MarkAllFromGroup()
-        //{
-        //    var lvItems = lvQueue.Items.Cast<ListViewItem>().Where(lvi => lvi.Selected);
-        //    var selected = lvItems.LastOrDefault().Tag as Operation;
-
-        //    var operations = _operations.Where(op => op.GroupId.Equals(selected.GroupId));
-
-        //    foreach (var op in operations)
-        //    {
-        //        var grpItem = lvQueue.Items.Cast<ListViewItem>().SingleOrDefault(lvi => (lvi.Tag as Operation).OperationId.Equals(op.OperationId));
-        //        grpItem.BackColor = Color.LightGray;
-        //    }
-        //}
-
-        //private void MoveOperationItem(Operation selected, string action)
-        //{
-        //    var group = _groups.FirstOrDefault(grp => grp.GroupId.Equals(selected.GroupId));
-
-        //    if (action.Equals("up"))
-        //    {
-        //        var oldIndex = group.Index;
-        //        if (oldIndex > 1)
-        //        {
-        //            var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(_groups.FindIndex(grp2 => grp2.Index.Equals(oldIndex))));
-        //            var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
-
-        //            oldGrp.Index++;
-        //            newGrp.Index--;
-
-        //            RenderOperationsList(oldIndex - 1);
-        //        }
-        //    }
-
-        //    if (action.Equals("down"))
-        //    {
-        //        var oldIndex = group.Index;
-        //        if (oldIndex < _groups.Count)
-        //        {
-        //            var oldGrp = _groups.SingleOrDefault(grp => grp.Index.Equals(oldIndex + 1));
-        //            var newGrp = _groups.SingleOrDefault(grp => grp.GroupId.Equals(group.GroupId));
-
-        //            oldGrp.Index--;
-        //            newGrp.Index++;
-
-        //            RenderOperationsList(oldIndex + 1);
-        //        }
-        //    }
-        //}
-        #endregion Private Helper Methods
-
-        #region Custom Handler Events
-        //private void HandleOperationsEvent(object sender, List<Operation> opsList)
-        //{
-        //    var group = new OperationGroup(opsList, _groups.Count + 1);
-        //    _groups.Add(group);
-
-        //    var operations = group.Operations;
-        //    foreach (var operation in operations)
-        //    {
-        //        if (!operation.OperationType.Equals(OperationType.PUBLISH))
-        //        {
-        //            //if (_operations.Any(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName)))
-        //            //{
-        //            //    throw new Exception($"An operation of the same type on solution {operation.Solution.DisplayName} is already added to queue");
-        //            //}
-
-        //            var updated = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE) /*&& op.Solution.LogicalName.Equals(operation.Solution.LogicalName)*/);
-        //            if (updated != null)
-        //            {
-        //                // found an update operation -> also update queued operations
-        //                //operation.Solution.DisplayName = updated.Solution.DisplayName;
-        //                //operation.Solution.Version = updated.Solution.Version;
-        //                //operation.Solution.Description = updated.Solution.Description;
-        //            }
-        //        }
-
-        //        operation.Index = lvQueue.Items.Count + 1;
-
-        //        operation.Description = GetOperationDescription(operation);
-
-        //        _operations.Add(operation);
-        //        var lvItem = operation.ToListViewItem();
-        //        lvQueue.Items.Add(lvItem);
-
-        //        var message = $"Added '{operation.OperationType}' operation to queue";
-        //        //if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
-        //        _logger.Log(LogLevel.INFO, message);
-
-        //        tsbQueueExecute.Enabled = true;
-        //        tsmiSaveQueue.Enabled = true;
-        //        tsmiClearQueue.Enabled = true;
-        //    }
-        //}
-
-        //private IEnumerable<Solution> HandleRetrieveSolutionsEvent(PackageType queryType, ConnectionType connType)
-        //{
-        //    return RetrieveSolutions(queryType, connType);
-        //}
-
-        //private Solution HandleRetrieveSingleSolutionEvent(string logicalName, ConnectionType connType)
-        //{
-        //    return RetrieveSolutionByLogicalName(logicalName, connType);
-        //}
-
-        //private IEnumerable<Operation> HandleRetrieveOperationsEvent(OperationType opType)
-        //{
-        //    return _operations.Where(op => op.OperationType.Equals(opType));
-        //}
-        #endregion Custom Handler Events
-
-        #region Form Events
-        //private void btnConnectSource_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        AddAdditionalOrganization();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ManageWorkingState(false);
-        //        LogError(ex.Message);
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-
-        //private void btnAddOperation_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        //using (var form = new AddOperation(_logger, _settings))
-        //        //{
-        //        //    form.OnOperations += HandleOperationsEvent;
-        //        //    form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
-        //        //    form.OnSingleSolutionRetrieve += HandleRetrieveSingleSolutionEvent;
-        //        //    form.OnOperationsRetrieve += HandleRetrieveOperationsEvent;
-
-        //        //    form.ShowDialog();
-        //        //}
-
-        //        //using (var form = new NewOperation(_logger, _settings, OperationType.UPDATE))
-        //        //{
-        //        //    form.OnOperations += HandleOperationsEvent;
-        //        //    form.OnSolutionsRetrieve += HandleRetrieveSolutionsEvent;
-        //        //    form.OnSingleSolutionRetrieve += HandleRetrieveSingleSolutionEvent;
-        //        //    form.OnOperationsRetrieve += HandleRetrieveOperationsEvent;
-
-        //        //    form.ShowDialog();
-        //        //}
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ManageWorkingState(false);
-        //        LogError(ex.Message);
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-
-        //private void btnClearQueue_Click(object sender, EventArgs e)
-        //{
-        //    lvQueue.Items.Clear();
-        //    _operations.Clear();
-
-        //    tsbQueueExecute.Enabled = false;
-
-        //    //btnUp.Enabled = false;
-        //    //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
-
-        //    //btnDown.Enabled = false;
-        //    //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
-
-        //    tsmiSaveQueue.Enabled = false;
-        //    tsmiClearQueue.Enabled = false;
-        //}
-
-        //private async void tsbDeploy_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        txtLogs.Clear();
-        //        txtOutput.Clear();
-
-        //        await CheckRequirements();
-        //        DeployQueue();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ManageWorkingState(false);
-        //        _logger.Log(LogLevel.ERROR, ex.Message);
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-
-        private void tsbCancel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnClearLogs_Click(object sender, EventArgs e)
-        {
-            txtLogs.Clear();
-            txtOutput.Clear();
-        }
-
-        //private void lvOperations_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    var count = lvQueue.SelectedItems.Count;
-        //    if (count > 0)
-        //    {
-        //        //btnUp.Enabled = true;
-        //        //btnUp.BackgroundImage = Properties.Resources.arrow_up_35px;
-
-        //        //btnDown.Enabled = true;
-        //        //btnDown.BackgroundImage = Properties.Resources.arrow_down_35px;
-
-        //        MarkAllFromGroup();
-        //    }
-        //    else
-        //    {
-        //        //btnUp.Enabled = false;
-        //        //btnUp.BackgroundImage = Properties.Resources.arrow_up_disabled_35px;
-
-        //        //btnDown.Enabled = false;
-        //        //btnDown.BackgroundImage = Properties.Resources.arrow_down_disabled_35px;
-
-        //        var marked = lvQueue.Items.Cast<ListViewItem>().Where(lvi => lvi.BackColor.Equals(Color.LightGray));
-        //        foreach (var lvi in marked)
-        //        {
-        //            lvi.BackColor = SystemColors.Window;
-        //        }
-        //    }
-        //}
-
-        //private void lvOperations_DoubleClick(object sender, EventArgs e)
-        //{
-        //    var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-        //    if (selected != null)
-        //    {
-        //        try
-        //        {
-        //            var operation = selected.Tag as Operation;
-        //            if(operation.OperationType.Equals(OperationType.PUBLISH)) { return; }
-
-        //            using (var form = new OperationDetails(_logger, operation))
-        //            {
-        //                form.ShowDialog();
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ManageWorkingState(false);
-        //            LogError(ex.Message);
-        //            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //    }
-        //}
-
-        //private void btnUp_Click(object sender, EventArgs e)
-        //{
-        //    var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-        //    if (selected != null)
-        //    {
-        //        MoveOperationItem(selected.Tag as Operation, "up");
-        //    }
-        //}
-
-        //private void btnDown_Click(object sender, EventArgs e)
-        //{
-        //    var selected = lvQueue.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
-        //    if (selected != null)
-        //    {
-        //        MoveOperationItem(selected.Tag as Operation, "down");
-        //    }
-        //}
-
-        private void txtLogs_TextChanged(object sender, EventArgs e)
-        {
-            txtOutput.ScrollToCaret();
-        }
-
-        private void txtOutput_TextChanged(object sender, EventArgs e)
-        {
-            txtOutput.ScrollToCaret();
-        }
-        #endregion Form Events
-
-        //private void btnSaveQueue_Click(object sender, EventArgs e)
-        //{
-        //    //SaveQueue();
-        //}
-
-        //private void btnLoadQueue_Click(object sender, EventArgs e)
-        //{
-        //    _logger.Log(LogLevel.INFO, $"Loading queue...");
-        //    var path = this.SelectFile("Json files (*.json)|*.queue.json");
-        //    if (string.IsNullOrEmpty(path)) { return; }
-
-        //    var json = File.ReadAllText(path);
-        //    _groups = json.DeserializeObject<List<OperationGroup>>();
-
-        //    _operations.Clear();
-
-        //    foreach (var grp in _groups)
-        //    {
-        //        _operations.AddRange(grp.Operations);
-        //    }
-
-        //    RenderOperationsList();
-
-        //    _logger.Log(LogLevel.INFO, $"Queue loaded from file {path}");
-
-        //    if (lvQueue.Items.Count > 0)
-        //    {
-        //        tsmiSaveQueue.Enabled = true;
-        //        tsmiClearQueue.Enabled = true;
-        //        tsbQueueExecute.Enabled = true;
-        //    }
-        //}
-
         private async Task<Dictionary<string, string>> InstallSolutionPackager()
         {
             _logger.Log(LogLevel.INFO, $"Downloading latest version of Core Tools...");
@@ -926,104 +584,6 @@ namespace Dataverse.XrmTools.Deployer
             ManageWorkingState(false);
 
             return packager;
-        }
-
-        private void tsbOperationCancel_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                pnlAddOperation.Controls.Clear();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                ManageWorkingState(false);
-            }
-        }
-
-        private void tsmiExport_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ManageWorkingState(true);
-                pnlAddOperation.Controls.Clear();
-
-                var allSolutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
-
-                // filter workspace solutions
-                var solutionIds = _workspace.Solutions.Select(ws => ws.SolutionId);
-                var solutions = allSolutions.Where(sol => solutionIds.Contains(sol.SolutionId));
-
-                var export = new ExportControl(_logger, solutions, _workspace, _secondary != null);
-                export.OnAddToQueue_Export += HandleAddExportsToQueueEvent;
-
-                pnlAddOperation.Controls.Add(export);
-            }
-            catch (Exception ex)
-            {
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                ManageWorkingState(false);
-            }
-        }
-
-        private void HandleAddExportsToQueueEvent(object sender, IEnumerable<ExportOperation> exports)
-        {
-            try
-            {
-                foreach (var export in exports)
-                {
-                    if(export.UpdateVersion)
-                    {
-                        var update = ParseUpdate(export);
-                        AddToQueue(update);
-                    }
-
-                    AddToQueue(export);
-
-                    if (export.Unpack)
-                    {
-                        var unpack = ParseUnpack(export);
-                        AddToQueue(unpack);
-                    }
-
-                    if (export.Pack)
-                    {
-                        var pack = ParsePack(export);
-                        AddToQueue(pack);
-                    }
-
-                    tsbQueueExecute.Enabled = true;
-                    tsmiSaveQueue.Enabled = true;
-                    tsmiClearQueue.Enabled = true;
-                }
-
-                // update workspace version if there is at least one update operation
-                var anyUpdate = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE));
-                if (anyUpdate != null)
-                {
-                    _workspace.Version = (anyUpdate as UpdateOperation).Version;
-                    SaveWorkspaceFile();
-                }
-
-                pnlAddOperation.Controls.Clear();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                ManageWorkingState(false);
-            }
         }
 
         private UpdateOperation ParseUpdate(ExportOperation export)
@@ -1110,6 +670,208 @@ namespace Dataverse.XrmTools.Deployer
             _logger.Log(LogLevel.INFO, $"Added '{operation.OperationType}' operation on solution '{operation.Solution.DisplayName}' to queue");
         }
 
+        private void CreateWorkspace(Workspace workspace)
+        {
+            // create workspace structure
+            var projectDir = Path.Combine(workspace.RootPath, workspace.ProjectDisplayName);
+
+            foreach (var solution in workspace.Solutions)
+            {
+                var solutionDir = Path.Combine(projectDir, solution.DisplayName);
+
+                Directory.CreateDirectory(Path.Combine(solutionDir, "backup")); // exported solutions dir
+                Directory.CreateDirectory(Path.Combine(solutionDir, "source")); // unpacked solutions dir
+                Directory.CreateDirectory(Path.Combine(solutionDir, "dist")); // packed solutions dir
+            }
+
+            _workspace = workspace;
+            _workspaceLoaded = true;
+            tsbEditProject.Enabled = true;
+            mainContainer.Enabled = true;
+        }
+
+        private void SaveWorkspaceFile()
+        {
+            _logger.Log(LogLevel.INFO, $"Saving project workspace file...");
+
+            var filename = Path.Combine(_workspace.RootPath, $"{_workspace.ProjectLogicalName}.workspace");
+
+            var json = _workspace.SerializeObject();
+            File.WriteAllText(filename, json);
+
+            _logger.Log(LogLevel.INFO, $"Project workspace saved to {filename}");
+        }
+        #endregion Private Helper Methods
+
+        #region Custom Handler Events
+        private void HandleAddExportsToQueueEvent(object sender, IEnumerable<ExportOperation> exports)
+        {
+            try
+            {
+                foreach (var export in exports)
+                {
+                    if (export.UpdateVersion)
+                    {
+                        var update = ParseUpdate(export);
+                        AddToQueue(update);
+                    }
+
+                    AddToQueue(export);
+
+                    if (export.Unpack)
+                    {
+                        var unpack = ParseUnpack(export);
+                        AddToQueue(unpack);
+                    }
+
+                    if (export.Pack)
+                    {
+                        var pack = ParsePack(export);
+                        AddToQueue(pack);
+                    }
+
+                    tsbQueueExecute.Enabled = true;
+                    tsmiSaveQueue.Enabled = true;
+                    tsmiClearQueue.Enabled = true;
+                }
+
+                // update workspace version if there is at least one update operation
+                var anyUpdate = _operations.FirstOrDefault(op => op.OperationType.Equals(OperationType.UPDATE));
+                if (anyUpdate != null)
+                {
+                    _workspace.Version = (anyUpdate as UpdateOperation).Version;
+                    SaveWorkspaceFile();
+                }
+
+                pnlAddOperation.Controls.Clear();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private void HandleAddImportsToQueueEvent(object sender, IEnumerable<ImportOperation> imports)
+        {
+            try
+            {
+                foreach (var import in imports)
+                {
+                    AddToQueue(import);
+
+                    tsbQueueExecute.Enabled = true;
+                    tsmiSaveQueue.Enabled = true;
+                    tsmiClearQueue.Enabled = true;
+                }
+
+                pnlAddOperation.Controls.Clear();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private void HandleAddDeletesToQueueEvent(object sender, IEnumerable<DeleteOperation> deletes)
+        {
+            try
+            {
+                foreach (var delete in deletes)
+                {
+                    AddToQueue(delete);
+
+                    tsbQueueExecute.Enabled = true;
+                    tsmiSaveQueue.Enabled = true;
+                    tsmiClearQueue.Enabled = true;
+                }
+
+                pnlAddOperation.Controls.Clear();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+        #endregion Custom Handler Events
+
+        #region Form Events
+        private void btnClearLogs_Click(object sender, EventArgs e)
+        {
+            txtLogs.Clear();
+            txtOutput.Clear();
+        }
+
+        private void txtLogs_TextChanged(object sender, EventArgs e)
+        {
+            txtOutput.ScrollToCaret();
+        }
+
+        private void txtOutput_TextChanged(object sender, EventArgs e)
+        {
+            txtOutput.ScrollToCaret();
+        }        
+
+        private void tsbOperationCancel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                pnlAddOperation.Controls.Clear();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
+        private void tsmiExport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ManageWorkingState(true);
+                pnlAddOperation.Controls.Clear();
+
+                var allSolutions = RetrieveSolutions(PackageType.UNMANAGED, ConnectionType.SOURCE);
+
+                // filter workspace solutions
+                var solutionIds = _workspace.Solutions.Select(ws => ws.SolutionId);
+                var solutions = allSolutions.Where(sol => solutionIds.Contains(sol.SolutionId));
+
+                var export = new ExportControl(_logger, solutions, _workspace, _secondary != null);
+                export.OnAddToQueue_Export += HandleAddExportsToQueueEvent;
+
+                pnlAddOperation.Controls.Add(export);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                ManageWorkingState(false);
+            }
+        }
+
         private void btnConnectTarget_Click(object sender, EventArgs e)
         {
             try
@@ -1139,14 +901,11 @@ namespace Dataverse.XrmTools.Deployer
                     lvQueue.Items.RemoveAt(selected.Index);
 
                     var operation = selected.ToObject(new Operation()) as Operation;
-                    var item = _operations.SingleOrDefault(op => op.OperationType.Equals(operation.OperationType) && (op.OperationType.Equals(OperationType.PUBLISH) || op.Solution.LogicalName.Equals(operation.Solution.LogicalName)));
+                    var item = _operations.SingleOrDefault(op => op.OperationType.Equals(operation.OperationType) && op.Solution.LogicalName.Equals(operation.Solution.LogicalName));
                     if (item != null)
                     {
                         _operations.Remove(item);
-
-                        var message = $"Removed '{operation.OperationType}' operation from queue";
-                        if (!operation.OperationType.Equals(OperationType.PUBLISH)) { message += $" ({operation.Solution.DisplayName})"; }
-                        _logger.Log(LogLevel.INFO, message);
+                        _logger.Log(LogLevel.INFO, $"Removed '{operation.OperationType}' operation regarding solution '{operation.Solution.DisplayName}'");
                     }
                 }
 
@@ -1274,39 +1033,6 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void CreateWorkspace(Workspace workspace)
-        {
-            // create workspace structure
-            var projectDir = Path.Combine(workspace.RootPath, workspace.ProjectDisplayName);
-
-            foreach (var solution in workspace.Solutions)
-            {
-                var solutionDir = Path.Combine(projectDir, solution.DisplayName);
-
-                Directory.CreateDirectory(Path.Combine(solutionDir, "backup")); // exported solutions dir
-                Directory.CreateDirectory(Path.Combine(solutionDir, "source")); // unpacked solutions dir
-                Directory.CreateDirectory(Path.Combine(solutionDir, "dist")); // packed solutions dir
-            }
-
-            _workspace = workspace;
-            _workspaceLoaded = true;
-            tsbEditProject.Enabled = true;
-            mainContainer.Enabled = true;
-        }
-
-        private void SaveWorkspaceFile()
-        {
-            _logger.Log(LogLevel.INFO, $"Saving project workspace file...");
-
-            var filename = Path.Combine(_workspace.RootPath, $"{_workspace.ProjectLogicalName}.workspace");
-
-            var json = _workspace.SerializeObject();
-            File.WriteAllText(filename, json);
-
-            _logger.Log(LogLevel.INFO, $"Project workspace saved to {filename}");
-            //MessageBox.Show(this, "Project workspace successfully saved", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
         private void tsbLoadProject_Click(object sender, EventArgs e)
         {
             try
@@ -1401,32 +1127,6 @@ namespace Dataverse.XrmTools.Deployer
             }
         }
 
-        private void HandleAddImportsToQueueEvent(object sender, IEnumerable<ImportOperation> imports)
-        {
-            try
-            {
-                foreach (var import in imports)
-                {
-                    AddToQueue(import);
-
-                    tsbQueueExecute.Enabled = true;
-                    tsmiSaveQueue.Enabled = true;
-                    tsmiClearQueue.Enabled = true;
-                }
-
-                pnlAddOperation.Controls.Clear();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                ManageWorkingState(false);
-            }
-        }
-
         private async void tsbQueueExecute_Click(object sender, EventArgs e)
         {
             try
@@ -1469,31 +1169,6 @@ namespace Dataverse.XrmTools.Deployer
                 ManageWorkingState(false);
             }
         }
-
-        private void HandleAddDeletesToQueueEvent(object sender, IEnumerable<DeleteOperation> deletes)
-        {
-            try
-            {
-                foreach (var delete in deletes)
-                {
-                    AddToQueue(delete);
-
-                    tsbQueueExecute.Enabled = true;
-                    tsmiSaveQueue.Enabled = true;
-                    tsmiClearQueue.Enabled = true;
-                }
-
-                pnlAddOperation.Controls.Clear();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                ManageWorkingState(false);
-            }
-        }
+        #endregion Form Events
     }
 }

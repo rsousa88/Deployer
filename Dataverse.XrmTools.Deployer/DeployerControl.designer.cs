@@ -29,6 +29,7 @@
             this.tsMain = new System.Windows.Forms.ToolStrip();
             this.tsbNewProject = new System.Windows.Forms.ToolStripButton();
             this.tsbLoadProject = new System.Windows.Forms.ToolStripButton();
+            this.tsbEditProject = new System.Windows.Forms.ToolStripButton();
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.pnlSettings = new System.Windows.Forms.TableLayoutPanel();
             this.gbSolutionPackagerLogs = new System.Windows.Forms.GroupBox();
@@ -49,6 +50,7 @@
             this.tsAddOperation = new System.Windows.Forms.ToolStrip();
             this.tsbAddOperation = new System.Windows.Forms.ToolStripDropDownButton();
             this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsbsSourceTarget = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiPublish = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,8 +73,6 @@
             this.tssQueue1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbQueueExecute = new System.Windows.Forms.ToolStripButton();
             this.tsbQueueCancel = new System.Windows.Forms.ToolStripButton();
-            this.tsbsSourceTarget = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbEditProject = new System.Windows.Forms.ToolStripButton();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
@@ -135,6 +135,17 @@
             this.tsbLoadProject.Size = new System.Drawing.Size(89, 27);
             this.tsbLoadProject.Text = "Load Project";
             this.tsbLoadProject.Click += new System.EventHandler(this.tsbLoadProject_Click);
+            // 
+            // tsbEditProject
+            // 
+            this.tsbEditProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbEditProject.Enabled = false;
+            this.tsbEditProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbEditProject.Image")));
+            this.tsbEditProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbEditProject.Name = "tsbEditProject";
+            this.tsbEditProject.Size = new System.Drawing.Size(82, 27);
+            this.tsbEditProject.Text = "Edit Project";
+            this.tsbEditProject.Click += new System.EventHandler(this.tsbEditProject_Click);
             // 
             // mainContainer
             // 
@@ -220,6 +231,7 @@
             this.txtOutput.Size = new System.Drawing.Size(328, 226);
             this.txtOutput.TabIndex = 1;
             this.txtOutput.Text = "";
+            this.txtOutput.TextChanged += new System.EventHandler(this.txtOutput_TextChanged);
             // 
             // gbEnvironments
             // 
@@ -319,6 +331,7 @@
             this.txtLogs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtLogs.Size = new System.Drawing.Size(323, 222);
             this.txtLogs.TabIndex = 2;
+            this.txtLogs.TextChanged += new System.EventHandler(this.txtLogs_TextChanged);
             // 
             // btnClearLogs
             // 
@@ -332,6 +345,7 @@
             this.btnClearLogs.TabIndex = 9;
             this.btnClearLogs.Text = "Clear Logs";
             this.btnClearLogs.UseVisualStyleBackColor = true;
+            this.btnClearLogs.Click += new System.EventHandler(this.btnClearLogs_Click);
             // 
             // bodyContainer
             // 
@@ -395,6 +409,11 @@
             this.tsmiExport.Size = new System.Drawing.Size(234, 26);
             this.tsmiExport.Text = "Export solutions";
             this.tsmiExport.Click += new System.EventHandler(this.tsmiExport_Click);
+            // 
+            // tsbsSourceTarget
+            // 
+            this.tsbsSourceTarget.Name = "tsbsSourceTarget";
+            this.tsbsSourceTarget.Size = new System.Drawing.Size(231, 6);
             // 
             // tsmiImport
             // 
@@ -579,22 +598,7 @@
             this.tsbQueueCancel.Size = new System.Drawing.Size(53, 23);
             this.tsbQueueCancel.Text = "Cancel";
             this.tsbQueueCancel.Visible = false;
-            // 
-            // tsbsSourceTarget
-            // 
-            this.tsbsSourceTarget.Name = "tsbsSourceTarget";
-            this.tsbsSourceTarget.Size = new System.Drawing.Size(231, 6);
-            // 
-            // tsbEditProject
-            // 
-            this.tsbEditProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbEditProject.Enabled = false;
-            this.tsbEditProject.Image = ((System.Drawing.Image)(resources.GetObject("tsbEditProject.Image")));
-            this.tsbEditProject.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbEditProject.Name = "tsbEditProject";
-            this.tsbEditProject.Size = new System.Drawing.Size(82, 27);
-            this.tsbEditProject.Text = "Edit Project";
-            this.tsbEditProject.Click += new System.EventHandler(this.tsbEditProject_Click);
+            this.tsbQueueCancel.Click += new System.EventHandler(this.tsbOperationCancel_Click);
             // 
             // DeployerControl
             // 

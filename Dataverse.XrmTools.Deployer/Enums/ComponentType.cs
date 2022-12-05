@@ -1,21 +1,5 @@
-﻿using System;
-
-namespace Dataverse.XrmTools.Deployer.Models
+﻿namespace Dataverse.XrmTools.Deployer.Enums
 {
-    public class ImportDependency
-    {
-        public DependencyComponent Required { get; set; }
-        public DependencyComponent Dependent { get; set; }
-    }
-
-    public class DependencyComponent
-    {
-        public ComponentType Type { get; set; }
-        public Guid Id { get; set; }
-        public string LogicalName { get; set; }
-        public string DisplayName { get; set; }
-    }
-
     public enum ComponentType
     {
         Unknown = 0,

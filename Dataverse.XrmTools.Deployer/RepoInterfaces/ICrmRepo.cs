@@ -74,10 +74,5 @@ namespace Dataverse.XrmTools.Deployer.RepoInterfaces
         /// </summary>
         /// <param name="pack">Operation object that contains all the required data to pack a referenced solution</param>
         void PackSolution(PackOperation pack);
-
-        ///// <summary>
-        ///// Publish all customizations
-        ///// </summary>
-        //void PublishCustomizations();
     }
 }

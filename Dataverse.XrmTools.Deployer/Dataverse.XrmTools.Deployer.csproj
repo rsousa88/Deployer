@@ -227,11 +227,6 @@
     <Compile Include="DeployerControl.designer.cs">
       <DependentUpon>DeployerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Enums\OperationMode.cs" />
-    <Compile Include="Enums\HistoryOperation.cs" />
-    <Compile Include="Enums\HistoryResult.cs" />
-    <Compile Include="Enums\HistoryStatus.cs" />
-    <Compile Include="Enums\ImportType.cs" />
     <Compile Include="Enums\PackageType.cs" />
     <Compile Include="Enums\ConnectionType.cs" />
     <Compile Include="Enums\OperationStatus.cs" />
@@ -244,27 +239,18 @@
     <Compile Include="Forms\ProjectForm.Designer.cs">
       <DependentUpon>ProjectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\OperationDetails.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\OperationDetails.Designer.cs">
-      <DependentUpon>OperationDetails.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Helpers\Logger.cs" />
-    <Compile Include="Helpers\VersionHelper.cs" />
     <Compile Include="Models\DeleteOperation.cs" />
-    <Compile Include="Models\ExportOperation_old.cs" />
-    <Compile Include="Models\ImportJobData.cs" />
+    <Compile Include="Models\DependencyComponent.cs" />
+    <Compile Include="Models\ImportDependency.cs" />
     <Compile Include="Models\ImportOperation.cs" />
     <Compile Include="Models\JointRecord.cs" />
-    <Compile Include="Models\MissingDependency.cs" />
+    <Compile Include="Enums\ComponentType.cs" />
     <Compile Include="Models\OperationResponse.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\Package.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Record.cs" />
-    <Compile Include="Models\SolutionHistory.cs" />
     <Compile Include="Models\Publisher.cs" />
     <Compile Include="Models\Solution.cs" />
     <Compile Include="Helpers\ListViewComparer.cs" />
@@ -311,9 +297,6 @@
     <EmbeddedResource Include="Forms\ProjectForm.resx">
       <DependentUpon>ProjectForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\OperationDetails.resx">
-      <DependentUpon>OperationDetails.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -322,15 +305,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
-    <None Include="Resources\arrow-down-35px.png" />
-    <Resource Include="Resources\arrow-up-35px.png" />
-    <Content Include="Resources\arrow-down-disabled-35px.png" />
-    <Content Include="Resources\arrow-up-disabled-35px.png" />
-    <None Include="Resources\download-arrow.png" />
     <Content Include="Resources\icon.png" />
     <Content Include="Resources\icon32.png" />
     <Content Include="Resources\icon80.png" />
-    <Content Include="Resources\solutions.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logic\" />

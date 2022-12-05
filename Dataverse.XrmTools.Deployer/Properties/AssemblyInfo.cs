@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Dataverse.XrmTools.Deployer")]
-[assembly: AssemblyDescription("Tool used to deploy dataverse solutions to a target environment")]
+[assembly: AssemblyDescription("Tool used to manage solution operations with ease. It allows for bulk export/import operations and ultimately a semi-automated deploy with just a few clicks.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rui Sousa")]
 [assembly: AssemblyProduct("Dataverse.XrmTools.Deployer")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2022.5.19.1")]
-[assembly: AssemblyFileVersion("2022.5.19.1")]
+[assembly: AssemblyVersion("2022.12.5.1")]
+[assembly: AssemblyFileVersion("2022.12.5.1")]

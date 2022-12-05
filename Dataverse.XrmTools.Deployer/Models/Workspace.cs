@@ -1,6 +1,5 @@
-﻿using Dataverse.XrmTools.Deployer.AppSettings;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Dataverse.XrmTools.Deployer.AppSettings;
 
 namespace Dataverse.XrmTools.Deployer.Models
 {

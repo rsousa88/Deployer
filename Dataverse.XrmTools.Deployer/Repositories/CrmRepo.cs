@@ -434,29 +434,6 @@ namespace Dataverse.XrmTools.Deployer.Repositories
                 throw;
             }
         }
-
-        //public void PublishCustomizations()
-        //{
-        //    try
-        //    {
-        //        _logger.Log(LogLevel.INFO, $"Publishing all customizations...");
-
-        //        var response = _target.Execute(new OrganizationRequest("PublishAllXmlAsync"));
-
-        //        _logger.Log(LogLevel.INFO, $"Waiting for publish operation...");
-        //        var result = CheckProgress(ConnectionType.TARGET, Guid.Parse(response["AsyncOperationId"].ToString()));
-        //        if (result.Status.Equals(Enums.OperationStatus.CANCELED)) { return; }
-
-        //        if (!result.Success)
-        //        {
-        //            throw new Exception($"Error on Publish operation:\n{result.Message}");
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
         #endregion Interface Methods
 
         #region Private Methods

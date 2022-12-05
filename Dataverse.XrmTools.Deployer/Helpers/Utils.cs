@@ -109,11 +109,6 @@ namespace Dataverse.XrmTools.Deployer.Helpers
                 var solution = lvItem.Tag as Solution;
                 return solution;
             }
-            if (output is SolutionHistory)
-            {
-                var history = lvItem.Tag as SolutionHistory;
-                return history;
-            }
 
             return null;
         }
