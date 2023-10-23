@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Dataverse.XrmTools.Deployer.Enums;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Dataverse.XrmTools.Deployer.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Dataverse.XrmTools.Deployer.Controls
 {
@@ -151,6 +152,10 @@ namespace Dataverse.XrmTools.Deployer.Controls
                 {
                     export.PackageType = type;
                     export.PackageName = $"{export.Solution.LogicalName}_{_version}{suffix}";
+
+                    var pathArr = export.PackagePath.Split('\\');
+                    pathArr[pathArr.Length -1] = export.PackageName;
+                    export.PackagePath = string.Join("\\", pathArr);
                 }
             }
         }

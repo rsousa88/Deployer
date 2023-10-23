@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Dataverse.XrmTools.Deployer</id>
-    <version>2022.12.5.1</version>
+    <version>2023.10.23.1</version>
     <title>Deployer</title>
     <authors>Rui Sousa</authors>
     <owners>Rui Sousa</owners>
@@ -21,8 +21,10 @@
 		- First release version
 		2022.12.5.x
 		- Minor bug fix
+		2023.10.23.x
+		- Package type bug fix
 	</releaseNotes>
-    <copyright>Copyright 2022</copyright>
+    <copyright>Copyright 2023</copyright>
     <tags>XrmToolBox dataverse managed unmanaged active solution solutions layer layers manage deploy import export delete tool dynamics 365 crm xrm</tags>
     <dependencies>
       <dependency id="XrmToolBox" version="1.2021.6.51" />

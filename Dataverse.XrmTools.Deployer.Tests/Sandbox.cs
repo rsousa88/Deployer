@@ -5,6 +5,7 @@ using Dataverse.XrmTools.Deployer.Models;
 using Dataverse.XrmTools.Deployer.Helpers;
 using Xunit;
 using System.Text;
+using Dataverse.XrmTools.Deployer.Enums;
 
 namespace Dataverse.XrmTools.Deployer.Tests
 {
