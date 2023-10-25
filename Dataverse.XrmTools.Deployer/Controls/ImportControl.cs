@@ -161,21 +161,23 @@ namespace Dataverse.XrmTools.Deployer.Controls
             if (doc is null) { throw new Exception("Invalid solution file"); }
 
             var solManifestNodes = doc.Descendants("SolutionManifest");
-            var solDisplayNames = solManifestNodes.Select(node => node.Element("LocalizedNames")).FirstOrDefault().Descendants();
-            var displayNameNode = solDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033"));
-            var publisherNodes = solManifestNodes.Select(node => node.Element("Publisher")).FirstOrDefault().Descendants();
-            var pubDisplayNames = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("LocalizedNames")).Descendants();
+            var solManifestNames = solManifestNodes.Select(node => node.Element("LocalizedNames")).FirstOrDefault();
+            var displayNameNode = solManifestNames.Descendants().FirstOrDefault();
+
+            var publisherNodes = doc.Descendants("Publisher");
+            var publisherNames = publisherNodes.Select(node => node.Element("LocalizedNames")).FirstOrDefault();
+            var publisherNameNode = publisherNames.Descendants().FirstOrDefault();
 
             return new Solution
             {
-                LogicalName = solManifestNodes.Select(node => node.Element("UniqueName")).FirstOrDefault().Value,
+                LogicalName = solManifestNodes.Select(node => node.Element("UniqueName")).First().Value,
                 DisplayName = displayNameNode is null ? "N/A" : displayNameNode.Attribute("description").Value,
-                Version = solManifestNodes.Select(node => node.Element("Version")).FirstOrDefault().Value,
-                IsManaged = solManifestNodes.Select(node => node.Element("Managed")).FirstOrDefault().Value.Equals("1") ? true : false,
+                Version = solManifestNodes.Select(node => node.Element("Version")).First().Value,
+                IsManaged = solManifestNodes.Select(node => node.Element("Managed")).First().Value.Equals("1") ? true : false,
                 Publisher = new Publisher
                 {
-                    LogicalName = publisherNodes.FirstOrDefault(node => node.Name.LocalName.Equals("UniqueName")).Value,
-                    DisplayName = pubDisplayNames.FirstOrDefault(node => node.Attribute("languagecode").Value.Equals("1033")).Attribute("description").Value
+                    LogicalName = publisherNodes.Select(node => node.Element("UniqueName")).First().Value,
+                    DisplayName = publisherNameNode is null ? "N/A" : publisherNameNode.Attribute("description").Value
                 }
             };
         }
